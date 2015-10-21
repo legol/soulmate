@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
    `user_id` bigint(20) NOT NULL AUTO_INCREMENT,
+   `password` varchar(255) DEFAULT NULL,
    `user_verify` varchar(255) DEFAULT NULL,
    `country` varchar(255) DEFAULT NULL,
    `province` varchar(255) DEFAULT NULL,
