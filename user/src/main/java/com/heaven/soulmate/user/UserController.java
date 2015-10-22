@@ -1,4 +1,4 @@
-package com.heaven.soulmate;
+package com.heaven.soulmate.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,10 +12,10 @@ import javax.servlet.http.HttpServletResponse;
  * Created by ChenJie3 on 2015/9/8.
  */
 @Controller
-public class SoulMateController {
-    @RequestMapping("/test")
+public class UserController {
+    @RequestMapping("/user")
     @ResponseBody
-    public Object test(HttpServletRequest request, HttpServletResponse response) {
-        return "hello soulmate & spring mvc!";
+    public Object user(HttpServletRequest request, HttpServletResponse response) {
+        return "hello user & spring mvc!";
     }
 }
