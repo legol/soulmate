@@ -44,7 +44,7 @@ CREATE TABLE `login_status` (
 `uid` BIGINT(20) NULL COMMENT '',
 `token` VARCHAR(255) NULL COMMENT '',
 `last_login_time` TIMESTAMP,
-`router_id` INT(10) COMMENT 'long connection router id',
+location Point,
 PRIMARY KEY(`uid`));
 
 
