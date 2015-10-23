@@ -2,41 +2,81 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
    `user_id` bigint(20) NOT NULL AUTO_INCREMENT,
    `password` varchar(255) DEFAULT NULL,
-   `user_verify` varchar(255) DEFAULT NULL,
-   `country` varchar(255) DEFAULT NULL,
-   `province` varchar(255) DEFAULT NULL,
    `avatar` text,   `city` varchar(255) DEFAULT NULL,
-   `email` varchar(255) DEFAULT NULL,
-   `first_name` varchar(255) DEFAULT NULL,
-   `last_name` varchar(255) DEFAULT NULL,
-   `nick_name` varchar(255) DEFAULT NULL,
+   `name` varchar(255) DEFAULT NULL,
    `gender` int(11) DEFAULT NULL,
    `phone` varchar(255) DEFAULT NULL,
-   `postal` varchar(255) DEFAULT NULL,
-   `address` varchar(255) DEFAULT NULL,
-   `ease_mob_id` varchar(255) DEFAULT NULL,
-   `ease_mob_tk` varchar(255) DEFAULT NULL,
-   `signature` text, 
-   `verify_code` varchar(255) DEFAULT NULL,
-   `state` int(11) DEFAULT 0,
-   `expiry` timestamp DEFAULT 0,
    PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
  
-#============2.0 Éý¼¶=============
-ALTER TABLE `user` 
-ADD COLUMN `relation_version` BIGINT(24) NULL DEFAULT 0 COMMENT '' AFTER `expiry`;
 
-
-
+DROP TABLE IF EXISTS `relation`;
 
 CREATE TABLE `relation` (
-`id` BIGINT(20) NOT NULL COMMENT '',
-`user_id` BIGINT(20) NULL COMMENT '',
+
+`uid` BIGINT(20) NULL COMMENT '',
+
 `friend_id` BIGINT(20) NULL COMMENT '',
-`group_id` BIGINT(20) NULL COMMENT '',
-`note_name` VARCHAR(255) NULL COMMENT '',
-`relation` INT(11) NULL DEFAULT 0 COMMENT '',
+
+`memo` VARCHAR(255) NULL COMMENT '',
+
 `version` BIGINT(20) NULL COMMENT '',
-`invalid` INT(11) NULL DEFAULT 0 COMMENT '',
-PRIMARY KEY (`id`) COMMENT '');
+
+PRIMARY KEY(`uid`, `friend_id`));
+
+
+DROP TABLE IF EXISTS `relation_reverse`;
+
+CREATE TABLE `relation_reverse` (
+
+`uid` BIGINT(20) NULL COMMENT '',
+
+`belongs_to_uid` BIGINT(20) NULL COMMENT '',
+
+`version` BIGINT(20) NULL COMMENT '',
+
+PRIMARY KEY(`uid`, `belongs_to_uid`));
+
+DROP TABLE IF EXISTS `msg`;
+
+
+CREATE TABLE `msg` (
+
+
+`from_uid` BIGINT(20) NULL COMMENT '',
+
+
+`to_uid` BIGINT(20) NULL COMMENT '',
+
+
+`msg` VARCHAR(255) NULL COMMENT '',
+
+
+`sent_time` TIMESTAMP,
+
+KEY(`from_uid`),
+
+KEY(`to_uid`),
+
+KEY(`sent_time`));
+
+
+
+DROP TABLE IF EXISTS `login_status`;
+
+
+
+CREATE TABLE `login_status` (
+
+
+`uid` BIGINT(20) NULL COMMENT '',
+
+`token` VARCHAR(255) NULL COMMENT '',
+
+`last_login_time` TIMESTAMP,
+
+`router_id` INT(10) COMMENT 'long connection router id',
+
+PRIMARY KEY(`uid`));
+
+
