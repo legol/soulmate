@@ -2,10 +2,11 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
    `user_id` bigint(20) NOT NULL AUTO_INCREMENT,
    `password` varchar(255) DEFAULT NULL,
-   `avatar` text,   `city` varchar(255) DEFAULT NULL,
+   `avatar` varchar(255) DEFAULT NULL,
    `name` varchar(255) DEFAULT NULL,
    `gender` int(11) DEFAULT NULL,
    `phone` varchar(255) DEFAULT NULL,
+   `email` varchar(255) DEFAULT NULL,
    PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
  
