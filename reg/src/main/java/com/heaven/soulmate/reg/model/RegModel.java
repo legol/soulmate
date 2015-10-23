@@ -60,15 +60,17 @@ public class RegModel {
             conn = cpds.getConnection();
 
             statement = conn.prepareStatement("insert into `user`(`phone`, `password`) values (?,?)");
-            statement.setString(0, phone);
-            statement.setString(1, password);
+            statement.setString(1, phone);
+            statement.setString(2, password);
             rowsAffected = statement.executeUpdate();
 
             if(rowsAffected == 1){
-                statement = conn.prepareStatement("SELECT LAST_INSERT_ID()");
+                statement = conn.prepareStatement("SELECT LAST_INSERT_ID() as newUID");
                 ResultSet rs = statement.executeQuery();
-                rs.first();
-                newUID = rs.getInt(0);
+                while (rs.next()) {
+                    newUID = rs.getInt("newUID");
+                    break;
+                }
             }
             statement.close();
             conn.close();
