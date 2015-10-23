@@ -16,7 +16,8 @@ CREATE TABLE `relation` (
 `friend_id` BIGINT(20) NULL COMMENT '',
 `memo` VARCHAR(255) NULL COMMENT '',
 `version` BIGINT(20) NULL COMMENT '',
-PRIMARY KEY(`uid`, `friend_id`));
+PRIMARY KEY(`uid`, `friend_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS `relation_reverse`;
@@ -24,10 +25,10 @@ CREATE TABLE `relation_reverse` (
 `uid` BIGINT(20) NULL COMMENT '',
 `belongs_to_uid` BIGINT(20) NULL COMMENT '',
 `version` BIGINT(20) NULL COMMENT '',
-PRIMARY KEY(`uid`, `belongs_to_uid`));
+PRIMARY KEY(`uid`, `belongs_to_uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `msg`;
-
-
 CREATE TABLE `msg` (
 `from_uid` BIGINT(20) NULL COMMENT '',
 `to_uid` BIGINT(20) NULL COMMENT '',
@@ -35,16 +36,17 @@ CREATE TABLE `msg` (
 `sent_time` TIMESTAMP,
 KEY(`from_uid`),
 KEY(`to_uid`),
-KEY(`sent_time`));
-
-
+KEY(`sent_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `login_status`;
 CREATE TABLE `login_status` (
 `uid` BIGINT(20) NULL COMMENT '',
 `token` VARCHAR(255) NULL COMMENT '',
 `last_login_time` TIMESTAMP,
-location Point,
-PRIMARY KEY(`uid`));
+location Point NOT NULL COMMENT 'current location',
+PRIMARY KEY(`uid`),
+SPATIAL INDEX(location)
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
