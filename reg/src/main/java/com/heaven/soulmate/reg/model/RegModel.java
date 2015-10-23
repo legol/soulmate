@@ -48,6 +48,9 @@ public class RegModel {
     public int register(String phone, String password){
         assert(cpds != null);
 
+        if(phone.isEmpty() || password.isEmpty()){
+            return 0;
+        }
         Connection conn = null;
         PreparedStatement statement = null;
         int rowsAffected = 0;
@@ -56,7 +59,7 @@ public class RegModel {
         try {
             conn = cpds.getConnection();
 
-            statement = conn.prepareStatement("");
+            statement = conn.prepareStatement("insert into `user`(`phone`, `password`) values (?,?)");
             statement.setString(0, phone);
             statement.setString(1, password);
             rowsAffected = statement.executeUpdate();
