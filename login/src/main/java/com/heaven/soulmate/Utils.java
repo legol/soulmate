@@ -1,15 +1,19 @@
-package com.heaven.soulmate.reg;
+package com.heaven.soulmate;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.util.Properties;
+import java.util.Random;
 
 /**
  * Created by ChenJie3 on 2015/10/23.
  */
 public class Utils {
+
+    static Random rand = new Random();
 
     // read a property file from resource folder
     static public Properties readProperties(String filename){
@@ -42,5 +46,20 @@ public class Utils {
         }
 
         return sb.toString();
+    }
+
+    public static int randInt(int min, int max) {
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        return rand.nextInt((max - min) + 1) + min;
+    }
+
+    public static String generateToken(int uid, String password) {
+        String secret = "chenjie love cxf!";
+        int rand = randInt(19800202, 19901116);
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());;
+
+        String token_raw = String.format("%d %d %s %s %d", uid, rand, secret, password, timestamp.getTime());
+        return md5(token_raw);
     }
 }

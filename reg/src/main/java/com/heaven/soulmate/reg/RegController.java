@@ -31,11 +31,11 @@ public class RegController {
         HashMap<String, Object> retMap = new HashMap<String, Object>();
         int newUID = RegModel.sharedInstance().register(phone, password);
         if (newUID != 0) {
-            retMap.put("code", new Integer(0));
+            retMap.put("err_no", new Integer(0));
             retMap.put("uid", new Integer(newUID));
         }
         else{
-            retMap.put("code", new Integer(100));
+            retMap.put("err_no", new Integer(100));
             retMap.put("err_msg", "register failed");
         }
 

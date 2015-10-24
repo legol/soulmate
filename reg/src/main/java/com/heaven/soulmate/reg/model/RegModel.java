@@ -1,6 +1,6 @@
 package com.heaven.soulmate.reg.model;
 
-import com.heaven.soulmate.reg.Utils;
+import com.heaven.soulmate.Utils;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import java.beans.PropertyVetoException;
