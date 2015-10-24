@@ -4,10 +4,7 @@ import com.heaven.soulmate.Utils;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import java.beans.PropertyVetoException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Properties;
 
 /**
@@ -43,6 +40,8 @@ public class LoginModel {
         return instance;
     }
 
+    // 1. verify password
+    // 2. generate token and store it into login_status
     public LoginResult login(String phone, String password){
         assert(cpds != null);
 
@@ -87,6 +86,23 @@ public class LoginModel {
                 login_result.token = Utils.generateToken(uid, password_from_mysql);
 
                 break;
+            }
+
+            // save token to login_status table
+            statement = conn.prepareStatement("delete from login_status where uid = ?");
+            statement.setInt(1, uid);
+            statement.executeUpdate();
+
+            statement = conn.prepareStatement("insert into login_status(uid, token, token_gen_time, location) values (?, ?, ?, ST_GEOMFROMTEXT(?))");
+            statement.setInt(1, uid);
+            statement.setString(2, login_result.token);
+            statement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+            statement.setString(4, "POINT(0 0)");
+            int rowsAffacted = statement.executeUpdate();
+            if (rowsAffacted != 1) {
+                login_result.err_no = -4;
+                login_result.token = "";
+                login_result.err_msg = String.format("can't write login_status(uid=%d)", uid);
             }
 
             statement.close();

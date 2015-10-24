@@ -48,7 +48,8 @@ DROP TABLE IF EXISTS `login_status`;
 CREATE TABLE `login_status` (
 `uid` BIGINT(20) NOT NULL COMMENT '',
 `token` VARCHAR(255) NULL COMMENT '',
-`last_login_time` TIMESTAMP,
+`token_gen_time` TIMESTAMP,
+`last_login_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 location Point NOT NULL COMMENT 'current location',
 PRIMARY KEY(`uid`),
 SPATIAL INDEX(location)

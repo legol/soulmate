@@ -57,7 +57,7 @@ public class Utils {
     public static String generateToken(int uid, String password) {
         String secret = "chenjie love cxf!";
         int rand = randInt(19800202, 19901116);
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());;
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         String token_raw = String.format("%d %d %s %s %d", uid, rand, secret, password, timestamp.getTime());
         return md5(token_raw);

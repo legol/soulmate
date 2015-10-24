@@ -39,8 +39,6 @@ public class LoginController {
         dataMap.put("token", lr.token);
         retMap.put("data",dataMap);
 
-        // todo: put token to login_status table
-
         return retMap;
     }
 }
