@@ -61,7 +61,7 @@ public class RegModel {
 
             statement = conn.prepareStatement("insert into `user`(`phone`, `password`) values (?,?)");
             statement.setString(1, phone);
-            statement.setString(2, password);
+            statement.setString(2, Utils.md5(password));
             rowsAffected = statement.executeUpdate();
 
             if(rowsAffected == 1){

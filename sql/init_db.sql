@@ -3,15 +3,16 @@ use soulmate;
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-   `user_id` bigint(20) NOT NULL AUTO_INCREMENT,
+   `uid` bigint(20) NOT NULL AUTO_INCREMENT,
    `password` varchar(255) DEFAULT NULL,
    `avatar` varchar(255) DEFAULT NULL,
    `name` varchar(255) DEFAULT NULL,
    `gender` int(11) DEFAULT NULL,
    `phone` varchar(255) DEFAULT NULL,
    `email` varchar(255) DEFAULT NULL,
-   PRIMARY KEY (`user_id`)
+   PRIMARY KEY (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
  
 
 DROP TABLE IF EXISTS `relation`;

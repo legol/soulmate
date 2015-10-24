@@ -2,6 +2,8 @@ package com.heaven.soulmate.reg;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 
 /**
@@ -9,6 +11,7 @@ import java.util.Properties;
  */
 public class Utils {
 
+    // read a property file from resource folder
     static public Properties readProperties(String filename){
         Properties props = new Properties();
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -20,5 +23,24 @@ public class Utils {
             return null;
         }
         return props;
+    }
+
+    public static String md5(String original) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return "";
+        }
+
+        md.update(original.getBytes());
+        byte[] digest = md.digest();
+        StringBuffer sb = new StringBuffer();
+        for (byte b : digest) {
+            sb.append(String.format("%02x", b & 0xff));
+        }
+
+        return sb.toString();
     }
 }
