@@ -5,6 +5,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import java.beans.PropertyVetoException;
 import java.sql.*;
+import java.util.Calendar;
 import java.util.Properties;
 
 /**
@@ -93,11 +94,20 @@ public class LoginModel {
             statement.setInt(1, uid);
             statement.executeUpdate();
 
-            statement = conn.prepareStatement("insert into login_status(uid, token, token_gen_time, location) values (?, ?, ?, ST_GEOMFROMTEXT(?))");
+            Timestamp token_gen_time = new Timestamp(System.currentTimeMillis());
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(token_gen_time.getTime());
+            cal.add(Calendar.HOUR, 3); // expires after 3 hours
+
+            Timestamp token_expire_time = new Timestamp(cal.getTime().getTime());
+
+            statement = conn.prepareStatement("insert into login_status(uid, token, token_gen_time, token_expire_time, location) values (?, ?, ?, ?, ST_GEOMFROMTEXT(?))");
             statement.setInt(1, uid);
             statement.setString(2, login_result.token);
-            statement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-            statement.setString(4, "POINT(0 0)");
+            statement.setTimestamp(3, token_gen_time);
+            statement.setTimestamp(4, token_expire_time);
+            statement.setString(5, "POINT(0 0)");
             int rowsAffacted = statement.executeUpdate();
             if (rowsAffacted != 1) {
                 login_result.err_no = -4;
