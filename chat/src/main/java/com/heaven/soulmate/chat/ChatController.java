@@ -1,7 +1,12 @@
 package com.heaven.soulmate.chat;
 
+import com.heaven.soulmate.chat.model.ChatMessages;
+import com.heaven.soulmate.chat.model.ChatMessages;
 import com.heaven.soulmate.chat.model.ChatModel;
+import com.heaven.soulmate.chat.model.ChatResult;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -15,16 +20,13 @@ import java.util.HashMap;
 @Controller
 public class ChatController {
 
-    @RequestMapping("/chat")
+    @RequestMapping(value = "/chat",  produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Object chat(HttpServletRequest request, HttpServletResponse response) {
-        HashMap<String, Object> retMap = new HashMap<String, Object>();
+    public Object chat(HttpServletRequest request, @RequestBody ChatMessages messages) {
 
-        String phone = request.getParameter("phone");
-        String password = request.getParameter("password");
-
-        retMap.put("err_no", new Integer(0));
-
-        return retMap;
+        ChatResult ret = new ChatResult();
+        ret.setErr_no(0L);
+        return ret;
+        
     }
 }
