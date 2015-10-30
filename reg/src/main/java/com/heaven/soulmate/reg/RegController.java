@@ -1,7 +1,9 @@
 package com.heaven.soulmate.reg;
 
 import com.heaven.soulmate.reg.model.RegModel;
+import com.heaven.soulmate.reg.model.RegResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,7 +23,7 @@ import java.util.HashMap;
  */
 @Controller
 public class RegController {
-    @RequestMapping("/reg")
+    @RequestMapping(value="/reg", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Object reg(HttpServletRequest request, HttpServletResponse response) {
 
@@ -29,17 +31,19 @@ public class RegController {
         String password = request.getParameter("password");
 
         HashMap<String, Object> retMap = new HashMap<String, Object>();
-        int newUID = RegModel.sharedInstance().register(phone, password);
+        Long newUID = RegModel.sharedInstance().register(phone, password);
+
+        RegResult ret = new RegResult();
         if (newUID != 0) {
-            retMap.put("err_no", new Integer(0));
-            retMap.put("uid", new Integer(newUID));
+            ret.setErrNo(0L);
+            ret.setUid(newUID);
         }
         else{
-            retMap.put("err_no", new Integer(100));
-            retMap.put("err_msg", "register failed");
+            ret.setErrNo(100L); // TODO: define err code
+            ret.setErrMsg("registered failed. no new uid is generated.");
         }
 
-        return retMap;
+        return ret;
     }
 
     @RequestMapping("/reg/test")

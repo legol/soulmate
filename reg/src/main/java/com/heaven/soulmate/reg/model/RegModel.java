@@ -45,16 +45,16 @@ public class RegModel {
         return instance;
     }
 
-    public int register(String phone, String password){
+    public Long register(String phone, String password){
         assert(cpds != null);
 
         if(phone.isEmpty() || password.isEmpty()){
-            return 0;
+            return 0L;
         }
         Connection conn = null;
         PreparedStatement statement = null;
         int rowsAffected = 0;
-        int newUID = 0;
+        Long newUID = 0L;
 
         try {
             conn = cpds.getConnection();
@@ -68,7 +68,7 @@ public class RegModel {
                 statement = conn.prepareStatement("SELECT LAST_INSERT_ID() as newUID");
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
-                    newUID = rs.getInt("newUID");
+                    newUID = rs.getLong("newUID");
                     break;
                 }
             }

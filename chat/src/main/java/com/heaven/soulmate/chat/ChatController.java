@@ -20,13 +20,13 @@ import java.util.HashMap;
 @Controller
 public class ChatController {
 
-    @RequestMapping(value = "/chat",  produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/chat", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Object chat(HttpServletRequest request, @RequestBody ChatMessages messages) {
 
         ChatResult ret = new ChatResult();
         ret.setErr_no(0L);
         return ret;
-        
+
     }
 }
