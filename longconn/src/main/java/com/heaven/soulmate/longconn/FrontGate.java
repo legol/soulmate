@@ -20,6 +20,17 @@ class FrontGate extends Thread {
         }
     }
 
+    public boolean process(Client client, String payload)
+    {
+        // payload is a json string
+        System.out.println(payload);
+        return true;
+    }
+
+    public void clientDisconnected(Client client) {
+        System.out.println(String.format("client:%s disconnected", client.getClientId()));
+    }
+
     public void run() {
         System.out.println(String.format("start listening at port:%s", props.getProperty("listen")));
 
@@ -27,7 +38,8 @@ class FrontGate extends Thread {
         try {
             listener = new ServerSocket(Integer.parseInt(props.getProperty("listen")));
             while (true) {
-                //new Handler(listener.accept()).start();
+                Client client = new Client(listener.accept(), this);
+                client.start();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -39,6 +51,4 @@ class FrontGate extends Thread {
             e.printStackTrace();
         }
     }
-
-
 }

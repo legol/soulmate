@@ -11,6 +11,6 @@ public class App
         System.out.println( "Hello World!" );
 
         FrontGate fg = new FrontGate();
-        fg.run();
+        fg.start();
     }
 }
