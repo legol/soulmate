@@ -6,11 +6,16 @@ package com.heaven.soulmate.longconn;
  */
 public class App 
 {
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ){
         System.out.println( "Hello World!" );
 
         FrontGate fg = new FrontGate();
         fg.start();
+
+        try {
+            fg.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

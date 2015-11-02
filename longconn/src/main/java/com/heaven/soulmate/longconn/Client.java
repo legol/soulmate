@@ -11,14 +11,13 @@ import static java.util.UUID.randomUUID;
  */
 class Client extends Thread {
 
+    private String clientId = "";
+    private Socket socket = null;
     private FrontGate fg = null;
 
-    private String clientId = "";
-
-    private Socket socket = null;
     private DataInputStream in = null;
-    private OutputStreamWriter out = null;
-    final private int bufferLen = 1024;
+    private DataOutputStream out = null;
+
     final private int protocolSupported = 1;
 
     public Client(Socket socket, FrontGate fg) {
@@ -41,9 +40,11 @@ class Client extends Thread {
         int protocol = 0;
         long payloadLen = 0L;
 
+        System.out.printf("client:%s connected.\n", getClientId());
+
         try {
             in = new DataInputStream(this.socket.getInputStream());
-            out = new OutputStreamWriter(this.socket.getOutputStream());
+            out = new DataOutputStream(this.socket.getOutputStream());
 
             while (true) {
                 /*
@@ -76,11 +77,6 @@ class Client extends Thread {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            try {
-                this.socket.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
         }
 
         clientDisconnected();
@@ -92,5 +88,13 @@ class Client extends Thread {
             clientId = randomUUID().toString();
         }
         return clientId;
+    }
+
+    public DataOutputStream getOut() {
+        return out;
+    }
+
+    public void setOut(DataOutputStream out) {
+        this.out = out;
     }
 }

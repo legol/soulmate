@@ -23,16 +23,16 @@ class FrontGate extends Thread {
     public boolean process(Client client, String payload)
     {
         // payload is a json string
-        System.out.println(payload);
+        System.out.printf("payload:<%s>\n",payload);
         return true;
     }
 
     public void clientDisconnected(Client client) {
-        System.out.println(String.format("client:%s disconnected", client.getClientId()));
+        System.out.printf("client:%s disconnected\n", client.getClientId());
     }
 
     public void run() {
-        System.out.println(String.format("start listening at port:%s", props.getProperty("listen")));
+        System.out.printf("start listening at port:%s\n", props.getProperty("listen"));
 
         ServerSocket listener = null;
         try {
