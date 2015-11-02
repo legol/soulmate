@@ -54,9 +54,9 @@ public class Utils {
         return rand.nextInt((max - min) + 1) + min;
     }
 
-    public static String generateToken(long uid, String password) {
+    public static String generateToken(int uid, String password) {
         String secret = "chenjie love cxf!";
-        long rand = randInt(19800202, 19901116);
+        int rand = randInt(19800202, 19901116);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         String token_raw = String.format("%d %d %s %s %d", uid, rand, secret, password, timestamp.getTime());

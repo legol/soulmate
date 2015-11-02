@@ -23,22 +23,6 @@ public class LoginController {
         String password = request.getParameter("password");
 
         LoginResult lr = LoginModel.sharedInstance().login(phone, password);
-        HashMap<String, Object> retMap = new HashMap<String, Object>();
-        HashMap<String, Object> dataMap = new HashMap<String, Object>();
-
-        if (lr.err_no != 0) {
-            retMap.put("err_no", new Integer(lr.err_no));
-            retMap.put("err_msg", lr.err_msg);
-
-            return retMap;
-        }
-
-        retMap.put("err_no", new Integer(0));
-
-        dataMap.put("uid", new Integer(lr.uid));
-        dataMap.put("token", lr.token);
-        retMap.put("data",dataMap);
-
-        return retMap;
+        return lr;
     }
 }

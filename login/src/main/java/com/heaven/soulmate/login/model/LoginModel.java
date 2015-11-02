@@ -49,14 +49,14 @@ public class LoginModel {
         LoginResult login_result = new LoginResult();
 
         if(phone.isEmpty() || password.isEmpty()){
-            login_result.err_no = -1;
-            login_result.err_msg = "wrong parameters.";
+            login_result.setErrNo(-1L);
+            login_result.setErrMsg("wrong parameters.");
             return login_result;
         }
         Connection conn = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        int uid = 0;
+        long uid = 0L;
         String password_from_mysql = "";
 
         try {
@@ -71,27 +71,27 @@ public class LoginModel {
                 password_from_mysql = rs.getString("password");
 
                 if (uid == 0 || password_from_mysql.isEmpty()) {
-                    login_result.err_no = -2;
-                    login_result.err_msg = "user does not exist.";
+                    login_result.setErrNo(-2L);
+                    login_result.setErrMsg("user does not exist.");
                     break;
                 }
 
                 if (Utils.md5(password).compareToIgnoreCase(password_from_mysql) != 0) {
-                    login_result.err_no = -3;
-                    login_result.err_msg = "wrong password.";
+                    login_result.setErrNo(-3L);
+                    login_result.setErrMsg("wrong password.");
                     break;
                 }
 
-                login_result.err_no = 0;
-                login_result.uid = uid;
-                login_result.token = Utils.generateToken(uid, password_from_mysql);
+                login_result.setErrNo(0L);
+                login_result.setUid(uid);
+                login_result.setToken(Utils.generateToken(uid, password_from_mysql));
 
                 break;
             }
 
             // save token to login_status table
             statement = conn.prepareStatement("delete from login_status where uid = ?");
-            statement.setInt(1, uid);
+            statement.setLong(1, uid);
             statement.executeUpdate();
 
             Timestamp token_gen_time = new Timestamp(System.currentTimeMillis());
@@ -103,16 +103,16 @@ public class LoginModel {
             Timestamp token_expire_time = new Timestamp(cal.getTime().getTime());
 
             statement = conn.prepareStatement("insert into login_status(uid, token, token_gen_time, token_expire_time, location) values (?, ?, ?, ?, ST_GEOMFROMTEXT(?))");
-            statement.setInt(1, uid);
-            statement.setString(2, login_result.token);
+            statement.setLong(1, uid);
+            statement.setString(2, login_result.getToken());
             statement.setTimestamp(3, token_gen_time);
             statement.setTimestamp(4, token_expire_time);
             statement.setString(5, "POINT(0 0)");
             int rowsAffacted = statement.executeUpdate();
             if (rowsAffacted != 1) {
-                login_result.err_no = -4;
-                login_result.token = "";
-                login_result.err_msg = String.format("can't write login_status(uid=%d)", uid);
+                login_result.setErrNo(-4L);
+                login_result.setToken("");
+                login_result.setErrMsg(String.format("can't write login_status(uid=%d)", uid));
             }
 
             statement.close();
