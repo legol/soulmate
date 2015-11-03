@@ -13,30 +13,41 @@ import static java.lang.Thread.sleep;
  */
 public class App 
 {
-    public static void main( String[] args ) {
+    public static void main( String[] args ) throws InterruptedException {
+//
+//        MainLoop mainloop = new MainLoop();
+//        mainloop.start();
+//        mainloop.join();
+
         try {
+
             Socket socket = new Socket("localhost", 7788);
+
+
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
             String payload1 = "hello longconn!";
 
             out.writeInt(1);
-            out.writeLong(payload1.length());
+            out.writeInt(payload1.length());
             out.writeBytes(payload1);
 
             String payload2 = "hahahahahahaha oh yeah!";
 
             out.writeInt(1);
-            out.writeLong(payload2.length());
+            out.writeInt(payload2.length());
             out.writeBytes(payload2);
 
             sleep(1000);
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
     }
 }

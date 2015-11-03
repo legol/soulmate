@@ -9,11 +9,11 @@ public class App
     public static void main( String[] args ){
         System.out.println( "Hello World!" );
 
-        FrontGate fg = new FrontGate();
-        fg.start();
+        TcpServer server = new TcpServer();
+        server.start();
 
         try {
-            fg.join();
+            server.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
