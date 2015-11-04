@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 import static java.lang.Thread.sleep;
 
@@ -26,6 +27,12 @@ public class App
 
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+
+            byte[] buff = new byte[1024*10];
+            int protocol = in.readInt();
+            int payloadSize = in.readInt();
+            in.read(buff, 0, payloadSize);
+            String payload = new String(buff, 0, payloadSize, StandardCharsets.UTF_8);
 
             String payload1 = "hello longconn!";
 

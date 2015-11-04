@@ -5,16 +5,13 @@ import com.heaven.soulmate.Utils;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.channels.*;
 import java.util.HashMap;
 import java.util.Properties;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -50,6 +47,7 @@ class TcpServer extends Thread
             ssChannel.socket().bind(new InetSocketAddress(props.getProperty("ip"), Integer.parseInt(props.getProperty("port"))));
             ssChannel.register(selector, SelectionKey.OP_ACCEPT);
             while (true) {
+                System.out.println("select");
                 if (selector.select() <= 0) {
                     continue;
                 }
@@ -65,6 +63,7 @@ class TcpServer extends Thread
     void processSelectedKeys(Set selectedKeys) throws IOException {
         Iterator iterator = selectedKeys.iterator();
         while (iterator.hasNext()) {
+            System.out.println("process selected keys");
             SelectionKey key = (SelectionKey) iterator.next();
             iterator.remove();
             if (key.isAcceptable()) {
@@ -78,15 +77,31 @@ class TcpServer extends Thread
                 }
 
                 clientChannel.configureBlocking(false);
-                clientChannel.register(selector, SelectionKey.OP_READ);
+                clientChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+
+                send(client, client.getClientId());
             }
-            else if (key.isReadable()) {
-                processRead(key);
-                key.channel().register(selector, SelectionKey.OP_WRITE);
-            }
-            else if (key.isWritable()){
-                processWrite(key);
-                key.channel().register(selector, SelectionKey.OP_READ);
+            else{
+                TcpClient client = null;
+                synchronized (clientMap){
+                    client = clientMap.get(key.channel());
+                }
+
+                boolean clientValid = (client != null);
+                if (clientValid && key.isReadable()) {
+                    clientValid &= client.processRead();
+                }
+
+                if (clientValid && key.isWritable()){
+                    clientValid &= client.processWrite();
+                    if (clientValid){
+                        key.interestOps(SelectionKey.OP_READ);
+                    }
+                }
+
+                if (!clientValid){
+                    clientDisconnected(client);
+                }
             }
         }
     }
@@ -126,8 +141,14 @@ class TcpServer extends Thread
     public void clientDisconnected(TcpClient client) {
 
         LOGGER.info(String.format("client:<%s> disconnected\n", client.getClientId()));
+
+        try {
+            client.getChannel().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         synchronized (clientMap){
-            //client.getChannel().keyFor(selector).cancel();;
             clientMap.remove(client.getChannel());
         }
     }
@@ -135,4 +156,10 @@ class TcpServer extends Thread
     public void packetReceived(TcpClient client, TcpPacket packet) {
         LOGGER.info(String.format("packet:<%s>\n", packet.payload));
     }
+
+    public void send(TcpClient client, String payload) {
+        client.send(payload);
+        client.getChannel().keyFor(selector).interestOps(SelectionKey.OP_WRITE);
+        selector.wakeup();
+   }
 }
