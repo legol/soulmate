@@ -4,6 +4,8 @@ package com.heaven.soulmate.longconn;
  * Hello world!
  *
  */
+import com.heaven.soulmate.longconn.network.*;
+
 public class App
 {
     public static void main( String[] args ){

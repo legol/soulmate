@@ -1,5 +1,7 @@
 package com.heaven.soulmate.longconn;
 
+import com.heaven.soulmate.longconn.network.*;
+
 /**
  * Created by chenjie3 on 2015/11/4.
  */
