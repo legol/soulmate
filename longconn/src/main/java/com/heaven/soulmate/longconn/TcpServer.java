@@ -18,12 +18,16 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 /**
  * Created by ChenJie3 on 2015/11/2.
  */
 class TcpServer extends Thread
     implements ITcpServerDelegate
 {
+    private static final Logger LOGGER = Logger.getLogger(TcpServer.class);
+
     private Properties props;
 
     private Selector selector = null;
@@ -37,7 +41,7 @@ class TcpServer extends Thread
     }
 
     public void run() {
-        System.out.printf("start listening at: %s:%s\n", props.getProperty("ip"), props.getProperty("port"));
+        LOGGER.info(String.format("start listening at: %s:%s\n", props.getProperty("ip"), props.getProperty("port")));
 
         try {
             selector = Selector.open();
@@ -115,12 +119,13 @@ class TcpServer extends Thread
     }
 
     public void clientConnected(TcpClient client) {
-        System.out.printf("client:<%s> connected.\n", client.getClientId());
+        LOGGER.info(String.format("client:<%s> connected.\n", client.getClientId()));
+
     }
 
     public void clientDisconnected(TcpClient client) {
 
-        System.out.printf("client:<%s> disconnected\n", client.getClientId());
+        LOGGER.info(String.format("client:<%s> disconnected\n", client.getClientId()));
         synchronized (clientMap){
             //client.getChannel().keyFor(selector).cancel();;
             clientMap.remove(client.getChannel());
@@ -128,6 +133,6 @@ class TcpServer extends Thread
     }
 
     public void packetReceived(TcpClient client, TcpPacket packet) {
-        System.out.printf("packet:<%s>\n", packet.payload);
+        LOGGER.info(String.format("packet:<%s>\n", packet.payload));
     }
 }
