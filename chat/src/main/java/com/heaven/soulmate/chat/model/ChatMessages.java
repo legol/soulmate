@@ -9,6 +9,23 @@ import java.util.List;
 /**
  * Created by ChenJie3 on 2015/10/30.
  */
+
+/*
+{
+    "uid":1,
+    "target_uid":2,
+    "messages":[
+        {
+            "type":123,
+            "message":"abcde"
+        },
+        {
+            "type":22,
+            "message":"ccccc"
+        }
+    ]
+}
+ */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
 public class ChatMessages{
