@@ -30,7 +30,11 @@ class TcpServer extends Thread
     private Selector selector = null;
     private HashMap<SocketChannel, TcpClient> clientMap = new HashMap<SocketChannel, TcpClient>();
 
-    public TcpServer() {
+    private ITcpServerDelegate delegate = null;
+
+    public TcpServer(ITcpServerDelegate delegate) {
+        this.delegate = delegate;
+
         props = Utils.readProperties("server.properties");
         if (props == null) {
             return;
@@ -79,7 +83,7 @@ class TcpServer extends Thread
                 clientChannel.configureBlocking(false);
                 clientChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
 
-                send(client, client.getClientId());
+                //send(client, client.getClientId());
             }
             else{
                 TcpClient client = null;
@@ -136,11 +140,13 @@ class TcpServer extends Thread
     public void clientConnected(TcpClient client) {
         LOGGER.info(String.format("client:<%s> connected.\n", client.getClientId()));
 
+        delegate.clientConnected(client);
     }
 
     public void clientDisconnected(TcpClient client) {
-
         LOGGER.info(String.format("client:<%s> disconnected\n", client.getClientId()));
+
+        delegate.clientDisconnected(client);
 
         try {
             client.getChannel().close();
@@ -155,6 +161,8 @@ class TcpServer extends Thread
 
     public void packetReceived(TcpClient client, TcpPacket packet) {
         LOGGER.info(String.format("packet:<%s>\n", packet.payload));
+
+        delegate.packetReceived(client, packet);
     }
 
     public void send(TcpClient client, String payload) {
