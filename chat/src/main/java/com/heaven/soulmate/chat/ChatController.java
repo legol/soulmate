@@ -25,18 +25,22 @@ public class ChatController {
     public Object chat(HttpServletRequest request, @RequestBody ChatMessages messages) {
         LOGGER.info("chat message received.");
 
+        ChatResult ret = new ChatResult();
+
         // 1. store the message to db
         // 2. deliver the message to client b
         // 3. check if confirmation is received
         // 4. if confirmation is received, mark the message as delivered and finish.
         // 5. if confirmation is not received, just ignore. (client b will fetch offline message on login)
         if (!OfflineMsgDAO.sharedInstance().saveMsg(messages)){
-            
+            ret.setErrNo(100L);
+            ret.setErrMsg("can't write msg to db.");
+            return ret;
         }
 
+        // todo: longconn mgr: find out where each user is.
 
-        ChatResult ret = new ChatResult();
-        ret.setErr_no(0L);
+        ret.setErrNo(0L);
         return ret;
 
     }

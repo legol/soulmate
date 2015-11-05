@@ -11,13 +11,23 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
 public class ChatResult {
     @JsonProperty("err_no")
-    private Long err_no;
+    private Long errNo;
 
-    public Long getErr_no() {
-        return err_no;
+    @JsonProperty("err_msg")
+    private String errMsg;
+
+    public Long getErrNo() {
+        return errNo;
+    }
+    public void setErrNo(Long errNo) {
+        this.errNo = errNo;
     }
 
-    public void setErr_no(Long err_no) {
-        this.err_no = err_no;
+    public String getErrMsg() {
+        return errMsg;
+    }
+
+    public void setErrMsg(String errMsg) {
+        this.errMsg = errMsg;
     }
 }
