@@ -1,9 +1,7 @@
 package com.heaven.soulmate.chat;
 
+import com.heaven.soulmate.chat.model.*;
 import com.heaven.soulmate.chat.model.ChatMessages;
-import com.heaven.soulmate.chat.model.ChatMessages;
-import com.heaven.soulmate.chat.model.ChatModel;
-import com.heaven.soulmate.chat.model.ChatResult;
 import org.apache.log4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -26,6 +24,15 @@ public class ChatController {
     @ResponseBody
     public Object chat(HttpServletRequest request, @RequestBody ChatMessages messages) {
         LOGGER.info("chat message received.");
+
+        // 1. store the message to db
+        // 2. deliver the message to client b
+        // 3. check if confirmation is received
+        // 4. if confirmation is received, mark the message as delivered and finish.
+        // 5. if confirmation is not received, just ignore. (client b will fetch offline message on login)
+        if (!OfflineMsgDAO.sharedInstance().saveMsg(messages)){
+            
+        }
 
 
         ChatResult ret = new ChatResult();
