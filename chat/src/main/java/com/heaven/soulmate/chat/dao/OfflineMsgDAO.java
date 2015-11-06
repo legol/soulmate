@@ -1,6 +1,7 @@
-package com.heaven.soulmate.chat.model;
+package com.heaven.soulmate.chat.dao;
 
 import com.heaven.soulmate.Utils;
+import com.heaven.soulmate.chat.model.ChatMessages;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import java.beans.PropertyVetoException;
@@ -43,11 +44,10 @@ public class OfflineMsgDAO {
         return instance;
     }
 
-    public boolean saveMsg(ChatMessages messages){
+    public long saveMsg(ChatMessages messages){
         Connection conn = null;
         PreparedStatement statement = null;
-        ResultSet rs = null;
-        long uid = 0L;
+        long messageId = -1L;
         String password_from_mysql = "";
 
         try {
@@ -59,16 +59,19 @@ public class OfflineMsgDAO {
             statement.setString(3, messages.getMessages().toString());
 
             int rowsAffactted = statement.executeUpdate();
-            if (rowsAffactted == 1){
-                return true;
-            }else{
-                return false;
+            if(rowsAffactted == 1){
+                statement = conn.prepareStatement("SELECT LAST_INSERT_ID() as messageId");
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    messageId = rs.getLong("messageId");
+                    break;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return true;
+        return messageId;
     }
 }
 

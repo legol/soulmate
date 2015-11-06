@@ -36,17 +36,21 @@ PRIMARY KEY(`uid`, `belongs_to_uid`)
 use soulmate;
 DROP TABLE IF EXISTS `msg`;
 CREATE TABLE `msg` (
+`message_id` BIGINT(20) AUTO_INCREMENT,
 `from_uid` BIGINT(20) NULL COMMENT '',
 `to_uid` BIGINT(20) NULL COMMENT '',
 `msg` VARCHAR(255) NULL COMMENT '',
 `sent_time` TIMESTAMP,
 `delivered` BOOLEAN DEFAULT FALSE COMMENT 'whether the message was delivered',
 `tried_count` tinyint(2) DEFAULT 0 COMMENT 'How many times we tried to deliver the message',
+KEY(`message_id`),
 KEY(`from_uid`),
 KEY(`to_uid`),
 KEY(`sent_time`),
 KEY(`delivered`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 
 DROP TABLE IF EXISTS `login_status`;
 CREATE TABLE `login_status` (
