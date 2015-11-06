@@ -5,7 +5,7 @@ import com.heaven.soulmate.longconn.network.*;
 /**
  * Created by chenjie3 on 2015/11/4.
  */
-public class LongConnHolder implements ITcpServerDelegate{
+public class ServerCommController implements ITcpServerDelegate{
     public void clientConnected(TcpClient client) {
 
     }

@@ -25,30 +25,28 @@ public class TcpServer extends Thread
 {
     private static final Logger LOGGER = Logger.getLogger(TcpServer.class);
 
-    private Properties props;
+    private String ip = null;
+    private int port = 0;
 
     private Selector selector = null;
     private HashMap<SocketChannel, TcpClient> clientMap = new HashMap<SocketChannel, TcpClient>();
 
     private ITcpServerDelegate delegate = null;
 
-    public TcpServer(ITcpServerDelegate delegate) {
+    public TcpServer(ITcpServerDelegate delegate, String ip, int port) {
         this.delegate = delegate;
-
-        props = Utils.readProperties("server.properties");
-        if (props == null) {
-            return;
-        }
+        this.ip = ip;
+        this.port = port;
     }
 
     public void run() {
-        LOGGER.info(String.format("start listening at: %s:%s\n", props.getProperty("ip"), props.getProperty("port")));
+        LOGGER.info(String.format("start listening at: %s:%d\n", ip, port));
 
         try {
             selector = Selector.open();
             ServerSocketChannel ssChannel = ServerSocketChannel.open();
             ssChannel.configureBlocking(false);
-            ssChannel.socket().bind(new InetSocketAddress(props.getProperty("ip"), Integer.parseInt(props.getProperty("port"))));
+            ssChannel.socket().bind(new InetSocketAddress(ip, port));
             ssChannel.register(selector, SelectionKey.OP_ACCEPT);
             while (true) {
                 System.out.println("select");
