@@ -45,7 +45,11 @@ public class ChatController {
         messages.setMessageId(messageId);
 
         ServerInfo longconnServer = LongConnServerController.sharedInstance().serverByUid(messages.getTarget_uid());
-
+        if (longconnServer == null){
+            ret.setErrNo(-1L);
+            ret.setErrMsg(String.format("can't find a server for uid=%d.", messages.getTarget_uid()));
+            return ret;
+        }
         // todo: longconn mgr: find out where each user is.
 
         ret.setErrNo(0L);

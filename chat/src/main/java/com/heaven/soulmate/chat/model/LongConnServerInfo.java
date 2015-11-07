@@ -13,5 +13,5 @@ import java.util.List;
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
 public class LongConnServerInfo {
     @JsonProperty("info")
-    private List<ServerInfo> info;
+    public List<ServerInfo> info;
 }

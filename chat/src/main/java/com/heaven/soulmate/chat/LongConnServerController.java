@@ -7,6 +7,10 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by chenjie3 on 2015/11/6.
@@ -42,6 +46,25 @@ public class LongConnServerController {
     }
 
     public ServerInfo serverByUid(long uid){
+        LinkedList<ServerInfo> servers = new LinkedList<ServerInfo>();
+
+        for (ServerInfo server:longConnServerInfo.info) {
+            if (server.uidLow <= uid && uid < server.uidHigh){
+                servers.addFirst(server);
+            }
+        }
+
+        int pickedServerIdx = ThreadLocalRandom.current().nextInt(0, servers.size());
+        for (int i = 0; i < servers.size(); i++){
+            if (i == pickedServerIdx){
+                LOGGER.error(String.format("server:<%s:%d> for uid:%d", servers.getFirst().ip, servers.getFirst().portClient, uid));
+                return servers.getFirst();
+            }
+
+            servers.removeFirst();
+        }
+
+        LOGGER.error(String.format("no server is found for:%d", uid));
         return null;
     }
 
