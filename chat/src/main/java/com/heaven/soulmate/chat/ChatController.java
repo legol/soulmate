@@ -1,5 +1,6 @@
 package com.heaven.soulmate.chat;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heaven.soulmate.chat.dao.OfflineMsgDAO;
 import com.heaven.soulmate.chat.model.*;
@@ -44,13 +45,22 @@ public class ChatController {
         }
         messages.setMessageId(messageId);
 
-        ServerInfo longconnServer = LongConnServerController.sharedInstance().serverByUid(messages.getTarget_uid());
-        if (longconnServer == null){
+        ObjectMapper mapper = new ObjectMapper();
+        String messageInJson = null;
+        try {
+            messageInJson = mapper.writeValueAsString(messages);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
             ret.setErrNo(-1L);
-            ret.setErrMsg(String.format("can't find a server for uid=%d.", messages.getTarget_uid()));
+            ret.setErrMsg(String.format("can't convert message to json"));
             return ret;
         }
-        // todo: longconn mgr: find out where each user is.
+
+        if (LongConnServerController.sharedInstance().sendMessage(messages.getTarget_uid(), messageInJson) == false){
+            ret.setErrNo(-1L);
+            ret.setErrMsg(String.format("can't send message."));
+            return ret;
+        }
 
         ret.setErrNo(0L);
         return ret;
