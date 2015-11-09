@@ -21,7 +21,6 @@ import org.apache.log4j.Logger;
  * Created by ChenJie3 on 2015/11/2.
  */
 public class TcpServer extends Thread
-    implements ITcpServerDelegate
 {
     private static final Logger LOGGER = Logger.getLogger(TcpServer.class);
 
@@ -138,13 +137,13 @@ public class TcpServer extends Thread
     public void clientConnected(TcpClient client) {
         LOGGER.info(String.format("client:<%s> connected.\n", client.getClientId()));
 
-        delegate.clientConnected(client);
+        delegate.clientConnected(this, client);
     }
 
     public void clientDisconnected(TcpClient client) {
         LOGGER.info(String.format("client:<%s> disconnected\n", client.getClientId()));
 
-        delegate.clientDisconnected(client);
+        delegate.clientDisconnected(this, client);
 
         try {
             client.getChannel().close();
@@ -160,7 +159,7 @@ public class TcpServer extends Thread
     public void packetReceived(TcpClient client, TcpPacket packet) {
         LOGGER.info(String.format("packet:<%s>\n", packet.payload));
 
-        delegate.packetReceived(client, packet);
+        delegate.packetReceived(this, client, packet);
     }
 
     public void send(TcpClient client, String payload) {

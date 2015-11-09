@@ -18,7 +18,7 @@ public class App
     public static void main( String[] args ){
 
         try {
-            String testJson = "{\"typehaha\":1,\"content\":\"aabbcc\"}";
+            String testJson = "{\"type\":1,\"content\":\"aabbcc\"}";
 
             ObjectMapper mapper = new ObjectMapper();
             Payload obj = mapper.readValue(testJson, Payload.class);
@@ -37,12 +37,10 @@ public class App
             return;
         }
 
-        ServerCommController serverCommController = new ServerCommController();
-        TcpServer serverComm = new TcpServer(serverCommController,  props.getProperty("ipServerComm"), Integer.parseInt(props.getProperty("portServerComm")));
+        TcpServer serverComm = new TcpServer(ServerCommController.sharedInstance(),  props.getProperty("ipServerComm"), Integer.parseInt(props.getProperty("portServerComm")));
         serverComm.start();
 
-        ClientCommController clientCommController = new ClientCommController();
-        TcpServer clientComm = new TcpServer(clientCommController,  props.getProperty("ip"), Integer.parseInt(props.getProperty("port")));
+        TcpServer clientComm = new TcpServer(ClientCommController.sharedInstance(),  props.getProperty("ip"), Integer.parseInt(props.getProperty("port")));
         clientComm.start();
 
 

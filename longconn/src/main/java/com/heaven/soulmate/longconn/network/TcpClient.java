@@ -19,6 +19,7 @@ public class TcpClient {
 
     private ITcpServerDelegate delegate = null;
     private SocketChannel channel = null;
+    private TcpServer server = null;
 
     ByteBuffer remainingBuffer = null;
     int remainingBufferSize = 0;
@@ -27,11 +28,11 @@ public class TcpClient {
 
     private LinkedList<String> outgoingPayload = new LinkedList<String>();
 
-    public TcpClient(SocketChannel channel, ITcpServerDelegate delegate) {
+    public TcpClient(SocketChannel channel, TcpServer server) {
         this.channel = channel;
-        this.delegate = delegate;
+        this.server = server;
 
-        delegate.clientConnected(this);
+        server.clientConnected(this);
     }
 
     boolean processRead() {
@@ -82,7 +83,7 @@ public class TcpClient {
                 bytesToConsume -= bytesConsumed;
 
                 if (receivingPacket.completed()){
-                    delegate.packetReceived(this, receivingPacket);
+                    server.packetReceived(this, receivingPacket);
                     receivingPacket = null;
                 }
             }
@@ -122,6 +123,7 @@ public class TcpClient {
 
     public void send(String payload){
         outgoingPayload.addFirst(payload);
+
     }
 
 }
