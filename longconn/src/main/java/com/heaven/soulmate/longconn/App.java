@@ -32,23 +32,10 @@ public class App
             e.printStackTrace();
         }
 
-        Properties props = Utils.readProperties("server.properties");
-        if (props == null) {
-            return;
-        }
+        ClientCommController clientController = new ClientCommController();
+        ServerCommController serverController = new ServerCommController(clientController);
 
-        TcpServer serverComm = new TcpServer(ServerCommController.sharedInstance(),  props.getProperty("ipServerComm"), Integer.parseInt(props.getProperty("portServerComm")));
-        serverComm.start();
-
-        TcpServer clientComm = new TcpServer(ClientCommController.sharedInstance(),  props.getProperty("ip"), Integer.parseInt(props.getProperty("port")));
-        clientComm.start();
-
-
-        try {
-            serverComm.join();
-            clientComm.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        clientController.join();
+        serverController.join();
     }
 }

@@ -1,5 +1,7 @@
 package com.heaven.soulmate.chat.dao;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heaven.soulmate.Utils;
 import com.heaven.soulmate.chat.model.ChatMessages;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
@@ -54,9 +56,13 @@ public class OfflineMsgDAO {
             conn = cpds.getConnection();
 
             statement = conn.prepareStatement("insert into msg(`from_uid`, `to_uid`, `msg`) values (?,?,?)");
+
             statement.setLong(1, messages.getUid());
             statement.setLong(2, messages.getTarget_uid());
-            statement.setString(3, messages.getMessages().toString());
+
+            ObjectMapper mapper = new ObjectMapper();
+            String messagesInJson = mapper.writeValueAsString(messages);
+            statement.setString(3, messagesInJson);
 
             int rowsAffactted = statement.executeUpdate();
             if(rowsAffactted == 1){
@@ -68,6 +74,8 @@ public class OfflineMsgDAO {
                 }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
