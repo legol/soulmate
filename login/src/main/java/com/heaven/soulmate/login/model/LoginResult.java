@@ -23,6 +23,12 @@ public class LoginResult {
     @JsonProperty("err_no")
     private Long errNo;
 
+    @JsonProperty("longconn_ip")
+    private String longconnIP;
+
+    @JsonProperty("longconn_port")
+    private int longconnPort;
+
     public String getToken() {
         return token;
     }
@@ -43,6 +49,14 @@ public class LoginResult {
         return errMsg;
     }
 
+    public String getLongconnIP() {
+        return longconnIP;
+    }
+
+    public int getLongconnPort() {
+        return longconnPort;
+    }
+
     public void setErrMsg(String errMsg) {
         this.errMsg = errMsg;
     }
@@ -53,5 +67,13 @@ public class LoginResult {
 
     public void setErrNo(Long errNo) {
         this.errNo = errNo;
+    }
+
+    public void setLongconnIP(String longconnIP) {
+        this.longconnIP = longconnIP;
+    }
+
+    public void setLongconnPort(int longconnPort) {
+        this.longconnPort = longconnPort;
     }
 }

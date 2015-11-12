@@ -8,6 +8,8 @@ import com.heaven.soulmate.longconn.network.TcpServer;
 import org.apache.log4j.Logger;
 
 import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * Created by chenjie3 on 2015/11/6.
@@ -16,6 +18,8 @@ public class ClientCommController implements ITcpServerDelegate {
     private static final Logger LOGGER = Logger.getLogger(ClientCommController.class);
 
     private TcpServer server = null;
+
+    TreeMap<Long, TcpClient> clientMap = new TreeMap<Long, TcpClient>();
 
     public ClientCommController() {
         Properties props = Utils.readProperties("server.properties");
@@ -47,7 +51,6 @@ public class ClientCommController implements ITcpServerDelegate {
     //////////////////////////////////////////////////////////////////
     // ITcpServerDelegate
     public void clientConnected(TcpServer server, TcpClient client) {
-
     }
 
     public void clientDisconnected(TcpServer server, TcpClient client) {
