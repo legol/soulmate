@@ -34,4 +34,16 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/edtPassword"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Response"
+        android:id="@+id/txtResponse"
+        android:layout_below="@+id/btnLogin"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/edtPassword"
+        android:layout_alignEnd="@+id/edtPassword"
+        android:enabled="true" />
+
 </RelativeLayout>

@@ -6,13 +6,22 @@ import org.json.JSONObject;
  * Created by legol on 2015/11/15.
  */
 public class HttpResponseData {
+
+    private int httpStatus;
     private JSONObject response;
 
     public JSONObject getResponse() {
         return response;
     }
-
     public void setResponse(JSONObject response) {
         this.response = response;
+    }
+
+    public int getHttpStatus() {
+        return httpStatus;
+    }
+
+    public void setHttpStatus(int httpStatus) {
+        this.httpStatus = httpStatus;
     }
 }

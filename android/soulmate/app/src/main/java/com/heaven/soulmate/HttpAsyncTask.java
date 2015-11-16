@@ -28,9 +28,12 @@ public class HttpAsyncTask extends AsyncTask<HttpRequestData, Void, HttpResponse
     protected HttpResponseData doInBackground(HttpRequestData... request) {
         URL url;
         HttpURLConnection urlConn;
-        DataOutputStream printout;
+
+
         DataInputStream input;
+
         StringBuilder sb = new StringBuilder();
+        HttpResponseData response = new HttpResponseData();
 
         try {
             url = new URL(request[0].getUrl());
@@ -43,14 +46,18 @@ public class HttpAsyncTask extends AsyncTask<HttpRequestData, Void, HttpResponse
 
             // Send POST output.
             JSONObject requestObj = request[0].getRequest();
-            printout = new DataOutputStream(urlConn.getOutputStream());
-            printout.write(URLEncoder.encode(requestObj.toString(), "UTF-8").getBytes());
-            printout.flush();
-            printout.close();
+            if (requestObj != null){
+                DataOutputStream printout = new DataOutputStream(urlConn.getOutputStream());
+                printout.write(URLEncoder.encode(requestObj.toString(), "UTF-8").getBytes());
+                printout.flush();
+                printout.close();
+            }
 
             // process response
-            int HttpResult = urlConn.getResponseCode();
-            if(HttpResult == HttpURLConnection.HTTP_OK){
+            int httpResult = urlConn.getResponseCode();
+            response.setHttpStatus(httpResult);
+
+            if(httpResult == HttpURLConnection.HTTP_OK){
                 BufferedReader br = new BufferedReader(new InputStreamReader(
                         urlConn.getInputStream(),"utf-8"));
                 String line = null;
@@ -59,10 +66,8 @@ public class HttpAsyncTask extends AsyncTask<HttpRequestData, Void, HttpResponse
                 }
                 br.close();
 
-                System.out.println(""+sb.toString());
-
-            }else{
-                //System.out.println(urlConn.getResponseMessage());
+                JSONObject responseObj = new JSONObject(sb.toString());
+                response.setResponse(responseObj);
             }
 
             urlConn.disconnect();
@@ -71,13 +76,16 @@ public class HttpAsyncTask extends AsyncTask<HttpRequestData, Void, HttpResponse
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
-        return null;
+        return response;
     }
 
 
     @Override
     protected void onPostExecute(HttpResponseData result) {
+
     }
 }
