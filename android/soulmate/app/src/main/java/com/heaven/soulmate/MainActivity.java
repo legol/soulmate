@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import com.heaven.soulmate.model.HttpAsyncTask;
 import com.heaven.soulmate.model.HttpRequestData;
 
 
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+
                 HttpRequestData request = new HttpRequestData();
                 request.setUrl("http://192.168.132.69:8080/soulmate/login?phone=15011113304&password=803048");
                 new HttpAsyncTask().execute(request);
