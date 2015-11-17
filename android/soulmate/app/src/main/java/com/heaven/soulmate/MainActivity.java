@@ -12,10 +12,14 @@ import android.widget.Button;
 
 import com.heaven.soulmate.model.HttpAsyncTask;
 import com.heaven.soulmate.model.HttpRequestData;
+import com.heaven.soulmate.model.HttpResponseData;
+import com.heaven.soulmate.model.IHttpDelegate;
 
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity
+    implements IHttpDelegate
+{
+    IHttpDelegate mainActivity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +42,13 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                HttpAsyncTask httpTask;
 
                 HttpRequestData request = new HttpRequestData();
                 request.setUrl("http://192.168.132.69:8080/soulmate/login?phone=15011113304&password=803048");
-                new HttpAsyncTask().execute(request);
+                httpTask = new HttpAsyncTask();
+                httpTask.setDelegate(mainActivity);
+                httpTask.execute(request);
             }
         });
     }
@@ -66,5 +73,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onHttpResponse(HttpRequestData request, HttpResponseData response) {
+
     }
 }
