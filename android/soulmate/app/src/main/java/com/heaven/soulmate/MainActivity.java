@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.heaven.soulmate.model.HttpAsyncTask;
 import com.heaven.soulmate.model.HttpRequestData;
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity
     public void onHttpResponse(HttpRequestData request, HttpResponseData response) {
         JSONObject responseObj = response.getResponse();
 
-
+        TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
+        txtResponse.setText(responseObj.toString());
     }
 }
