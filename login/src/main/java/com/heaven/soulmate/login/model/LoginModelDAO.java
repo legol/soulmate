@@ -46,12 +46,12 @@ public class LoginModelDAO {
     public LoginResult login(String phone, String password){
         assert(cpds != null);
 
-        LoginResult login_result = new LoginResult();
+        LoginResult lr = new LoginResult();
 
         if(phone.isEmpty() || password.isEmpty()){
-            login_result.setErrNo(-1L);
-            login_result.setErrMsg("wrong parameters.");
-            return login_result;
+            lr.setLoginErrNo(-1);
+            lr.setLoginErrMsg("wrong parameters.");
+            return null;
         }
         Connection conn = null;
         PreparedStatement statement = null;
@@ -71,20 +71,20 @@ public class LoginModelDAO {
                 password_from_mysql = rs.getString("password");
 
                 if (uid == 0 || password_from_mysql.isEmpty()) {
-                    login_result.setErrNo(-2L);
-                    login_result.setErrMsg("user does not exist.");
+                    lr.setLoginErrNo(-1);
+                    lr.setLoginErrMsg("no uid found");
                     break;
                 }
 
                 if (Utils.md5(password).compareToIgnoreCase(password_from_mysql) != 0) {
-                    login_result.setErrNo(-3L);
-                    login_result.setErrMsg("wrong password.");
+                    lr.setLoginErrNo(-1);
+                    lr.setLoginErrMsg("wrong password");
                     break;
                 }
 
-                login_result.setErrNo(0L);
-                login_result.setUid(uid);
-                login_result.setToken(Utils.generateToken(uid, password_from_mysql));
+                lr.setLoginErrNo(0);
+                lr.setUid(uid);
+                lr.setToken(Utils.generateToken(uid, password_from_mysql));
 
                 break;
             }
@@ -104,15 +104,13 @@ public class LoginModelDAO {
 
             statement = conn.prepareStatement("insert into login_status(uid, token, token_gen_time, token_expire_time, location) values (?, ?, ?, ?, ST_GEOMFROMTEXT(?))");
             statement.setLong(1, uid);
-            statement.setString(2, login_result.getToken());
+            statement.setString(2, lr.getToken());
             statement.setTimestamp(3, token_gen_time);
             statement.setTimestamp(4, token_expire_time);
             statement.setString(5, "POINT(0 0)");
             int rowsAffacted = statement.executeUpdate();
             if (rowsAffacted != 1) {
-                login_result.setErrNo(-4L);
-                login_result.setToken("");
-                login_result.setErrMsg(String.format("can't write login_status(uid=%d)", uid));
+                return null;
             }
 
             statement.close();
@@ -121,6 +119,6 @@ public class LoginModelDAO {
             e.printStackTrace();
         }
 
-        return login_result;
+        return lr;
     }
 }

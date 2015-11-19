@@ -15,6 +15,8 @@ import com.heaven.soulmate.model.HttpRequestData;
 import com.heaven.soulmate.model.HttpResponseData;
 import com.heaven.soulmate.model.IHttpDelegate;
 
+import org.json.JSONObject;
+
 
 public class MainActivity extends AppCompatActivity
     implements IHttpDelegate
@@ -77,6 +79,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onHttpResponse(HttpRequestData request, HttpResponseData response) {
+        JSONObject responseObj = response.getResponse();
 
+        
     }
 }

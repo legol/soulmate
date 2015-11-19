@@ -28,7 +28,7 @@ public class TcpServer extends Thread
     private int port = 0;
 
     private Selector selector = null;
-    private HashMap<SocketChannel, TcpClient> clientMap = new HashMap<SocketChannel, TcpClient>();
+    private HashMap<SocketChannel, IncomingTcpClient> clientMap = new HashMap<SocketChannel, IncomingTcpClient>();
 
     private ITcpServerDelegate delegate = null;
 
@@ -71,7 +71,7 @@ public class TcpServer extends Thread
                 ServerSocketChannel ssChannel = (ServerSocketChannel) key.channel();
                 SocketChannel clientChannel = (SocketChannel) ssChannel.accept();
 
-                TcpClient client = new TcpClient(clientChannel, this);
+                IncomingTcpClient client = new IncomingTcpClient(clientChannel, this);
 
                 synchronized (clientMap){
                     clientMap.put(clientChannel, client);
@@ -83,7 +83,7 @@ public class TcpServer extends Thread
                 //send(client, client.getClientId());
             }
             else{
-                TcpClient client = null;
+                IncomingTcpClient client = null;
                 synchronized (clientMap){
                     client = clientMap.get(key.channel());
                 }
@@ -110,7 +110,7 @@ public class TcpServer extends Thread
     void processRead(SelectionKey key){
         SocketChannel channel = (SocketChannel) key.channel();
 
-        TcpClient client = null;
+        IncomingTcpClient client = null;
         synchronized (clientMap){
             client = clientMap.get(channel);
         }
@@ -124,7 +124,7 @@ public class TcpServer extends Thread
     void processWrite(SelectionKey key){
         SocketChannel channel = (SocketChannel) key.channel();
 
-        TcpClient client = null;
+        IncomingTcpClient client = null;
         synchronized (clientMap){
             client = clientMap.get(channel);
         }
@@ -134,13 +134,13 @@ public class TcpServer extends Thread
         }
     }
 
-    public void clientConnected(TcpClient client) {
+    public void clientConnected(IncomingTcpClient client) {
         LOGGER.info(String.format("client:<%s> connected.\n", client.getClientId()));
 
         delegate.clientConnected(this, client);
     }
 
-    public void clientDisconnected(TcpClient client) {
+    public void clientDisconnected(IncomingTcpClient client) {
         LOGGER.info(String.format("client:<%s> disconnected\n", client.getClientId()));
 
         delegate.clientDisconnected(this, client);
@@ -156,13 +156,13 @@ public class TcpServer extends Thread
         }
     }
 
-    public void packetReceived(TcpClient client, TcpPacket packet) {
+    public void packetReceived(IncomingTcpClient client, TcpPacket packet) {
         LOGGER.info(String.format("packet:<%s>\n", packet.payload));
 
         delegate.packetReceived(this, client, packet);
     }
 
-    public void send(TcpClient client, String payload) {
+    public void send(IncomingTcpClient client, String payload) {
         client.send(payload);
         client.getChannel().keyFor(selector).interestOps(SelectionKey.OP_WRITE);
         selector.wakeup();

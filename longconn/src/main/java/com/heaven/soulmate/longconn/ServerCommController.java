@@ -57,7 +57,6 @@ public class ServerCommController implements ITcpServerDelegate{
 
             switch (payloadMsg.getType()){
                 case 1:{// chat msg
-
                     clientController.sendMessage(payloadMsg.getTargetUid(), payloadMsg.getPayload());
 
                     ServerMessage resultMsg = new ServerMessage();

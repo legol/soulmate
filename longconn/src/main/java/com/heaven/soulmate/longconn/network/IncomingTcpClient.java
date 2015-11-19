@@ -12,8 +12,8 @@ import static java.util.UUID.randomUUID;
 /**
  * Created by legol on 2015/11/3.
  */
-public class TcpClient {
-    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(TcpClient.class);
+public class IncomingTcpClient {
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(IncomingTcpClient.class);
 
     private String clientId = randomUUID().toString();
 
@@ -28,7 +28,7 @@ public class TcpClient {
 
     private LinkedList<String> outgoingPayload = new LinkedList<String>();
 
-    public TcpClient(SocketChannel channel, TcpServer server) {
+    public IncomingTcpClient(SocketChannel channel, TcpServer server) {
         this.channel = channel;
         this.server = server;
 
