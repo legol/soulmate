@@ -3,8 +3,6 @@ package com.heaven.soulmate.model.longconn;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-import static java.lang.Integer.min;
-
 /**
  * Created by legol on 2015/11/3.
  */
@@ -79,7 +77,7 @@ public class TcpPacket {
         if (protocolRead && payloadSizeRead && !payloadRead){
             if (payloadSizeRemaining > 0){
                 if (bytesToAppend > 0){
-                    int payloadSizeToAppend = min(buffer.remaining(), payloadSizeRemaining);
+                    int payloadSizeToAppend = buffer.remaining() < payloadSizeRemaining ? buffer.remaining() : payloadSizeRemaining;
 
                     String remainingPayload = new String(bufferArray, position, payloadSizeToAppend);
                     payload += remainingPayload;

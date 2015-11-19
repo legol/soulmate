@@ -15,6 +15,7 @@ import com.heaven.soulmate.model.HttpRequestData;
 import com.heaven.soulmate.model.HttpResponseData;
 import com.heaven.soulmate.model.IHttpDelegate;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -46,8 +47,18 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 HttpAsyncTask httpTask;
 
+                JSONObject requestData = new JSONObject();
+                try {
+                    requestData.put("phone", "15011113304");
+                    requestData.put("password", "803048");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 HttpRequestData request = new HttpRequestData();
-                request.setUrl("http://192.168.132.69:8080/soulmate/login?phone=15011113304&password=803048");
+                request.setUrl("http://192.168.132.69:8080/soulmate/login");
+                request.setRequest(requestData);
+
                 httpTask = new HttpAsyncTask();
                 httpTask.setDelegate(mainActivity);
                 httpTask.execute(request);
@@ -81,6 +92,6 @@ public class MainActivity extends AppCompatActivity
     public void onHttpResponse(HttpRequestData request, HttpResponseData response) {
         JSONObject responseObj = response.getResponse();
 
-        
+
     }
 }

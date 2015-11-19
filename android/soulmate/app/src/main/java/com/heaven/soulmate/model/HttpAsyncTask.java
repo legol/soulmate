@@ -65,7 +65,7 @@ public class HttpAsyncTask extends AsyncTask<HttpRequestData, Void, HttpResponse
             JSONObject requestObj = request[0].getRequest();
             if (requestObj != null){
                 DataOutputStream printout = new DataOutputStream(urlConn.getOutputStream());
-                printout.write(URLEncoder.encode(requestObj.toString(), "UTF-8").getBytes());
+                printout.write(requestObj.toString().getBytes());
                 printout.flush();
                 printout.close();
             }
