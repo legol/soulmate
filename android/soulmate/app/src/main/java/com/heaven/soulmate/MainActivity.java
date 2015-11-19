@@ -15,13 +15,16 @@ import com.heaven.soulmate.model.HttpAsyncTask;
 import com.heaven.soulmate.model.HttpRequestData;
 import com.heaven.soulmate.model.HttpResponseData;
 import com.heaven.soulmate.model.IHttpDelegate;
+import com.heaven.soulmate.model.longconn.ITcpClientDelegate;
+import com.heaven.soulmate.model.longconn.TcpClient;
+import com.heaven.soulmate.model.longconn.TcpPacket;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
 public class MainActivity extends AppCompatActivity
-    implements IHttpDelegate
+    implements IHttpDelegate ,ITcpClientDelegate
 {
     IHttpDelegate mainActivity = this;
 
@@ -94,6 +97,32 @@ public class MainActivity extends AppCompatActivity
         JSONObject responseObj = response.getResponse();
 
         TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
-        txtResponse.setText(responseObj.toString());
+        txtResponse.setText(responseObj.toString() + "\n");
+
+        TcpClient tcpclient = null;
+        try {
+            JSONObject responseData = responseObj.getJSONObject("data");
+            tcpclient = new TcpClient(this, responseData.getString("longconn_ip"), responseData.getInt("longconn_port"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        tcpclient.start();
+    }
+
+    @Override
+    public void connected(TcpClient client) {
+        TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
+        txtResponse.setText(txtResponse.getText() + "connected.");
+    }
+
+    @Override
+    public void connectionLost(TcpClient client) {
+        // todo reconoect
+    }
+
+    @Override
+    public void packetReceived(TcpClient client, TcpPacket packet) {
+
     }
 }

@@ -54,6 +54,7 @@ public class TcpClient extends Thread
             selector = Selector.open();
 
             // Create a non-blocking socket channel
+            socketChannel = SocketChannel.open();
             socketChannel.configureBlocking(false);
             socketChannel.register(selector, SelectionKey.OP_CONNECT);
 
@@ -83,6 +84,8 @@ public class TcpClient extends Thread
             if (key.isConnectable()) {
                 socketChannel.finishConnect();
                 socketChannel.register(selector, SelectionKey.OP_READ);
+
+                connected();
             }
             else{
                 if (key.isReadable()) {
@@ -152,6 +155,7 @@ public class TcpClient extends Thread
 
         } catch (IOException e) {
             e.printStackTrace();
+
             return false;
         }
 
@@ -174,6 +178,9 @@ public class TcpClient extends Thread
 
         return true;
     }
+
+    public void connected(){delegate.connected(this);}
+    public void connectionLost(){delegate.connectionLost(this);}
 
     public void packetReceived(TcpPacket packet) {
         delegate.packetReceived(this, packet);

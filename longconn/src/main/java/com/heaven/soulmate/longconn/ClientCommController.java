@@ -2,7 +2,7 @@ package com.heaven.soulmate.longconn;
 
 import com.heaven.soulmate.Utils;
 import com.heaven.soulmate.longconn.network.ITcpServerDelegate;
-import com.heaven.soulmate.longconn.network.TcpClient;
+import com.heaven.soulmate.longconn.network.IncomingTcpClient;
 import com.heaven.soulmate.longconn.network.TcpPacket;
 import com.heaven.soulmate.longconn.network.TcpServer;
 import org.apache.log4j.Logger;
@@ -19,7 +19,7 @@ public class ClientCommController implements ITcpServerDelegate {
 
     private TcpServer server = null;
 
-    TreeMap<Long, TcpClient> clientMap = new TreeMap<Long, TcpClient>();
+    TreeMap<Long, IncomingTcpClient> clientMap = new TreeMap<Long, IncomingTcpClient>();
 
     public ClientCommController() {
         Properties props = Utils.readProperties("server.properties");
@@ -50,14 +50,14 @@ public class ClientCommController implements ITcpServerDelegate {
 
     //////////////////////////////////////////////////////////////////
     // ITcpServerDelegate
-    public void clientConnected(TcpServer server, TcpClient client) {
+    public void clientConnected(TcpServer server, IncomingTcpClient client) {
     }
 
-    public void clientDisconnected(TcpServer server, TcpClient client) {
+    public void clientDisconnected(TcpServer server, IncomingTcpClient client) {
 
     }
 
-    public void packetReceived(TcpServer server, TcpClient client, TcpPacket packet) {
+    public void packetReceived(TcpServer server, IncomingTcpClient client, TcpPacket packet) {
 
     }
 

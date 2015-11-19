@@ -41,15 +41,15 @@ public class ServerCommController implements ITcpServerDelegate{
 
     /////////////////////////////////////////////////////////////////////////////////
     // ITcpServerDelegate
-    public void clientConnected(TcpServer server, TcpClient client) {
+    public void clientConnected(TcpServer server, IncomingTcpClient client) {
 
     }
 
-    public void clientDisconnected(TcpServer server, TcpClient client) {
+    public void clientDisconnected(TcpServer server, IncomingTcpClient client) {
 
     }
 
-    public void packetReceived(TcpServer server, TcpClient client, TcpPacket packet) {
+    public void packetReceived(TcpServer server, IncomingTcpClient client, TcpPacket packet) {
         ObjectMapper mapper = new ObjectMapper();
         ServerMessage payloadMsg = null;
         try {
