@@ -153,6 +153,16 @@ public class MainActivity extends AppCompatActivity
         }
 
         client.send(longconnMsgInJson);
+
+        this.runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
+                        txtResponse.setText(txtResponse.getText() + "connected to longconn.\n");
+                    }
+                }
+        );
     }
 
     @Override
@@ -162,6 +172,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void packetReceived(TcpClient client, TcpPacket packet) {
-
+        final TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
+        txtResponse.post(new Runnable() {
+            @Override
+            public void run() {
+                txtResponse.setText("packet received.");
+            }
+        });
     }
 }
