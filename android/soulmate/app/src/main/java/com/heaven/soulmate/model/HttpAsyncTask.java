@@ -2,12 +2,6 @@ package com.heaven.soulmate.model;
 
 import android.os.AsyncTask;
 
-import com.heaven.soulmate.model.HttpRequestData;
-import com.heaven.soulmate.model.HttpResponseData;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -16,8 +10,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 
 /**
  * Created by legol on 2015/11/15.
@@ -62,10 +54,10 @@ public class HttpAsyncTask extends AsyncTask<HttpRequestData, Void, HttpResponse
             urlConn.connect();
 
             // Send POST output.
-            JSONObject requestObj = request[0].getRequest();
-            if (requestObj != null){
+            String requestBody = request[0].getRequestBody();
+            if (requestBody!= null){
                 DataOutputStream printout = new DataOutputStream(urlConn.getOutputStream());
-                printout.write(requestObj.toString().getBytes());
+                printout.write(requestBody.getBytes());
                 printout.flush();
                 printout.close();
             }
@@ -83,8 +75,7 @@ public class HttpAsyncTask extends AsyncTask<HttpRequestData, Void, HttpResponse
                 }
                 br.close();
 
-                JSONObject responseObj = new JSONObject(sb.toString());
-                response.setResponse(responseObj);
+                response.setResponseBody(sb.toString());
             }
 
             urlConn.disconnect();
@@ -92,8 +83,6 @@ public class HttpAsyncTask extends AsyncTask<HttpRequestData, Void, HttpResponse
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
             e.printStackTrace();
         }
 

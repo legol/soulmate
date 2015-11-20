@@ -11,22 +11,34 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heaven.soulmate.model.HttpAsyncTask;
 import com.heaven.soulmate.model.HttpRequestData;
 import com.heaven.soulmate.model.HttpResponseData;
 import com.heaven.soulmate.model.IHttpDelegate;
+import com.heaven.soulmate.model.login.LoginResponseBody;
+import com.heaven.soulmate.model.login.LoginRequest;
+import com.heaven.soulmate.model.login.LoginResponseBody;
 import com.heaven.soulmate.model.longconn.ITcpClientDelegate;
+import com.heaven.soulmate.model.longconn.LongConnMessage;
+import com.heaven.soulmate.model.longconn.LongConnRegisterMessage;
 import com.heaven.soulmate.model.longconn.TcpClient;
 import com.heaven.soulmate.model.longconn.TcpPacket;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 
 public class MainActivity extends AppCompatActivity
     implements IHttpDelegate ,ITcpClientDelegate
 {
     IHttpDelegate mainActivity = this;
+
+    private long uid;
+    private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,17 +63,19 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 HttpAsyncTask httpTask;
 
-                JSONObject requestData = new JSONObject();
-                try {
-                    requestData.put("phone", "15011113304");
-                    requestData.put("password", "803048");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                LoginRequest loginRequest = new LoginRequest();
+                loginRequest.setPhone("15011113304");
+                loginRequest.setPassword("803048");
+
+                ObjectMapper mapper = new ObjectMapper();
 
                 HttpRequestData request = new HttpRequestData();
                 request.setUrl("http://192.168.132.69:8080/soulmate/login");
-                request.setRequest(requestData);
+                try {
+                    request.setRequestBody(mapper.writeValueAsString(loginRequest));
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
 
                 httpTask = new HttpAsyncTask();
                 httpTask.setDelegate(mainActivity);
@@ -94,26 +108,51 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onHttpResponse(HttpRequestData request, HttpResponseData response) {
-        JSONObject responseObj = response.getResponse();
+        String responseBody = response.getResponseBody();
 
-        TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
-        txtResponse.setText(responseObj.toString() + "\n");
-
-        TcpClient tcpclient = null;
+        ObjectMapper mapper = new ObjectMapper();
+        LoginResponseBody httpResult = null;
         try {
-            JSONObject responseData = responseObj.getJSONObject("data");
-            tcpclient = new TcpClient(this, responseData.getString("longconn_ip"), responseData.getInt("longconn_port"));
-        } catch (JSONException e) {
+            httpResult = mapper.readValue(responseBody, LoginResponseBody.class);
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
+        if (httpResult == null){
+            return;
+        }
+
+        uid = httpResult.getData().getUid();
+        token = httpResult.getData().getToken();
+
+        TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
+        txtResponse.setText(responseBody + "\n");
+
+        TcpClient tcpclient = null;
+        tcpclient = new TcpClient(this, httpResult.getData().getLongconnIP(), httpResult.getData().getLongconnPort());
         tcpclient.start();
     }
 
     @Override
-    public void connected(TcpClient client) {
-        TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
-        txtResponse.setText(txtResponse.getText() + "connected.");
+    public void connected(TcpClient client){
+        LongConnRegisterMessage longconnRegMsg = new LongConnRegisterMessage();
+        longconnRegMsg.setUid(uid);
+        longconnRegMsg.setToken(token);
+
+        ObjectMapper mapper = new ObjectMapper();
+        LongConnMessage longconnMsg = new LongConnMessage();
+        longconnMsg.setErrNo(0);
+        longconnMsg.setType(1);
+
+        String longconnMsgInJson = null;
+        try {
+            longconnMsg.setPayload(mapper.writeValueAsString(longconnRegMsg));
+            longconnMsgInJson = mapper.writeValueAsString(longconnMsg);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        client.send(longconnMsgInJson);
     }
 
     @Override

@@ -1,9 +1,12 @@
 package com.heaven.soulmate.longconn;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heaven.soulmate.Utils;
 import com.heaven.soulmate.longconn.network.*;
-import com.heaven.soulmate.model.ServerMessage;
+import com.heaven.soulmate.model.LoginStatusDao;
+import com.heaven.soulmate.model.LongConnRegisterMessage;
+import com.heaven.soulmate.model.LongConnMessage;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -46,26 +49,40 @@ public class ServerCommController implements ITcpServerDelegate{
     }
 
     public void clientDisconnected(TcpServer server, IncomingTcpClient client) {
+    }
 
+    private void processChatMsgPacket(TcpServer server, IncomingTcpClient client, LongConnMessage longconnMsg){
+        ObjectMapper mapper = new ObjectMapper();
+
+        // todo: deliver the msg
+        //clientController.sendMessage(longconnMsg.getTargetUid(), longconnMsg.getPayload());
+
+        LongConnMessage resultMsg = new LongConnMessage();
+        resultMsg.setErrNo(0);
+        resultMsg.setType(1);
+
+        String resultMsgInJson = null;
+        try {
+            resultMsgInJson = mapper.writeValueAsString(resultMsg);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        server.send(client, resultMsgInJson);
     }
 
     public void packetReceived(TcpServer server, IncomingTcpClient client, TcpPacket packet) {
-        ObjectMapper mapper = new ObjectMapper();
-        ServerMessage payloadMsg = null;
         try {
-            payloadMsg = mapper.readValue(packet.payload, ServerMessage.class);
+            ObjectMapper mapper = new ObjectMapper();
+            LongConnMessage longconnMsg = null;
 
-            switch (payloadMsg.getType()){
-                case 1:{// chat msg
-                    clientController.sendMessage(payloadMsg.getTargetUid(), payloadMsg.getPayload());
+            longconnMsg = mapper.readValue(packet.payload, LongConnMessage.class);
 
-                    ServerMessage resultMsg = new ServerMessage();
-                    resultMsg.setErrNo(0);
-                    resultMsg.setType(1);
-
-                    String resultMsgInJson = mapper.writeValueAsString(resultMsg);
-
-                    server.send(client, resultMsgInJson);
+            switch (longconnMsg.getType()){
+                case 2:{// chat msg
+                    processChatMsgPacket(server, client, longconnMsg);
+                    break;
                 }
 
             }

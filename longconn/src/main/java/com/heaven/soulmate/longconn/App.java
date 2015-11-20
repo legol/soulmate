@@ -6,22 +6,19 @@ package com.heaven.soulmate.longconn;
  */
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.heaven.soulmate.Utils;
-import com.heaven.soulmate.longconn.network.*;
-import com.heaven.soulmate.model.Payload;
+import com.heaven.soulmate.model.LongConnMessage;
 
 import java.io.IOException;
-import java.util.Properties;
 
 public class App
 {
     public static void main( String[] args ){
 
         try {
-            String testJson = "{\"type\":1,\"content\":\"aabbcc\"}";
+            String testJson = "{\"type\":1,\"payload\":\"aabbcc\"}";
 
             ObjectMapper mapper = new ObjectMapper();
-            Payload obj = mapper.readValue(testJson, Payload.class);
+            LongConnMessage obj = mapper.readValue(testJson, LongConnMessage.class);
             String jsonInString = mapper.writeValueAsString(obj);
 
             System.out.println(jsonInString);

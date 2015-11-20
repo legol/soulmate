@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
-public class ServerMessage {
+public class LongConnMessage {
 
     @JsonProperty("err_no")
     private int errNo;
@@ -18,17 +18,10 @@ public class ServerMessage {
     private String errMsg;
 
     @JsonProperty("type")
-    private int type; // 1 --  chat
-
-    @JsonProperty("target_uid")
-    private long targetUid;
+    private int type; // 1 -- client reg; 2 --  chat
 
     @JsonProperty("payload")
     private String payload; // will be delivered to payload
-
-    public long getTargetUid() {
-        return targetUid;
-    }
 
     public String getPayload() {
         return payload;
@@ -44,10 +37,6 @@ public class ServerMessage {
 
     public int getErrNo() {
         return errNo;
-    }
-
-    public void setTargetUid(long targetUid) {
-        this.targetUid = targetUid;
     }
 
     public void setPayload(String payload) {

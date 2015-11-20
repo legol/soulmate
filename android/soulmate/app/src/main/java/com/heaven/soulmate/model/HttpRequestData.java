@@ -7,10 +7,10 @@ import org.json.JSONObject;
  */
 public class HttpRequestData {
     private String url;
-    private JSONObject request;
+    private String requestBody;
 
-    public JSONObject getRequest() {
-        return request;
+    public String getRequestBody() {
+        return requestBody;
     }
 
     public String getUrl() {
@@ -21,7 +21,7 @@ public class HttpRequestData {
         this.url = url;
     }
 
-    public void setRequest(JSONObject request) {
-        this.request = request;
+    public void setRequestBody(String requestBody) {
+        this.requestBody = requestBody;
     }
 }

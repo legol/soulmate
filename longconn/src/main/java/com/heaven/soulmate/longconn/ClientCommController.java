@@ -1,12 +1,17 @@
 package com.heaven.soulmate.longconn;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heaven.soulmate.Utils;
 import com.heaven.soulmate.longconn.network.ITcpServerDelegate;
 import com.heaven.soulmate.longconn.network.IncomingTcpClient;
 import com.heaven.soulmate.longconn.network.TcpPacket;
 import com.heaven.soulmate.longconn.network.TcpServer;
+import com.heaven.soulmate.model.LoginStatusDao;
+import com.heaven.soulmate.model.LongConnMessage;
+import com.heaven.soulmate.model.LongConnRegisterMessage;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -19,7 +24,7 @@ public class ClientCommController implements ITcpServerDelegate {
 
     private TcpServer server = null;
 
-    TreeMap<Long, IncomingTcpClient> clientMap = new TreeMap<Long, IncomingTcpClient>();
+    private TreeMap<Long, IncomingTcpClient> clientMap = new TreeMap<Long, IncomingTcpClient>();
 
     public ClientCommController() {
         Properties props = Utils.readProperties("server.properties");
@@ -39,6 +44,14 @@ public class ClientCommController implements ITcpServerDelegate {
         }
     }
 
+    public void unregisterClient(IncomingTcpClient client){
+        clientMap.remove(client.getUid());
+    }
+
+    public void registerClient(IncomingTcpClient client){
+        clientMap.put(client.getUid(), client);
+    }
+
     public void sendMessage(long uid, String payload){
         LOGGER.info(String.format("send message to uid:%d payload:%s", uid, payload));
 
@@ -54,10 +67,57 @@ public class ClientCommController implements ITcpServerDelegate {
     }
 
     public void clientDisconnected(TcpServer server, IncomingTcpClient client) {
+        LOGGER.info(String.format("client disconnected. uid=%d", client.getUid()));
+        unregisterClient(client);
+    }
 
+
+    private void processRegisterPacket(TcpServer server, IncomingTcpClient client, LongConnMessage longconnMsg){
+        ObjectMapper mapper = new ObjectMapper();
+        LongConnRegisterMessage longconnRegMsg = null;
+
+        try {
+            longconnRegMsg = mapper.readValue(longconnMsg.getPayload(), LongConnRegisterMessage.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (longconnRegMsg == null){
+            return;
+        }
+
+        // verify token
+        if (!LoginStatusDao.sharedInstance().verifyToken(longconnRegMsg.getUid(), longconnRegMsg.getToken())){
+            LOGGER.info(String.format("client token verification failed. uid=%d token=%s", longconnRegMsg.getUid(), longconnRegMsg.getToken()));
+            return;
+        }
+
+        // save to map{uid->client}
+        client.setUid(longconnRegMsg.getUid()); // when client disconnected, we'll use the uid
+        registerClient(client);
+
+        LOGGER.info(String.format("client connected. uid=%d", client.getUid()));
     }
 
     public void packetReceived(TcpServer server, IncomingTcpClient client, TcpPacket packet) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            LongConnMessage longconnMsg = null;
+
+            longconnMsg = mapper.readValue(packet.payload, LongConnMessage.class);
+
+            switch (longconnMsg.getType()){
+                case 1:{
+                    processRegisterPacket(server, client, longconnMsg);
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            LOGGER.error("unknown server message" + packet.payload);
+            return;
+        }
 
     }
 

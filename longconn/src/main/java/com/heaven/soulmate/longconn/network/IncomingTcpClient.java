@@ -15,7 +15,7 @@ import static java.util.UUID.randomUUID;
 public class IncomingTcpClient {
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(IncomingTcpClient.class);
 
-    private String clientId = randomUUID().toString();
+    private long uid = 0;
 
     private ITcpServerDelegate delegate = null;
     private SocketChannel channel = null;
@@ -117,13 +117,16 @@ public class IncomingTcpClient {
         return channel;
     }
 
-    public String getClientId() {
-        return clientId;
-    }
-
     public void send(String payload){
         outgoingPayload.addFirst(payload);
 
     }
 
+    public long getUid() {
+        return uid;
+    }
+
+    public void setUid(long uid) {
+        this.uid = uid;
+    }
 }

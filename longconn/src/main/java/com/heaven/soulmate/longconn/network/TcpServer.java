@@ -135,14 +135,10 @@ public class TcpServer extends Thread
     }
 
     public void clientConnected(IncomingTcpClient client) {
-        LOGGER.info(String.format("client:<%s> connected.\n", client.getClientId()));
-
         delegate.clientConnected(this, client);
     }
 
     public void clientDisconnected(IncomingTcpClient client) {
-        LOGGER.info(String.format("client:<%s> disconnected\n", client.getClientId()));
-
         delegate.clientDisconnected(this, client);
 
         try {

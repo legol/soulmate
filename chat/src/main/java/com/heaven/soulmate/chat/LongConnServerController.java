@@ -2,20 +2,18 @@ package com.heaven.soulmate.chat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heaven.soulmate.chat.model.LongConnMessage;
 import com.heaven.soulmate.chat.model.LongConnServerInfo;
 import com.heaven.soulmate.chat.model.ServerInfo;
-import com.heaven.soulmate.chat.model.ServerMessage;
 import org.apache.log4j.Logger;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -89,17 +87,16 @@ public class LongConnServerController {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
 
-            ServerMessage serverMsg = new ServerMessage();
-            serverMsg.setType(1);
-            serverMsg.setErrNo(0);
-            serverMsg.setTargetUid(targetUid);
-            serverMsg.setPayload(payload);
+            LongConnMessage longconnMsg = new LongConnMessage();
+            longconnMsg.setType(1);
+            longconnMsg.setErrNo(0);
+            longconnMsg.setPayload(payload);
 
-            // serverMsg to json
+            // longconnMsg to json
             ObjectMapper mapper = new ObjectMapper();
             String messageInJson = null;
             try {
-                messageInJson = mapper.writeValueAsString(serverMsg);
+                messageInJson = mapper.writeValueAsString(longconnMsg);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
                 return false;
@@ -116,7 +113,7 @@ public class LongConnServerController {
             int payloadSize = in.readInt();
             in.read(buff, 0, payloadSize);
             String resultPayload = new String(buff, 0, payloadSize, StandardCharsets.UTF_8);
-            ServerMessage resultMsg = mapper.readValue(resultPayload, ServerMessage.class);
+            LongConnMessage resultMsg = mapper.readValue(resultPayload, LongConnMessage.class);
             if (resultMsg.getErrNo() != 0){
                 return false;
             }

@@ -1,5 +1,7 @@
 package com.heaven.soulmate.model.longconn;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -179,14 +181,20 @@ public class TcpClient extends Thread
         return true;
     }
 
-    public void connected(){delegate.connected(this);}
+    public void connected(){
+        try {
+            delegate.connected(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
     public void connectionLost(){delegate.connectionLost(this);}
 
     public void packetReceived(TcpPacket packet) {
         delegate.packetReceived(this, packet);
     }
 
-    public void send(TcpClient client, String payload) {
+    public void send(String payload) {
         outgoingPayload.addFirst(payload);
         socketChannel.keyFor(selector).interestOps(SelectionKey.OP_WRITE);
         selector.wakeup();

@@ -30,12 +30,15 @@ public class ChatController {
 
         ChatResult ret = new ChatResult();
 
+        // 0. verify token
         // 1. generate a message id and store the message with id to db
         // 2. deliver the message to client b
         //      2.1 find which longconn the client b is connected with.
         //      2.2 deliver the message to longconn
         // 3. longconn: deliever the message to b.
         // 4. longconn: if succeeded, update db with message(id) delivered.
+
+        // todo: verify token
 
         long messageId = 0;
         if ((messageId= OfflineMsgDAO.sharedInstance().saveMsg(messages)) < 0){
