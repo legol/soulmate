@@ -7,6 +7,7 @@ import com.heaven.soulmate.longconn.network.*;
 import com.heaven.soulmate.model.LoginStatusDao;
 import com.heaven.soulmate.model.LongConnRegisterMessage;
 import com.heaven.soulmate.model.LongConnMessage;
+import com.heaven.soulmate.model.chat.ChatMessages;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -52,24 +53,34 @@ public class ServerCommController implements ITcpServerDelegate{
     }
 
     private void processChatMsgPacket(TcpServer server, IncomingTcpClient client, LongConnMessage longconnMsg){
-        ObjectMapper mapper = new ObjectMapper();
-
-        // todo: deliver the msg
-        //clientController.sendMessage(longconnMsg.getTargetUid(), longconnMsg.getPayload());
-
-        LongConnMessage resultMsg = new LongConnMessage();
-        resultMsg.setErrNo(0);
-        resultMsg.setType(1);
-
-        String resultMsgInJson = null;
         try {
-            resultMsgInJson = mapper.writeValueAsString(resultMsg);
+            boolean delivered = false;
+            ObjectMapper mapper = new ObjectMapper();
+
+            // deliver the msg
+            if (longconnMsg.getType() == 2) { // chat msg
+                ChatMessages chatMsg = mapper.readValue(longconnMsg.getPayload(), ChatMessages.class);
+                delivered = clientController.sendChatMsg(longconnMsg);
+            }
+
+            LongConnMessage resultMsg = new LongConnMessage();
+            resultMsg.setType(2);
+            if (delivered){
+                resultMsg.setErrNo(0);
+            }else{
+                resultMsg.setErrNo(-1);
+                resultMsg.setErrMsg("can't deliver msg to the client");
+            }
+            String resultMsgInJson = mapper.writeValueAsString(resultMsg);
+            server.send(client, resultMsgInJson);
+
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
         }
-
-        server.send(client, resultMsgInJson);
     }
 
     public void packetReceived(TcpServer server, IncomingTcpClient client, TcpPacket packet) {

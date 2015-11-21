@@ -9,6 +9,7 @@ import com.heaven.soulmate.longconn.network.TcpServer;
 import com.heaven.soulmate.model.LoginStatusDao;
 import com.heaven.soulmate.model.LongConnMessage;
 import com.heaven.soulmate.model.LongConnRegisterMessage;
+import com.heaven.soulmate.model.chat.ChatMessages;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -52,13 +53,33 @@ public class ClientCommController implements ITcpServerDelegate {
         clientMap.put(client.getUid(), client);
     }
 
-    public void sendMessage(long uid, String payload){
-        LOGGER.info(String.format("send message to uid:%d payload:%s", uid, payload));
+    public boolean sendChatMsg(LongConnMessage longconnMsg){
 
-        // todo: send message to the client
+        assert(longconnMsg.getType() == 2);
 
-        // if message is sent, update db with delivered = 1
+        ObjectMapper mapper = new ObjectMapper();
+        ChatMessages chatMsg = null;
+        try {
+            chatMsg = mapper.readValue(longconnMsg.getPayload(), ChatMessages.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        if (chatMsg == null){
+            LOGGER.error(String.format("can't parse chat msg %s", longconnMsg.getPayload()));
+            return false;
+        }
+
+        IncomingTcpClient tcpClient = clientMap.get(chatMsg.getTarget_uid());
+        if (tcpClient == null) {
+            LOGGER.info(String.format("uid=%d not connected. message can't be delivered.", chatMsg.getTarget_uid()));
+            return false;
+        }
+
+        server.send(tcpClient, longconnMsg.getPayload());
+        // when receive ack from client, update offline_msg db
+
+        return true;
     }
 
     //////////////////////////////////////////////////////////////////
@@ -71,8 +92,9 @@ public class ClientCommController implements ITcpServerDelegate {
         unregisterClient(client);
     }
 
-
     private void processRegisterPacket(TcpServer server, IncomingTcpClient client, LongConnMessage longconnMsg){
+        assert(longconnMsg.getType() == 1);
+
         ObjectMapper mapper = new ObjectMapper();
         LongConnRegisterMessage longconnRegMsg = null;
 

@@ -2,6 +2,7 @@ package com.heaven.soulmate.chat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heaven.soulmate.chat.dao.LoginStatusDao;
 import com.heaven.soulmate.chat.dao.OfflineMsgDAO;
 import com.heaven.soulmate.chat.model.*;
 import com.heaven.soulmate.chat.model.ChatMessages;
@@ -41,7 +42,7 @@ public class ChatController {
         // todo: verify token
 
         long messageId = 0;
-        if ((messageId= OfflineMsgDAO.sharedInstance().saveMsg(messages)) < 0){
+        if ((messageId = OfflineMsgDAO.sharedInstance().saveMsg(messages)) < 0) {
             ret.setErrNo(messageId);
             ret.setErrMsg("can't write msg to db.");
             return ret;
@@ -59,7 +60,7 @@ public class ChatController {
             return ret;
         }
 
-        if (LongConnServerController.sharedInstance().sendMessage(messages.getTarget_uid(), messageInJson) == false){
+        if (LongConnServerController.sharedInstance().sendMessage(messages.getTarget_uid(), messageInJson) == false) {
             ret.setErrNo(-1L);
             ret.setErrMsg(String.format("can't send message."));
             return ret;
@@ -68,5 +69,20 @@ public class ChatController {
         ret.setErrNo(0L);
         return ret;
 
+    }
+
+    @RequestMapping(value = "/chat_ack", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Object chatack(HttpServletRequest request, @RequestBody ChatAckMessage msg) {
+        ChatAckResult ret = new ChatAckResult();
+
+        if (LoginStatusDao.sharedInstance().verifyToken(msg.getUid(), msg.getToken()) ==  false){
+            ret.setErrNo(-1L);
+            ret.setErrMsg(String.format("can't verify token for uid=%d token=%s", msg.getUid(), msg.getToken()));
+            return ret;
+        }
+
+        ret.setErrNo(0L);
+        return ret;
     }
 }

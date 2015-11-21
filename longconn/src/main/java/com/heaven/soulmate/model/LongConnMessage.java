@@ -17,8 +17,12 @@ public class LongConnMessage {
     @JsonProperty("err_msg")
     private String errMsg;
 
+    /*
+     * 1 -- client reg (client -> longconn)
+     * 2 -- chat (chat -> longconn)
+     */
     @JsonProperty("type")
-    private int type; // 1 -- client reg; 2 --  chat
+    private int type;
 
     @JsonProperty("payload")
     private String payload; // will be delivered to payload

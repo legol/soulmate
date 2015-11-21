@@ -119,7 +119,6 @@ public class IncomingTcpClient {
 
     public void send(String payload){
         outgoingPayload.addFirst(payload);
-
     }
 
     public long getUid() {
