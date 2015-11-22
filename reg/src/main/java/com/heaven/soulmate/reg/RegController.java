@@ -1,10 +1,12 @@
 package com.heaven.soulmate.reg;
 
 import com.heaven.soulmate.reg.model.RegModel;
+import com.heaven.soulmate.reg.model.RegRequest;
 import com.heaven.soulmate.reg.model.RegResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,13 +27,10 @@ import java.util.HashMap;
 public class RegController {
     @RequestMapping(value="/reg", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Object reg(HttpServletRequest request, HttpServletResponse response) {
-
-        String phone = request.getParameter("phone");
-        String password = request.getParameter("password");
+    public Object reg(HttpServletRequest request,  @RequestBody RegRequest regRequest) {
 
         HashMap<String, Object> retMap = new HashMap<String, Object>();
-        Long newUID = RegModel.sharedInstance().register(phone, password);
+        Long newUID = RegModel.sharedInstance().register(regRequest.getPhone(), regRequest.getPassword());
 
         RegResult ret = new RegResult();
         if (newUID != 0) {

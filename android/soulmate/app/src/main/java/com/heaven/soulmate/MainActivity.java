@@ -171,12 +171,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void packetReceived(TcpClient client, TcpPacket packet) {
+    public void packetReceived(TcpClient client, final TcpPacket packet) {
         final TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
         txtResponse.post(new Runnable() {
             @Override
             public void run() {
-                txtResponse.setText("packet received.");
+                txtResponse.setText(String.format("packet received:%s", packet.payload));
             }
         });
     }
