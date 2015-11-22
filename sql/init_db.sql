@@ -57,6 +57,7 @@ CREATE TABLE `login_status` (
 `uid` BIGINT(20) NOT NULL COMMENT '',
 `token` VARCHAR(255) NULL COMMENT '',
 `token_gen_time` TIMESTAMP,
+`token_expire_time` TIMESTAMP,
 `last_login_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 location Point NOT NULL COMMENT 'current location',
 PRIMARY KEY(`uid`),

@@ -33,6 +33,7 @@ public class LoginController {
             httpResult.setErrMsg("login failed.");
             return httpResult;
         }
+
         // assign a longconn server to client
         ServerInfo selectedLongconnServer = LongConnServerController.sharedInstance().serverByUid(lr.getUid());
         if (selectedLongconnServer == null){
