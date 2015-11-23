@@ -26,19 +26,22 @@ import com.heaven.soulmate.model.longconn.LongConnRegisterMessage;
 import com.heaven.soulmate.model.longconn.TcpClient;
 import com.heaven.soulmate.model.longconn.TcpPacket;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.os.Handler;
 
 import java.io.IOException;
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity
     implements IHttpDelegate ,ITcpClientDelegate
 {
-    IHttpDelegate mainActivity = this;
+    MainActivity mainActivity = this;
 
     private long uid;
     private String token;
+
+    private String longconnHost = null;
+    private int longconnPort = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,12 +127,14 @@ public class MainActivity extends AppCompatActivity
 
         uid = httpResult.getData().getUid();
         token = httpResult.getData().getToken();
+        longconnHost = httpResult.getData().getLongconnIP();
+        longconnPort = httpResult.getData().getLongconnPort();
 
         TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
         txtResponse.setText(responseBody + "\n");
 
         TcpClient tcpclient = null;
-        tcpclient = new TcpClient(this, httpResult.getData().getLongconnIP(), httpResult.getData().getLongconnPort());
+        tcpclient = new TcpClient(this, longconnHost, longconnPort);
         tcpclient.start();
     }
 
@@ -167,7 +172,22 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void connectionLost(TcpClient client) {
-        // todo reconoect
+        final TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
+        txtResponse.post(new Runnable() {
+            @Override
+            public void run() {
+                txtResponse.setText(txtResponse.getText() + "\n connection lost. \n");
+            }
+        });
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                // reconnect after rand(0-5) seconds;
+                TcpClient tcpclient = new TcpClient(mainActivity, longconnHost, longconnPort);
+                tcpclient.start();
+            }
+        }, (new Random()).nextInt(5000)); // [0-5) seconds
     }
 
     @Override

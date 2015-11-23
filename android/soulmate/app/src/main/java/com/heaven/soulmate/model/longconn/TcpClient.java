@@ -69,7 +69,9 @@ public class TcpClient extends Thread
                     continue;
                 }
 
-                processSelectedKeys(selector.selectedKeys());
+                if (!processSelectedKeys(selector.selectedKeys())){
+                    break;
+                }
             }
 
         } catch (IOException e) {
@@ -77,29 +79,38 @@ public class TcpClient extends Thread
         }
     }
 
-    void processSelectedKeys(Set selectedKeys) throws IOException {
+    private boolean processSelectedKeys(Set selectedKeys) throws IOException {
+        boolean valid;
+
         Iterator iterator = selectedKeys.iterator();
         while (iterator.hasNext()) {
-            System.out.println("process selected keys");
+            valid = true;
+
             SelectionKey key = (SelectionKey) iterator.next();
             iterator.remove();
             if (key.isConnectable()) {
                 socketChannel.finishConnect();
                 socketChannel.register(selector, SelectionKey.OP_READ);
 
-                connected();
+                valid &= connected();
             }
             else{
-                if (key.isReadable()) {
-                    processRead();
+                if (valid && key.isReadable()) {
+                    valid &= processRead();
                 }
 
-                if (key.isWritable()){
-                    processWrite();
+                if (valid && key.isWritable()){
+                    valid &= processWrite();
                     key.interestOps(SelectionKey.OP_READ);
                 }
             }
+
+            if (!valid){
+                return valid;
+            }
         }
+
+        return true;
     }
 
     private boolean processRead(){
@@ -112,6 +123,7 @@ public class TcpClient extends Thread
                 buffer.position(0);
             }
             else{
+                connectionLost();
                 return false;
             }
 
@@ -181,12 +193,14 @@ public class TcpClient extends Thread
         return true;
     }
 
-    public void connected(){
+    public boolean connected(){
         try {
             delegate.connected(this);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+
+        return true;
     }
     public void connectionLost(){delegate.connectionLost(this);}
 

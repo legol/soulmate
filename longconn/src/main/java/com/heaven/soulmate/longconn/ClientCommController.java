@@ -122,6 +122,8 @@ public class ClientCommController implements ITcpServerDelegate {
     }
 
     public void packetReceived(TcpServer server, IncomingTcpClient client, TcpPacket packet) {
+        LOGGER.info("packet received from client.");
+
         try {
             ObjectMapper mapper = new ObjectMapper();
             LongConnMessage longconnMsg = null;
@@ -140,7 +142,6 @@ public class ClientCommController implements ITcpServerDelegate {
             LOGGER.error("unknown server message" + packet.payload);
             return;
         }
-
     }
 
 

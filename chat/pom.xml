@@ -104,7 +104,7 @@
           <reload>manual</reload>
           <connectors>
             <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-              <port>8080</port>
+              <port>8081</port>
               <maxIdleTime>60000</maxIdleTime>
             </connector>
           </connectors>

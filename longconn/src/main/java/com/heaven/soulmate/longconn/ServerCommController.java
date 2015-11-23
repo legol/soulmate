@@ -84,6 +84,8 @@ public class ServerCommController implements ITcpServerDelegate{
     }
 
     public void packetReceived(TcpServer server, IncomingTcpClient client, TcpPacket packet) {
+        LOGGER.info("packet received from server.");
+
         try {
             ObjectMapper mapper = new ObjectMapper();
             LongConnMessage longconnMsg = null;

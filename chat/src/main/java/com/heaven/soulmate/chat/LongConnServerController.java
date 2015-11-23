@@ -88,7 +88,7 @@ public class LongConnServerController {
             out = new DataOutputStream(socket.getOutputStream());
 
             LongConnMessage longconnMsg = new LongConnMessage();
-            longconnMsg.setType(1);
+            longconnMsg.setType(2);
             longconnMsg.setErrNo(0);
             longconnMsg.setPayload(payload);
 
