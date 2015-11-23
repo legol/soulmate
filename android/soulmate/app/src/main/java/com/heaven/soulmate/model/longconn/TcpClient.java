@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.nio.channels.*;
 import java.util.HashMap;
 import java.util.Properties;
@@ -57,25 +58,37 @@ public class TcpClient extends Thread
 
             // Create a non-blocking socket channel
             socketChannel = SocketChannel.open();
-            socketChannel.configureBlocking(false);
-            socketChannel.register(selector, SelectionKey.OP_CONNECT);
 
             // Kick off connection establishment
-            socketChannel.connect(new InetSocketAddress(this.hostAddress, this.hostPort));
+            socketChannel.socket().connect(new InetSocketAddress(this.hostAddress, this.hostPort), 3000);
+            if (socketChannel.isConnected()){
+                socketChannel.configureBlocking(false);
+                socketChannel.register(selector, SelectionKey.OP_READ);
+                if(!connected()){
+                    connectionFailure();
+                    return;
+                }
+            }else{
+                connectionFailure();
+                return;
+            }
 
             while (true) {
-                System.out.println("select");
                 if (selector.select() <= 0) {
                     continue;
                 }
 
                 if (!processSelectedKeys(selector.selectedKeys())){
-                    break;
+                    return;
                 }
             }
 
+        } catch (SocketTimeoutException e){
+            connectionFailure();
+            return;
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
     }
 
@@ -193,18 +206,15 @@ public class TcpClient extends Thread
         return true;
     }
 
-    public boolean connected(){
-        try {
-            delegate.connected(this);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
+    private boolean connected(){
+        delegate.connected(this);
         return true;
     }
-    public void connectionLost(){delegate.connectionLost(this);}
+    private void connectionLost(){delegate.connectionLost(this);}
 
-    public void packetReceived(TcpPacket packet) {
+    private void connectionFailure(){delegate.connectionFailure(this);}
+
+    private void packetReceived(TcpPacket packet) {
         delegate.packetReceived(this, packet);
     }
 

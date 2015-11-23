@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity
     private String longconnHost = null;
     private int longconnPort = 0;
 
+    LongConnKeeper longconnKeeper = new LongConnKeeper(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +75,7 @@ public class MainActivity extends AppCompatActivity
                 ObjectMapper mapper = new ObjectMapper();
 
                 HttpRequestData request = new HttpRequestData();
-                request.setUrl("http://192.168.132.69:8080/soulmate/login");
+                request.setUrl("http://192.168.1.87:8080/soulmate/login");
                 try {
                     request.setRequestBody(mapper.writeValueAsString(loginRequest));
                 } catch (JsonProcessingException e) {
@@ -130,27 +132,22 @@ public class MainActivity extends AppCompatActivity
         longconnHost = httpResult.getData().getLongconnIP();
         longconnPort = httpResult.getData().getLongconnPort();
 
+        longconnKeeper.setLongconnHost(longconnHost);
+        longconnKeeper.setLongconnPort(longconnPort);
+
         TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
         txtResponse.setText(responseBody + "\n");
 
-        TcpClient tcpclient = null;
-        tcpclient = new TcpClient(this, longconnHost, longconnPort);
-        tcpclient.start();
+        longconnKeeper.connect();
+    }
+
+    @Override
+    public void connectionFailure(TcpClient client) {
+        longconnKeeper.connect();
     }
 
     @Override
     public void connected(TcpClient client){
-
-        this.runOnUiThread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        TextView txtResponse = (TextView) findViewById(R.id.txtResponse);
-                        txtResponse.setText(txtResponse.getText() + "\n connected. \n");
-                    }
-                }
-        );
-
         LongConnRegisterMessage longconnRegMsg = new LongConnRegisterMessage();
         longconnRegMsg.setUid(uid);
         longconnRegMsg.setToken(token);
@@ -190,10 +187,6 @@ public class MainActivity extends AppCompatActivity
                 txtResponse.setText(txtResponse.getText() + "\n connection lost. \n");
             }
         });
-
-        // reconnect
-        TcpClient tcpclient = new TcpClient(mainActivity, longconnHost, longconnPort);
-        tcpclient.start();
     }
 
     @Override
