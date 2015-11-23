@@ -140,6 +140,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void connected(TcpClient client){
+
+        this.runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView txtResponse = (TextView) findViewById(R.id.txtResponse);
+                        txtResponse.setText(txtResponse.getText() + "\n connected. \n");
+                    }
+                }
+        );
+
         LongConnRegisterMessage longconnRegMsg = new LongConnRegisterMessage();
         longconnRegMsg.setUid(uid);
         longconnRegMsg.setToken(token);
@@ -180,14 +191,9 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                // reconnect after rand(0-5) seconds;
-                TcpClient tcpclient = new TcpClient(mainActivity, longconnHost, longconnPort);
-                tcpclient.start();
-            }
-        }, (new Random()).nextInt(5000)); // [0-5) seconds
+        // reconnect
+        TcpClient tcpclient = new TcpClient(mainActivity, longconnHost, longconnPort);
+        tcpclient.start();
     }
 
     @Override

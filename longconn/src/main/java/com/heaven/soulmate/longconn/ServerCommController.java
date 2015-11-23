@@ -52,35 +52,27 @@ public class ServerCommController implements ITcpServerDelegate{
     public void clientDisconnected(TcpServer server, IncomingTcpClient client) {
     }
 
-    private void processChatMsgPacket(TcpServer server, IncomingTcpClient client, LongConnMessage longconnMsg){
+    private boolean processChatMsgPacket(TcpServer server, IncomingTcpClient client, LongConnMessage longconnMsg){
+        boolean delivered = false;
         try {
-            boolean delivered = false;
             ObjectMapper mapper = new ObjectMapper();
 
             // deliver the msg
             if (longconnMsg.getType() == 2) { // chat msg
                 ChatMessages chatMsg = mapper.readValue(longconnMsg.getPayload(), ChatMessages.class);
                 delivered = clientController.sendChatMsg(longconnMsg);
-            }
 
-            LongConnMessage resultMsg = new LongConnMessage();
-            resultMsg.setType(2);
-            if (delivered){
-                resultMsg.setErrNo(0);
-            }else{
-                resultMsg.setErrNo(-1);
-                resultMsg.setErrMsg("can't deliver msg to the client");
+                LOGGER.info(String.format("deliver chat msg to client. uid_from=%d uid_to=%d message_id=%d delivered=%b", chatMsg.getUid(), chatMsg.getTarget_uid(), chatMsg.getMessageId(), delivered));
             }
-            String resultMsgInJson = mapper.writeValueAsString(resultMsg);
-            server.send(client, resultMsgInJson);
-
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return;
+            return delivered;
         } catch (IOException e) {
             e.printStackTrace();
-            return;
+            return delivered;
         }
+
+        return delivered;
     }
 
     public void packetReceived(TcpServer server, IncomingTcpClient client, TcpPacket packet) {
@@ -97,13 +89,16 @@ public class ServerCommController implements ITcpServerDelegate{
                     processChatMsgPacket(server, client, longconnMsg);
                     break;
                 }
+                default:{
+                    LOGGER.error("unknown server message:" + packet.payload);
+                    break;
+                }
 
             }
         } catch (IOException e) {
             e.printStackTrace();
 
-            LOGGER.error("unknown server message" + packet.payload);
-            return;
+            LOGGER.error("unknown server message:" + packet.payload);
         }
     }
 }

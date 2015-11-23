@@ -27,7 +27,7 @@ public class ChatController {
     @RequestMapping(value = "/chat", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Object chat(HttpServletRequest request, @RequestBody ChatMessages messages) {
-        LOGGER.info("chat message received.");
+        LOGGER.info(String.format("chat message received. uid_from=%d uid_to=%d token=%s", messages.getUid(), messages.getTarget_uid(), messages.getToken()));
 
         ChatResult ret = new ChatResult();
 
@@ -48,6 +48,7 @@ public class ChatController {
             return ret;
         }
         messages.setMessageId(messageId);
+        LOGGER.info(String.format("chat message id generated. id=%d. uid_from=%d uid_to=%d token=%s", messageId, messages.getUid(), messages.getTarget_uid(), messages.getToken()));
 
         ObjectMapper mapper = new ObjectMapper();
         String messageInJson = null;

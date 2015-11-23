@@ -106,20 +106,12 @@ public class LongConnServerController {
             out.writeInt(messageInJson.length());
             out.writeBytes(messageInJson);
 
-            ///////////////////////////////////////////////////////
-            // read response
-            byte[] buff = new byte[1024*10];
-            int protocol = in.readInt();
-            int payloadSize = in.readInt();
-            in.read(buff, 0, payloadSize);
-            String resultPayload = new String(buff, 0, payloadSize, StandardCharsets.UTF_8);
-            LongConnMessage resultMsg = mapper.readValue(resultPayload, LongConnMessage.class);
-            if (resultMsg.getErrNo() != 0){
-                return false;
-            }
-
+            LOGGER.info(String.format("payload sent. longconn=%s:%d target_uid=%d", longconnServer.ip, longconnServer.portServer, targetUid));
         } catch (IOException e) {
             e.printStackTrace();
+
+            LOGGER.error(String.format("can't send payload. longconn=%s:%d target_uid=%d", longconnServer.ip, longconnServer.portServer, targetUid));
+            return false;
         }
 
         return true;

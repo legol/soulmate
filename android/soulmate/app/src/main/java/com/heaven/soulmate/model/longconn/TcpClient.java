@@ -169,7 +169,7 @@ public class TcpClient extends Thread
 
         } catch (IOException e) {
             e.printStackTrace();
-
+            connectionLost();
             return false;
         }
 
