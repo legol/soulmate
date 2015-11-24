@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SoulMate.getInstance().setDelegate(this);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -84,17 +87,24 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void loginFailed() {
-
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                final TextView txtResponse = (TextView) findViewById(R.id.txtResponse);
+                txtResponse.setText("login failed.");
+            }
+        });
     }
 
     @Override
     public void packetReceived(TcpClient client, final TcpPacket packet) {
-        final TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
-        txtResponse.post(new Runnable() {
+        this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                final TextView txtResponse = (TextView) findViewById(R.id.txtResponse);
                 txtResponse.setText(String.format("packet received:%s", packet.payload));
             }
         });
+
     }
 }
