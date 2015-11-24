@@ -39,8 +39,14 @@ public class ChatController {
         // 3. longconn: deliever the message to b.
         // 4. longconn: if succeeded, update db with message(id) delivered.
 
-        // todo: verify token
+        // 0. verify token
+        if(!LoginStatusDao.sharedInstance().verifyToken(messages.getUid(), messages.getToken())){
+            ret.setErrNo(-1L);
+            ret.setErrMsg(String.format("can't verify token"));
+            return ret;
+        }
 
+        // 1. save to offlineMsgDB
         long messageId = 0;
         if ((messageId = OfflineMsgDAO.sharedInstance().saveMsg(messages)) < 0) {
             ret.setErrNo(messageId);
@@ -61,6 +67,7 @@ public class ChatController {
             return ret;
         }
 
+        // 2. deliver message
         if (LongConnServerController.sharedInstance().sendMessage(messages.getTarget_uid(), messageInJson) == false) {
             ret.setErrNo(-1L);
             ret.setErrMsg(String.format("can't send message."));

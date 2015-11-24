@@ -11,8 +11,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ConnectException;
-import java.net.Socket;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -83,8 +82,9 @@ public class LongConnServerController {
         DataInputStream in = null;
         DataOutputStream out = null;
         try {
-            // todo: handle connection timeout
-            socket = new Socket(longconnServer.ip, longconnServer.portServer);
+            socket = new Socket();
+            InetSocketAddress addr = new InetSocketAddress(longconnServer.ip, longconnServer.portServer);
+            socket.connect(addr, 3000);
 
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
@@ -110,6 +110,11 @@ public class LongConnServerController {
 
             LOGGER.info(String.format("payload sent. longconn=%s:%d target_uid=%d", longconnServer.ip, longconnServer.portServer, targetUid));
         } catch(ConnectException e){
+            e.printStackTrace();
+            LOGGER.error(String.format("can't connect to longconn=%s:%d", longconnServer.ip, longconnServer.portServer));
+            return false;
+        }
+        catch (SocketTimeoutException e){
             e.printStackTrace();
             LOGGER.error(String.format("can't connect to longconn=%s:%d", longconnServer.ip, longconnServer.portServer));
             return false;

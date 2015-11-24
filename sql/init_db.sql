@@ -42,7 +42,6 @@ CREATE TABLE `msg` (
 `msg` VARCHAR(255) NULL COMMENT '',
 `sent_time` TIMESTAMP,
 `delivered` BOOLEAN DEFAULT FALSE COMMENT 'whether the message was delivered',
-`tried_count` tinyint(2) DEFAULT 0 COMMENT 'How many times we tried to deliver the message',
 KEY(`message_id`),
 KEY(`from_uid`),
 KEY(`to_uid`),
