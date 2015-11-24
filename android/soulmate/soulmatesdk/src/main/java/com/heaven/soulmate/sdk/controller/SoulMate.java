@@ -18,6 +18,7 @@ import com.heaven.soulmate.sdk.model.longconn.TcpClient;
 import com.heaven.soulmate.sdk.model.longconn.TcpPacket;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 
 /**
  * Created by ChenJie3 on 2015/11/24.
@@ -25,8 +26,8 @@ import java.io.IOException;
 public class SoulMate implements IHttpDelegate, ITcpClientDelegate{
     private static SoulMate ourInstance = new SoulMate();
 
-    private String loginUrl = "http://192.168.1.87:8080/soulmate/login";
-    private String chatUrl = "http://192.168.1.87:8080/soulmate/chat";
+    private String loginUrl = "http://192.168.132.69:8080/soulmate/login";
+    private String chatUrl = "http://192.168.132.69:8080/soulmate/chat";
 
     private String phone = null;
     private String password = null;
@@ -83,6 +84,11 @@ public class SoulMate implements IHttpDelegate, ITcpClientDelegate{
 
     @Override
     public void onHttpResponse(HttpRequestData request, HttpResponseData response) {
+        if (response == null || response.getHttpStatus() != HttpURLConnection.HTTP_OK){
+            loginFailed();
+            return;
+        }
+
         String responseBody = response.getResponseBody();
 
         ObjectMapper mapper = new ObjectMapper();
