@@ -1,13 +1,10 @@
-package com.heaven.soulmate;
+package com.heaven.soulmate.sdk.controller;
 
 import android.util.Log;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.heaven.soulmate.model.longconn.ITcpClientDelegate;
-import com.heaven.soulmate.model.longconn.TcpClient;
-import com.heaven.soulmate.model.longconn.TcpPacket;
-
-import java.util.logging.Logger;
+import com.heaven.soulmate.sdk.model.longconn.ITcpClientDelegate;
+import com.heaven.soulmate.sdk.model.longconn.TcpClient;
+import com.heaven.soulmate.sdk.model.longconn.TcpPacket;
 
 /**
  * Created by ChenJie3 on 2015/11/23.
@@ -45,7 +42,7 @@ public class LongConnKeeper
         return tcpClient;
     }
 
-    void connect(){
+    public void connect(){
         if (tcpClient == null){
             Log.i("network", String.format("trying to connect to %s:%d", longconnHost, longconnPort));
             tcpClient = new TcpClient(this, longconnHost, longconnPort);

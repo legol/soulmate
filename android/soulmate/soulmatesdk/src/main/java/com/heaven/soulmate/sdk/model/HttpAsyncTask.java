@@ -1,4 +1,4 @@
-package com.heaven.soulmate.model;
+package com.heaven.soulmate.sdk.model;
 
 import android.os.AsyncTask;
 

@@ -1,4 +1,4 @@
-package com.heaven.soulmate.model.longconn;
+package com.heaven.soulmate.sdk.model.longconn;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;

@@ -1,4 +1,4 @@
-package com.heaven.soulmate.model;
+package com.heaven.soulmate.sdk.model;
 
 /**
  * Created by ChenJie3 on 2015/11/17.

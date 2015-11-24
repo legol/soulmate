@@ -13,23 +13,20 @@ import android.widget.TextView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.heaven.soulmate.model.HttpAsyncTask;
-import com.heaven.soulmate.model.HttpRequestData;
-import com.heaven.soulmate.model.HttpResponseData;
-import com.heaven.soulmate.model.IHttpDelegate;
-import com.heaven.soulmate.model.login.LoginResponseBody;
-import com.heaven.soulmate.model.login.LoginRequest;
-import com.heaven.soulmate.model.login.LoginResponseBody;
-import com.heaven.soulmate.model.longconn.ITcpClientDelegate;
-import com.heaven.soulmate.model.longconn.LongConnMessage;
-import com.heaven.soulmate.model.longconn.LongConnRegisterMessage;
-import com.heaven.soulmate.model.longconn.TcpClient;
-import com.heaven.soulmate.model.longconn.TcpPacket;
-
-import android.os.Handler;
+import com.heaven.soulmate.sdk.model.HttpAsyncTask;
+import com.heaven.soulmate.sdk.model.HttpRequestData;
+import com.heaven.soulmate.sdk.model.HttpResponseData;
+import com.heaven.soulmate.sdk.model.IHttpDelegate;
+import com.heaven.soulmate.sdk.model.login.LoginResponseBody;
+import com.heaven.soulmate.sdk.model.login.LoginRequest;
+import com.heaven.soulmate.sdk.model.longconn.ITcpClientDelegate;
+import com.heaven.soulmate.sdk.model.longconn.LongConnMessage;
+import com.heaven.soulmate.sdk.model.longconn.LongConnRegisterMessage;
+import com.heaven.soulmate.sdk.model.longconn.TcpClient;
+import com.heaven.soulmate.sdk.model.longconn.TcpPacket;
+import com.heaven.soulmate.sdk.controller.*;
 
 import java.io.IOException;
-import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity

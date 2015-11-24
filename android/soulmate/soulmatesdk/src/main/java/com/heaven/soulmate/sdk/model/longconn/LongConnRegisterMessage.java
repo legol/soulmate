@@ -1,4 +1,4 @@
-package com.heaven.soulmate.model.longconn;
+package com.heaven.soulmate.sdk.model.longconn;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

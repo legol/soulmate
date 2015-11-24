@@ -1,31 +1,15 @@
-package com.heaven.soulmate.model.longconn;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
+package com.heaven.soulmate.sdk.model.longconn;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
-import java.nio.channels.*;
-import java.util.HashMap;
-import java.util.Properties;
-
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.util.Iterator;
-import java.util.Set;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.nio.channels.spi.SelectorProvider;
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * Created by ChenJie3 on 2015/11/2.

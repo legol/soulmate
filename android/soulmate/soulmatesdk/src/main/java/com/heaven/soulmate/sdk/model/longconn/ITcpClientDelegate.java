@@ -1,6 +1,4 @@
-package com.heaven.soulmate.model.longconn;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
+package com.heaven.soulmate.sdk.model.longconn;
 
 /**
  * Created by legol on 2015/11/4.

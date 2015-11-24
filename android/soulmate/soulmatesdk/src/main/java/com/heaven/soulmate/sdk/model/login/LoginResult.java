@@ -1,4 +1,4 @@
-package com.heaven.soulmate.model.login;
+package com.heaven.soulmate.sdk.model.login;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
