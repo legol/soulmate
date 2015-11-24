@@ -9,10 +9,11 @@ import com.heaven.soulmate.sdk.model.longconn.TcpPacket;
 /**
  * Created by ChenJie3 on 2015/11/23.
  */
-public class LongConnKeeper
+class LongConnKeeper
         implements ITcpClientDelegate{
-    private String longconnHost;
-    private int longconnPort;
+
+    private String longconnHost = null;
+    private int longconnPort = 0;
     private int reconnectInterval = 3; // in seconds
     private ITcpClientDelegate tcpClientDelegate = null;
 
@@ -44,7 +45,7 @@ public class LongConnKeeper
 
     public void connect(){
         if (tcpClient == null){
-            Log.i("network", String.format("trying to connect to %s:%d", longconnHost, longconnPort));
+            Log.i(this.getClass().getName(), String.format("trying to connect to %s:%d", longconnHost, longconnPort));
             tcpClient = new TcpClient(this, longconnHost, longconnPort);
             tcpClient.start();
         }
@@ -52,7 +53,7 @@ public class LongConnKeeper
 
     @Override
     public void connectionFailure(TcpClient client) {
-        Log.i("network", String.format("can't connect to %s:%d", longconnHost, longconnPort));
+        Log.i(this.getClass().getName(), String.format("can't connect to %s:%d", longconnHost, longconnPort));
 
         tcpClientDelegate.connectionFailure(client);
 
@@ -62,14 +63,14 @@ public class LongConnKeeper
 
     @Override
     public void connected(TcpClient client){
-        Log.i("network", String.format("connected to %s:%d", longconnHost, longconnPort));
+        Log.i(this.getClass().getName(), String.format("connected to %s:%d", longconnHost, longconnPort));
 
         tcpClientDelegate.connected(client);
     }
 
     @Override
     public void connectionLost(TcpClient client) {
-        Log.i("network", String.format("connection lost from %s:%d", longconnHost, longconnPort));
+        Log.i(this.getClass().getName(), String.format("connection lost from %s:%d", longconnHost, longconnPort));
 
         tcpClientDelegate.connectionLost(client);
 
@@ -79,6 +80,7 @@ public class LongConnKeeper
 
     @Override
     public void packetReceived(TcpClient client, TcpPacket packet) {
+        Log.d(this.getClass().getName(), String.format("packet received from %s:%d\n%s", longconnHost, longconnPort, packet.payload));
         tcpClientDelegate.packetReceived(client, packet);
     }
 }

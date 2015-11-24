@@ -30,17 +30,9 @@ import java.io.IOException;
 
 
 public class MainActivity extends AppCompatActivity
-    implements IHttpDelegate ,ITcpClientDelegate
+    implements ISoulMateDelegate
 {
     MainActivity mainActivity = this;
-
-    private long uid;
-    private String token;
-
-    private String longconnHost = null;
-    private int longconnPort = 0;
-
-    LongConnKeeper longconnKeeper = new LongConnKeeper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,28 +52,10 @@ public class MainActivity extends AppCompatActivity
         });
 
         Button btnLogin = (Button) findViewById(R.id.btnLogin);
-        btnLogin.setOnClickListener(new View.OnClickListener(){
+        btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HttpAsyncTask httpTask;
-
-                LoginRequest loginRequest = new LoginRequest();
-                loginRequest.setPhone("15011113304");
-                loginRequest.setPassword("803048");
-
-                ObjectMapper mapper = new ObjectMapper();
-
-                HttpRequestData request = new HttpRequestData();
-                request.setUrl("http://192.168.1.87:8080/soulmate/login");
-                try {
-                    request.setRequestBody(mapper.writeValueAsString(loginRequest));
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-
-                httpTask = new HttpAsyncTask();
-                httpTask.setDelegate(mainActivity);
-                httpTask.execute(request);
+                SoulMate.getInstance().Login("15011113304", "803048");
             }
         });
     }
@@ -109,81 +83,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onHttpResponse(HttpRequestData request, HttpResponseData response) {
-        String responseBody = response.getResponseBody();
+    public void loginFailed() {
 
-        ObjectMapper mapper = new ObjectMapper();
-        LoginResponseBody httpResult = null;
-        try {
-            httpResult = mapper.readValue(responseBody, LoginResponseBody.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (httpResult == null){
-            return;
-        }
-
-        uid = httpResult.getData().getUid();
-        token = httpResult.getData().getToken();
-        longconnHost = httpResult.getData().getLongconnIP();
-        longconnPort = httpResult.getData().getLongconnPort();
-
-        longconnKeeper.setLongconnHost(longconnHost);
-        longconnKeeper.setLongconnPort(longconnPort);
-
-        TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
-        txtResponse.setText(responseBody + "\n");
-
-        longconnKeeper.connect();
-    }
-
-    @Override
-    public void connectionFailure(TcpClient client) {
-        longconnKeeper.connect();
-    }
-
-    @Override
-    public void connected(TcpClient client){
-        LongConnRegisterMessage longconnRegMsg = new LongConnRegisterMessage();
-        longconnRegMsg.setUid(uid);
-        longconnRegMsg.setToken(token);
-
-        ObjectMapper mapper = new ObjectMapper();
-        LongConnMessage longconnMsg = new LongConnMessage();
-        longconnMsg.setErrNo(0);
-        longconnMsg.setType(1);
-
-        String longconnMsgInJson = null;
-        try {
-            longconnMsg.setPayload(mapper.writeValueAsString(longconnRegMsg));
-            longconnMsgInJson = mapper.writeValueAsString(longconnMsg);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        client.send(longconnMsgInJson);
-
-        this.runOnUiThread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
-                        txtResponse.setText(txtResponse.getText() + "connected to longconn.\n");
-                    }
-                }
-        );
-    }
-
-    @Override
-    public void connectionLost(TcpClient client) {
-        final TextView txtResponse = (TextView)findViewById(R.id.txtResponse);
-        txtResponse.post(new Runnable() {
-            @Override
-            public void run() {
-                txtResponse.setText(txtResponse.getText() + "\n connection lost. \n");
-            }
-        });
     }
 
     @Override
