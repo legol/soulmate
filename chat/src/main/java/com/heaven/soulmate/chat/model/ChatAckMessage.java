@@ -21,20 +21,12 @@ public class ChatAckMessage {
     @JsonProperty("token")
     private String token;
 
-    public LinkedList<Long> getMessageId() {
-        return messageIds;
-    }
-
     public long getUid() {
         return uid;
     }
 
     public String getToken() {
         return token;
-    }
-
-    public void setMessageId(LinkedList<Long> messageIds) {
-        this.messageIds = messageIds;
     }
 
     public void setUid(long uid) {
@@ -44,4 +36,13 @@ public class ChatAckMessage {
     public void setToken(String token) {
         this.token = token;
     }
+
+    public LinkedList<Long> getMessageIds() {
+        return messageIds;
+    }
+
+    public void setMessageIds(LinkedList<Long> messageIds) {
+        this.messageIds = messageIds;
+    }
+
 }
