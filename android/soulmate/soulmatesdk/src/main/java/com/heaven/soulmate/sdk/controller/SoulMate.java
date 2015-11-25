@@ -1,7 +1,6 @@
 package com.heaven.soulmate.sdk.controller;
 
 import android.util.Log;
-import android.widget.TextView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +8,8 @@ import com.heaven.soulmate.sdk.model.HttpAsyncTask;
 import com.heaven.soulmate.sdk.model.HttpRequestData;
 import com.heaven.soulmate.sdk.model.HttpResponseData;
 import com.heaven.soulmate.sdk.model.IHttpDelegate;
+import com.heaven.soulmate.sdk.model.chat.ChatAckRequest;
+import com.heaven.soulmate.sdk.model.chat.ChatRequest;
 import com.heaven.soulmate.sdk.model.login.LoginRequest;
 import com.heaven.soulmate.sdk.model.login.LoginResponseBody;
 import com.heaven.soulmate.sdk.model.longconn.ITcpClientDelegate;
@@ -19,6 +20,7 @@ import com.heaven.soulmate.sdk.model.longconn.TcpPacket;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.LinkedList;
 
 /**
  * Created by ChenJie3 on 2015/11/24.
@@ -26,11 +28,13 @@ import java.net.HttpURLConnection;
 public class SoulMate implements IHttpDelegate, ITcpClientDelegate{
     private static SoulMate ourInstance = new SoulMate();
 
-    private String loginUrl = "http://192.168.1.87:8080/soulmate/login";
-    private String chatUrl = "http://192.168.1.87:8080/soulmate/chat";
+//    private String loginUrl = "http://192.168.1.87:8080/soulmate/login";
+//    private String chatUrl = "http://192.168.1.87:8081/soulmate/chat";
+//    private String chatAckUrl = "http://192.168.1.87:8081/soulmate/chat_ack";
 
-//    private String loginUrl = "http://192.168.132.69:8080/soulmate/login";
-//    private String chatUrl = "http://192.168.132.69:8080/soulmate/chat";
+    private String loginUrl = "http://192.168.132.69:8080/soulmate/login";
+    private String chatUrl = "http://192.168.132.69:8081/soulmate/chat";
+    private String chatAckUrl = "http://192.168.132.69:8081/soulmate/chat_ack";
 
     private String phone = null;
     private String password = null;
@@ -58,26 +62,22 @@ public class SoulMate implements IHttpDelegate, ITcpClientDelegate{
         this.phone = phone;
         this.password = password;
 
-        ObjectMapper mapper = new ObjectMapper();
-
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setPhone(phone);
         loginRequest.setPassword(password);
 
-        HttpRequestData request = new HttpRequestData();
-        request.setUrl(loginUrl);
-        try {
-            request.setRequestBody(mapper.writeValueAsString(loginRequest));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return sendHttpRequest(loginUrl, loginRequest);
+    }
 
-        HttpAsyncTask httpTask = new HttpAsyncTask();
-        httpTask.setDelegate(this);
-        httpTask.execute(request);
+    private boolean chatAck(LinkedList<Long> messageIds) {
+        Log.i(this.getClass().getName(), String.format("chat ack. %d", uid));
 
-        return true;
+        ChatAckRequest chatAckRequest = new ChatAckRequest();
+        chatAckRequest.setUid(uid);
+        chatAckRequest.setToken(token);
+        chatAckRequest.setMessageIds(messageIds);
+
+        return sendHttpRequest(chatAckUrl, chatAckRequest);
     }
 
     public boolean chat(long targetUid, String payload){
@@ -85,8 +85,7 @@ public class SoulMate implements IHttpDelegate, ITcpClientDelegate{
         return true;
     }
 
-    @Override
-    public void onHttpResponse(HttpRequestData request, HttpResponseData response) {
+    private void onLoginResponse(HttpRequestData request, HttpResponseData response){
         if (response == null || response.getHttpStatus() != HttpURLConnection.HTTP_OK){
             loginFailed();
             return;
@@ -125,6 +124,49 @@ public class SoulMate implements IHttpDelegate, ITcpClientDelegate{
         longconnKeeper.setLongconnHost(longconnHost);
         longconnKeeper.setLongconnPort(longconnPort);
         longconnKeeper.connect();
+    }
+
+    private void onChatAckResponse(HttpRequestData request, HttpResponseData response) {
+        // do nothing
+    }
+
+    private boolean sendHttpRequest(String url, Object requestBody){
+        Log.i(this.getClass().getName(), String.format("send http request. url=%s", url));
+
+        HttpRequestData request = new HttpRequestData();
+        request.setUrl(url);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            request.setRequestBody(mapper.writeValueAsString(requestBody));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            Log.e(this.getClass().getName(), String.format("failed to send http request. url=%s", url));
+            return false;
+        }
+
+        HttpAsyncTask httpTask = new HttpAsyncTask();
+        httpTask.setDelegate(this);
+        httpTask.execute(request);
+
+        return true;
+    }
+
+    @Override
+    public void onHttpResponse(HttpRequestData request, HttpResponseData response) {
+        if(response == null || response.getHttpStatus() != HttpURLConnection.HTTP_OK) {
+            Log.e(this.getClass().getName(), String.format("failed to send http request. url=%s", request.getUrl()));
+            return;
+        }
+
+        if (request.getUrl().compareToIgnoreCase(loginUrl) == 0){
+            onLoginResponse(request, response);
+        }
+        else if (request.getUrl().compareToIgnoreCase(chatAckUrl) == 0){
+            onChatAckResponse(request, response);
+        }
+        else{
+
+        }
     }
 
     private void loginFailed(){
@@ -175,8 +217,30 @@ public class SoulMate implements IHttpDelegate, ITcpClientDelegate{
     @Override
     public void packetReceived(TcpClient client, TcpPacket packet) {
         Log.d(this.getClass().getName(), String.format("packet received from %s:%d\n%s", longconnHost, longconnPort, packet.payload));
+
         if (delegate != null){
             delegate.packetReceived(client, packet);
+        }
+
+        // send chat_ack to chat
+        ObjectMapper mapper = new ObjectMapper();
+        ChatRequest chatMsg = null;
+        try {
+            chatMsg = mapper.readValue(packet.payload, ChatRequest.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (chatMsg == null){
+            Log.d(this.getClass().getName(), String.format("unknown packet received from %s:%d\n%s", longconnHost, longconnPort, packet.payload));
+            return;
+        }
+
+        LinkedList<Long> messageIds = new LinkedList<Long>();
+        messageIds.add(chatMsg.getMessageId());
+        if(!chatAck(messageIds)){
+            Log.d(this.getClass().getName(), String.format("unknown packet received from %s:%d\n%s", longconnHost, longconnPort, packet.payload));
+            return;
         }
     }
 

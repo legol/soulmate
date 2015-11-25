@@ -1,6 +1,7 @@
 package com.heaven.soulmate.sdk.model;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -82,8 +83,10 @@ public class HttpAsyncTask extends AsyncTask<HttpRequestData, Void, HttpResponse
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            Log.e(this.getClass().getName(), String.format("failed to send http request. url=%s", request[0].getUrl()));
         } catch (IOException e) {
             e.printStackTrace();
+            Log.e(this.getClass().getName(), String.format("failed to send http request. url=%s", request[0].getUrl()));
         }
 
         return response;

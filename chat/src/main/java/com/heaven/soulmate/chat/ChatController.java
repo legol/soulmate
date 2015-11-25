@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heaven.soulmate.chat.dao.LoginStatusDao;
 import com.heaven.soulmate.chat.dao.OfflineMsgDAO;
 import com.heaven.soulmate.chat.model.*;
-import com.heaven.soulmate.chat.model.ChatMessages;
 import org.apache.log4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -27,8 +26,8 @@ public class ChatController {
 
     @RequestMapping(value = "/chat", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Object chat(HttpServletRequest request, @RequestBody ChatMessages messages) {
-        LOGGER.info(String.format("chat message received. uid_from=%d uid_to=%d token=%s", messages.getUid(), messages.getTarget_uid(), messages.getToken()));
+    public Object chat(HttpServletRequest request, @RequestBody ChatRequest msg) {
+        LOGGER.info(String.format("chat message received. uid_from=%d uid_to=%d token=%s", msg.getUid(), msg.getTarget_uid(), msg.getToken()));
 
         ChatResult ret = new ChatResult();
 
@@ -41,7 +40,7 @@ public class ChatController {
         // 4. longconn: if succeeded, update db with message(id) delivered.
 
         // 0. verify token
-        if(!LoginStatusDao.sharedInstance().verifyToken(messages.getUid(), messages.getToken())){
+        if(!LoginStatusDao.sharedInstance().verifyToken(msg.getUid(), msg.getToken())){
             ret.setErrNo(-1L);
             ret.setErrMsg(String.format("can't verify token"));
             return ret;
@@ -49,19 +48,19 @@ public class ChatController {
 
         // 1. save to offlineMsgDB
         long messageId = 0;
-        if ((messageId = OfflineMsgDAO.sharedInstance().saveMsg(messages)) < 0) {
+        if ((messageId = OfflineMsgDAO.sharedInstance().saveMsg(msg)) < 0) {
             ret.setErrNo(messageId);
             ret.setErrMsg("can't write msg to db.");
             return ret;
         }
-        messages.setMessageId(messageId);
-        LOGGER.info(String.format("chat message id generated. id=%d. uid_from=%d uid_to=%d token=%s", messageId, messages.getUid(), messages.getTarget_uid(), messages.getToken()));
+        msg.setMessageId(messageId);
+        LOGGER.info(String.format("chat message id generated. id=%d. uid_from=%d uid_to=%d token=%s", messageId, msg.getUid(), msg.getTarget_uid(), msg.getToken()));
 
         // 2. deliver message
         ObjectMapper mapper = new ObjectMapper();
         String messageInJson = null;
         try {
-            messageInJson = mapper.writeValueAsString(messages);
+            messageInJson = mapper.writeValueAsString(msg);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             ret.setErrNo(-1L);
@@ -69,7 +68,7 @@ public class ChatController {
             return ret;
         }
 
-        if (LongConnServerController.sharedInstance().sendMessage(messages.getTarget_uid(), 2, messageInJson) == false) {
+        if (LongConnServerController.sharedInstance().sendMessage(msg.getTarget_uid(), 2, messageInJson) == false) {
             ret.setErrNo(-1L);
             ret.setErrMsg(String.format("can't send message."));
             return ret;
@@ -82,7 +81,9 @@ public class ChatController {
 
     @RequestMapping(value = "/chat_ack", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Object chatack(HttpServletRequest request, @RequestBody ChatAckMessage msg) {
+    public Object chatack(HttpServletRequest request, @RequestBody ChatAckRequest msg) {
+        LOGGER.info(String.format("chat_ack received. uid=%d", msg.getUid()));
+
         ChatAckResult ret = new ChatAckResult();
 
         // 0. verify token

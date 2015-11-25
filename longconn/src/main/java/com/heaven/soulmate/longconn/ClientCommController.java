@@ -9,12 +9,11 @@ import com.heaven.soulmate.longconn.network.TcpServer;
 import com.heaven.soulmate.model.LoginStatusDao;
 import com.heaven.soulmate.model.LongConnMessage;
 import com.heaven.soulmate.model.LongConnRegisterMessage;
-import com.heaven.soulmate.model.chat.ChatMessages;
+import com.heaven.soulmate.model.chat.ChatRequest;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Properties;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
@@ -58,9 +57,9 @@ public class ClientCommController implements ITcpServerDelegate {
         assert(longconnMsg.getType() == 2);
 
         ObjectMapper mapper = new ObjectMapper();
-        ChatMessages chatMsg = null;
+        ChatRequest chatMsg = null;
         try {
-            chatMsg = mapper.readValue(longconnMsg.getPayload(), ChatMessages.class);
+            chatMsg = mapper.readValue(longconnMsg.getPayload(), ChatRequest.class);
         } catch (IOException e) {
             e.printStackTrace();
         }

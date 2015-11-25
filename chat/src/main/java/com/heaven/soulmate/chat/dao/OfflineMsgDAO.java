@@ -3,7 +3,8 @@ package com.heaven.soulmate.chat.dao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heaven.soulmate.Utils;
-import com.heaven.soulmate.chat.model.ChatMessages;
+import com.heaven.soulmate.chat.model.*;
+
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.apache.log4j.Logger;
 
@@ -50,7 +51,7 @@ public class OfflineMsgDAO {
         return instance;
     }
 
-    public long saveMsg(ChatMessages messages){
+    public long saveMsg(ChatRequest msg){
         Connection conn = null;
         PreparedStatement statement = null;
         long messageId = -1L;
@@ -61,11 +62,11 @@ public class OfflineMsgDAO {
 
             statement = conn.prepareStatement("insert into msg(`from_uid`, `to_uid`, `msg`) values (?,?,?)");
 
-            statement.setLong(1, messages.getUid());
-            statement.setLong(2, messages.getTarget_uid());
+            statement.setLong(1, msg.getUid());
+            statement.setLong(2, msg.getTarget_uid());
 
             ObjectMapper mapper = new ObjectMapper();
-            String messagesInJson = mapper.writeValueAsString(messages);
+            String messagesInJson = mapper.writeValueAsString(msg);
             statement.setString(3, messagesInJson);
 
             int rowsAffactted = statement.executeUpdate();

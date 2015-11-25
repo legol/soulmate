@@ -4,10 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heaven.soulmate.Utils;
 import com.heaven.soulmate.longconn.network.*;
-import com.heaven.soulmate.model.LoginStatusDao;
-import com.heaven.soulmate.model.LongConnRegisterMessage;
 import com.heaven.soulmate.model.LongConnMessage;
-import com.heaven.soulmate.model.chat.ChatMessages;
+import com.heaven.soulmate.model.chat.ChatRequest;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -59,7 +57,7 @@ public class ServerCommController implements ITcpServerDelegate{
 
             // deliver the msg
             if (longconnMsg.getType() == 2) { // chat msg
-                ChatMessages chatMsg = mapper.readValue(longconnMsg.getPayload(), ChatMessages.class);
+                ChatRequest chatMsg = mapper.readValue(longconnMsg.getPayload(), ChatRequest.class);
                 delivered = clientController.sendChatMsg(longconnMsg);
 
                 LOGGER.info(String.format("deliver chat msg to client. uid_from=%d uid_to=%d message_id=%d delivered=%b", chatMsg.getUid(), chatMsg.getTarget_uid(), chatMsg.getMessageId(), delivered));
