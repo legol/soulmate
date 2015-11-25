@@ -5,18 +5,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heaven.soulmate.Utils;
 import com.heaven.soulmate.chat.model.ChatMessages;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.apache.log4j.Logger;
 
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.Properties;
 
 /**
  * Created by chenjie3 on 2015/11/5.
  */
 public class OfflineMsgDAO {
+    private static final Logger LOGGER = Logger.getLogger(OfflineMsgDAO.class);
+
     private static OfflineMsgDAO instance = null;
 
     private ComboPooledDataSource cpds = null;
@@ -80,6 +84,40 @@ public class OfflineMsgDAO {
         }
 
         return messageId;
+    }
+
+    public boolean updateDelivered(long uid, LinkedList<Long> messageIds){
+        Connection conn = null;
+        PreparedStatement statement = null;
+        long messageId = -1L;
+        String password_from_mysql = "";
+
+        if (messageIds.size() == 0){
+            return false;
+        }
+
+        try {
+            conn = cpds.getConnection();
+
+
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.format("message_id in (%d", messageIds.getFirst()));
+            for (int i = 1; i < messageIds.size(); i++){
+                sb.append(String.format(",%d", messageIds.get(i)));
+            }
+            sb.append(")");
+            String sql = "update msg set delivered=1 where to_uid=? and " + sb.toString();
+
+            statement = conn.prepareStatement(sql);
+            statement.setLong(1, uid);
+
+            int rowsAffectted = statement.executeUpdate();
+            LOGGER.info(String.format("update delivered, %d rowsAffected: %s", rowsAffectted, sql));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return true;
     }
 }
 

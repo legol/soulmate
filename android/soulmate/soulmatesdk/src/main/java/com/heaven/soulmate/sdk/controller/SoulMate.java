@@ -26,8 +26,11 @@ import java.net.HttpURLConnection;
 public class SoulMate implements IHttpDelegate, ITcpClientDelegate{
     private static SoulMate ourInstance = new SoulMate();
 
-    private String loginUrl = "http://192.168.132.69:8080/soulmate/login";
-    private String chatUrl = "http://192.168.132.69:8080/soulmate/chat";
+    private String loginUrl = "http://192.168.1.87:8080/soulmate/login";
+    private String chatUrl = "http://192.168.1.87:8080/soulmate/chat";
+
+//    private String loginUrl = "http://192.168.132.69:8080/soulmate/login";
+//    private String chatUrl = "http://192.168.132.69:8080/soulmate/chat";
 
     private String phone = null;
     private String password = null;

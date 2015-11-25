@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -39,8 +40,14 @@ public class ChatController {
         // 3. longconn: deliever the message to b.
         // 4. longconn: if succeeded, update db with message(id) delivered.
 
-        // todo: verify token
+        // 0. verify token
+        if(!LoginStatusDao.sharedInstance().verifyToken(messages.getUid(), messages.getToken())){
+            ret.setErrNo(-1L);
+            ret.setErrMsg(String.format("can't verify token"));
+            return ret;
+        }
 
+        // 1. save to offlineMsgDB
         long messageId = 0;
         if ((messageId = OfflineMsgDAO.sharedInstance().saveMsg(messages)) < 0) {
             ret.setErrNo(messageId);
@@ -50,6 +57,7 @@ public class ChatController {
         messages.setMessageId(messageId);
         LOGGER.info(String.format("chat message id generated. id=%d. uid_from=%d uid_to=%d token=%s", messageId, messages.getUid(), messages.getTarget_uid(), messages.getToken()));
 
+        // 2. deliver message
         ObjectMapper mapper = new ObjectMapper();
         String messageInJson = null;
         try {
@@ -61,7 +69,7 @@ public class ChatController {
             return ret;
         }
 
-        if (LongConnServerController.sharedInstance().sendMessage(messages.getTarget_uid(), messageInJson) == false) {
+        if (LongConnServerController.sharedInstance().sendMessage(messages.getTarget_uid(), 2, messageInJson) == false) {
             ret.setErrNo(-1L);
             ret.setErrMsg(String.format("can't send message."));
             return ret;
@@ -77,9 +85,17 @@ public class ChatController {
     public Object chatack(HttpServletRequest request, @RequestBody ChatAckMessage msg) {
         ChatAckResult ret = new ChatAckResult();
 
+        // 0. verify token
         if (LoginStatusDao.sharedInstance().verifyToken(msg.getUid(), msg.getToken()) ==  false){
             ret.setErrNo(-1L);
             ret.setErrMsg(String.format("can't verify token for uid=%d token=%s", msg.getUid(), msg.getToken()));
+            return ret;
+        }
+
+        // 1. update offline msg db
+        if (!OfflineMsgDAO.sharedInstance().updateDelivered(msg.getUid(), msg.getMessageIds())){
+            ret.setErrNo(-1L);
+            ret.setErrMsg(String.format("can't update delivered uid=%d", msg.getUid()));
             return ret;
         }
 

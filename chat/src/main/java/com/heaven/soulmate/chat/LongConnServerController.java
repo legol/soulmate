@@ -11,8 +11,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ConnectException;
-import java.net.Socket;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -73,7 +72,12 @@ public class LongConnServerController {
         return null;
     }
 
-    public Boolean sendMessage(long targetUid, String payload){
+    /*
+    type:1 reg (client->longconn)
+    type:2 chat (chat->longconn)
+    type:3 chat_ack (chat->longconn)
+     */
+    public Boolean sendMessage(long targetUid, int type, String payload){
         ServerInfo longconnServer = LongConnServerController.sharedInstance().serverByUid(targetUid);
         if (longconnServer == null){
             return false;
@@ -83,14 +87,15 @@ public class LongConnServerController {
         DataInputStream in = null;
         DataOutputStream out = null;
         try {
-            // todo: handle connection timeout
-            socket = new Socket(longconnServer.ip, longconnServer.portServer);
+            socket = new Socket();
+            InetSocketAddress addr = new InetSocketAddress(longconnServer.ip, longconnServer.portServer);
+            socket.connect(addr, 3000);
 
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
 
             LongConnMessage longconnMsg = new LongConnMessage();
-            longconnMsg.setType(2);
+            longconnMsg.setType(type);
             longconnMsg.setErrNo(0);
             longconnMsg.setPayload(payload);
 
@@ -108,8 +113,15 @@ public class LongConnServerController {
             out.writeInt(messageInJson.length());
             out.writeBytes(messageInJson);
 
+            socket.setSoLinger(true, 3000);
+            socket.close();
             LOGGER.info(String.format("payload sent. longconn=%s:%d target_uid=%d", longconnServer.ip, longconnServer.portServer, targetUid));
         } catch(ConnectException e){
+            e.printStackTrace();
+            LOGGER.error(String.format("can't connect to longconn=%s:%d", longconnServer.ip, longconnServer.portServer));
+            return false;
+        }
+        catch (SocketTimeoutException e){
             e.printStackTrace();
             LOGGER.error(String.format("can't connect to longconn=%s:%d", longconnServer.ip, longconnServer.portServer));
             return false;
