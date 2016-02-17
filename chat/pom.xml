@@ -146,18 +146,15 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>8.1.14.v20131031</version>
+        <version>9.3.0.M1</version>
         <configuration>
           <scanIntervalSeconds>10</scanIntervalSeconds>
           <reload>manual</reload>
-          <connectors>
-            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-              <port>8081</port>
-              <maxIdleTime>60000</maxIdleTime>
-            </connector>
-          </connectors>
+          <httpConnector>
+            <port>8081</port>
+          </httpConnector>
           <webAppConfig>
             <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
             <contextPath>/soulmate</contextPath>

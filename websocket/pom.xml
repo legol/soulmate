@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.heaven.soulmate</groupId>
-  <artifactId>chat</artifactId>
+  <artifactId>websocket</artifactId>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>websocket Maven Webapp</name>
@@ -113,6 +113,20 @@
     </dependency>
     <!-- mysql end-->
 
+    <!-- websocket begin -->
+    <dependency>
+      <groupId>javax.websocket</groupId>
+      <artifactId>javax.websocket-api</artifactId>
+      <version>1.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-websocket</artifactId>
+      <version>4.1.4.RELEASE</version>
+    </dependency>
+    <!-- websocket end -->
+
   </dependencies>
   <build>
     <finalName>chat</finalName>
@@ -146,18 +160,15 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>8.1.14.v20131031</version>
+        <version>9.3.0.M1</version> <!-- version number must be greater than 9 to support websocket-->
         <configuration>
           <scanIntervalSeconds>10</scanIntervalSeconds>
           <reload>manual</reload>
-          <connectors>
-            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+          <httpConnector>
               <port>8081</port>
-              <maxIdleTime>60000</maxIdleTime>
-            </connector>
-          </connectors>
+          </httpConnector>
           <webAppConfig>
             <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
             <contextPath>/soulmate</contextPath>
