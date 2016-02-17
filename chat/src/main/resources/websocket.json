@@ -1,0 +1,18 @@
+{
+  "info": [
+    {
+      "ip": "192.168.132.69",
+      "portServer": 8081,
+      "portClient": 8081,
+      "uid_low":0,
+      "uid_high":10000
+    },
+    {
+      "ip": "106.186.33.7",
+      "portServer": 8081,
+      "portClient": 8081,
+      "uid_low":10000,
+      "uid_high":20000
+    }
+  ]
+}
