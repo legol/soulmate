@@ -50,17 +50,15 @@ KEY(`delivered`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-
 DROP TABLE IF EXISTS `login_status`;
 CREATE TABLE `login_status` (
 `uid` BIGINT(20) NOT NULL COMMENT '',
 `token` VARCHAR(255) NULL COMMENT '',
 `token_gen_time` TIMESTAMP,
 `token_expire_time` TIMESTAMP,
-`last_login_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+`last_login_time` TIMESTAMP DEFAULT 0,
 location Point NOT NULL COMMENT 'current location',
 PRIMARY KEY(`uid`),
 SPATIAL INDEX(location)
 )ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 
