@@ -8,12 +8,19 @@ if (!LoginController) {
     LoginController.prototype.login = function (user_name, pwd) {
         alert("LoginController: login button clicked");
 
+        var testData = {
+            "phone":"15011113304",
+            "password":"803048"
+        };
+
         $.ajax({
-            url: "", // 不能跨域，只能访问自己本站内容
-            dataType: 'text',
+            url: "/login", // 不能跨域，只能访问自己本站内容
             async: true,
-            timeout: 5000, // ms
+            timeout: 10000, // ms
             type: 'POST',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(testData),
             success: function (data) {
                 // process data
                 alert("success");
