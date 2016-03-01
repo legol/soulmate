@@ -24,7 +24,7 @@ if (!LoginController) {
             success: function (data) {
                 // process data
                 alert("success");
-                alert(data.toString());
+                alert(JSON.stringify(data));
             },
             error: function(url, options){
                 alert("error occured");
