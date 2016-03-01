@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.util.List;
+
 /**
  * Created by legol on 2015/10/24.
  */
@@ -24,11 +26,16 @@ public class LoginResult{
     @JsonProperty("uid")
     private Long uid;
 
-    @JsonProperty("longconn_ip")
-    private String longconnIP;
+    @JsonProperty("servers")
+    public ServerInfoList servers;
 
-    @JsonProperty("longconn_port")
-    private int longconnPort;
+    public ServerInfoList getServers() {
+        return servers;
+    }
+
+    public void setServers(ServerInfoList servers) {
+        this.servers = servers;
+    }
 
     public String getToken() {
         return token;
@@ -44,22 +51,6 @@ public class LoginResult{
 
     public void setUid(Long uid) {
         this.uid = uid;
-    }
-
-    public String getLongconnIP() {
-        return longconnIP;
-    }
-
-    public int getLongconnPort() {
-        return longconnPort;
-    }
-
-    public void setLongconnIP(String longconnIP) {
-        this.longconnIP = longconnIP;
-    }
-
-    public void setLongconnPort(int longconnPort) {
-        this.longconnPort = longconnPort;
     }
 
     public int getLoginErrNo() {

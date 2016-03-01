@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
 import com.heaven.soulmate.login.model.*;
+import com.heaven.soulmate.login.ServerSelector;
 
 /**
  * Created by ChenJie3 on 2015/9/8.
@@ -34,21 +35,17 @@ public class LoginController {
             return httpResult;
         }
 
-        // assign a longconn server to client
-        ServerInfo selectedLongconnServer = LongConnServerController.sharedInstance().serverByUid(lr.getUid());
-        if (selectedLongconnServer == null){
+        // assign a websocket server to client
+        ServerInfoList selectedWebSocketServer = ServerSelector.sharedInstance().selectServerBy("websocket", lr.getUid());
+        if (selectedWebSocketServer == null){
             httpResult.setErrNo(-1L);
             httpResult.setErrMsg("can't find a longconn server for you.");
             return httpResult;
         }
+        lr.setServers(selectedWebSocketServer);
 
         httpResult.setErrNo(0L);
-
-        lr.setLongconnIP(selectedLongconnServer.ip);
-        lr.setLongconnPort(selectedLongconnServer.portClient);
-
         httpResult.setData(lr);
-
         return httpResult;
     }
 }
