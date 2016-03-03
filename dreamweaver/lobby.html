@@ -15,7 +15,7 @@ html, body {
     background: #eeeeda;
 }
 
-.bordered_container {
+.main_container {
     border: 2px solid #0078ae;
     border-radius: 5px;
     width:100%;
@@ -29,25 +29,34 @@ html, body {
 	float:left;
     box-sizing: border-box;
 	background-color:#0F3;
+	margin-top:30px;
 }
 
-.member-list-area {
+.member-area {
 	width:25%;
     height: 80%;
 	float:left;
     resize: none;
     box-sizing: border-box;
 	background-color:#00C;
+	margin-top:30px;
 } 
 
 .input-area {
 	width:100%;
     height: 20%;
-	float:left;
     resize: none;
     box-sizing: border-box;
 	background-color:#909;
 } 
+
+.menu-area {
+	width:100%;
+    height: 30px;
+    resize: none;
+	background-color:#939;
+}
+
 
 </style>
 
@@ -55,16 +64,17 @@ html, body {
 
 <body>
 
-<div class="bordered_container" align="center">
-	<div class="message-area">
+<div class="main_container" align="center">
+	<div class="menu-area" id="menu_container">menu</div>
+	<div class="message-area" id="message_container">
     	<h1>right</h1>
 		<p>测试</p>
     </div>
-    <div class="member-list-area">
+    <div class="member-area" id="member_container">
         	<h1>right</h1>
 		<p>测试</p>
     </div>
-    <div class="input-area">
+    <div class="input-area" id="input_container">
     	hello
     </div>
 </div>
