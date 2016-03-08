@@ -28,11 +28,7 @@ if (!LoginController) {
 
                 if (callback)
                 {
-                    var login_result = {
-                        "status": 0,
-                        "data":data
-                    };
-                    callback(login_result);
+                    callback(true, data);
                 }
             },
             error: function(url, options){
@@ -41,10 +37,7 @@ if (!LoginController) {
                 alert(options.toString());
                 if (callback)
                 {
-                    var login_result = {
-                        "status": -1
-                    };
-                    callback(login_result);
+                    callback(false, null);
                 }
             }
         });

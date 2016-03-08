@@ -22,12 +22,30 @@ if (!UIController) {
             },
 
             submit: function(){
-                window.logincontroller.login("15011113304", "803048", function(login_result){
+                window.logincontroller.login($("#user_name_input").val(), $("#pwd_input").val(),
+                    function(status, login_result){
                     alert("login callback");
                     alert(JSON.stringify(login_result));
 
                     var r = new Render();
-                    r.render($("#main_container"), "resources/templates/chat/lobby.html", JSON.stringify(login_result));
+
+                    // save login result.
+                    if (status == true){
+                        storage = sessionStorage;
+
+                        if (login_result.err_no == 0){
+                            storage.uid = login_result.data.uid;
+                            storage.token = login_result.data.token;
+                            r.render($("#main_container"), "resources/templates/chat/lobby.html", JSON.stringify(login_result));
+                        }
+                        else{
+                            r.render($("#main_container"), "resources/templates/login/login_failure.html", JSON.stringify(login_result));
+                        }
+                    }
+                    else {
+                        r.render($("#main_container"), "resources/templates/login/login_failure.html", JSON.stringify(login_result));
+                    }
+
                 });
             }
         },

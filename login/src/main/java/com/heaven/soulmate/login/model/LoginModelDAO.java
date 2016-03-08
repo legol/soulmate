@@ -62,6 +62,7 @@ public class LoginModelDAO {
         try {
             conn = cpds.getConnection();
 
+            uid = -1;
             statement = conn.prepareStatement("select uid,password from user where phone=?");
             statement.setString(1, phone);
             rs = statement.executeQuery();
@@ -87,6 +88,10 @@ public class LoginModelDAO {
                 lr.setToken(Utils.generateToken(uid, password_from_mysql));
 
                 break;
+            }
+
+            if (uid == -1){
+                return null;
             }
 
             // save token to login_status table

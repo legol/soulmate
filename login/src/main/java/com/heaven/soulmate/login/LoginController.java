@@ -35,6 +35,8 @@ public class LoginController {
             return httpResult;
         }
 
+        LOGGER.info(lr.toString());
+
         // assign a websocket server to client
         ServerInfoList selectedWebSocketServer = ServerSelector.sharedInstance().selectServerBy("websocket", lr.getUid());
         if (selectedWebSocketServer == null){
