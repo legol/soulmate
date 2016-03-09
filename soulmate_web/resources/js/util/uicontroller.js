@@ -36,6 +36,13 @@ if (!UIController) {
                         if (login_result.err_no == 0){
                             storage.uid = login_result.data.uid;
                             storage.token = login_result.data.token;
+
+                            var myself = new User();
+                            myself.data.uid = storage.uid;
+                            myself.data.token = storage.token;
+
+                            window.userList.push(myself);
+
                             r.render($("#main_container"), "resources/templates/chat/lobby.html", JSON.stringify(login_result));
                         }
                         else{
