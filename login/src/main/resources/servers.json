@@ -3,7 +3,7 @@
 
     {
       "role":"websocket",
-      "ip": "192.168.132.69",
+      "ip": "106.186.33.7",
       "portServer": 8081,
       "portClient": 8081,
       "uid_low":0,
