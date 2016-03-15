@@ -7,17 +7,18 @@ if (!UserListController) {
     };
 
     UserListController.prototype = {
-        init: function (data) {
-            alert("user list controller");
+        init: function (userlist) {
+            this.reloadList(userlist);
+        },
 
+        reloadList: function(userlist){
             var r = new Render();
             var template_data = new Object();
-            template_data.users = data;
+            template_data.users = userlist;
 
             alert(JSON.stringify(template_data));
             r.render($("#member_container"), "resources/templates/userlist/userlist.html", template_data);
-        },
-
+        }
     }
 
     window.userlistcontroller = new UserListController();
