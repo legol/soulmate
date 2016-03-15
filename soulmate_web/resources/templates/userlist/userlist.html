@@ -1,0 +1,16 @@
+<div id="userlist_container" class="userlist_container">
+
+    <ul id="userlist_ul">
+    {#foreach $T.users as user}
+        <li>
+            {#if $T.user.data.uid==sessionStorage.uid}
+                我：{$T.user.data.name}
+            {#else}
+                {$T.user.data.name}
+            {#/if}
+        </li>
+    {#/for}
+    </ul>
+
+
+</div>

@@ -38,6 +38,7 @@ if (!UIController) {
                             storage.token = login_result.data.token;
 
                             var myself = new User();
+                            myself.data.name = "myself";
                             myself.data.uid = storage.uid;
                             myself.data.token = storage.token;
 

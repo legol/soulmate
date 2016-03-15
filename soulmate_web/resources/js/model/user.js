@@ -4,6 +4,7 @@
 if (!User) {
     var User = function () {
         this.data = new Object();
+        this.data.name = "";
     };
 
     User.version = "1.0.0";
