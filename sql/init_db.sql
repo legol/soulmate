@@ -57,6 +57,7 @@ CREATE TABLE `login_status` (
 `token_gen_time` TIMESTAMP,
 `token_expire_time` TIMESTAMP,
 `last_login_time` TIMESTAMP DEFAULT 0,
+`websocket_addr` VARCHAR(255) NULL COMMENT '',
 location Point NOT NULL COMMENT 'current location',
 PRIMARY KEY(`uid`),
 SPATIAL INDEX(location)
