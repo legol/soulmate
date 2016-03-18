@@ -93,32 +93,18 @@ public class LoginModelDAO {
             }
 
             // save websocket info to login_status
-//            // save token to login_status table
-//            statement = conn.prepareStatement("delete from login_status where uid = ?");
-//            statement.setLong(1, uid);
-//            statement.executeUpdate();
-//
-//            Timestamp token_gen_time = new Timestamp(System.currentTimeMillis());
-//
-//            Calendar cal = Calendar.getInstance();
-//            cal.setTimeInMillis(token_gen_time.getTime());
-//            cal.add(Calendar.HOUR, 3); // expires after 3 hours
-//
-//            Timestamp token_expire_time = new Timestamp(cal.getTime().getTime());
-//
-//            statement = conn.prepareStatement("insert into login_status(uid, token, token_gen_time, token_expire_time, location) values (?, ?, ?, ?, ST_GEOMFROMTEXT(?))");
-//            statement.setLong(1, uid);
-//            statement.setString(2, lr.getToken());
-//            statement.setTimestamp(3, token_gen_time);
-//            statement.setTimestamp(4, token_expire_time);
-//            statement.setString(5, "POINT(0 0)");
-//            int rowsAffacted = statement.executeUpdate();
-//            if (rowsAffacted != 1) {
-//                return null;
-//            }
-//
-//            statement.close();
-//            conn.close();
+            statement = conn.prepareStatement("update login_status set websocket_addr=? where uid=?");
+            statement.setString(1, Utils.getBindingIP());
+            statement.setLong(2, uid);
+            int rowsAffacted = statement.executeUpdate();
+            if (rowsAffacted != 1) {
+                lr.errno = -1;
+                lr.errmsg = "can't save websocket info to db.";
+                return lr;
+            }
+
+            statement.close();
+            conn.close();
 
         } catch (SQLException e) {
             e.printStackTrace();

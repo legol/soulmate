@@ -7,6 +7,46 @@
   <version>1.0-SNAPSHOT</version>
   <name>login Maven Webapp</name>
   <url>http://maven.apache.org</url>
+
+  <profiles>
+    <profile>
+      <id>debug</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <log.dir>C:/my_own_work/soulmate/logs</log.dir>
+        <log.file>websocket.log</log.file>
+        <mysql.jdbcUrl>jdbc:mysql://127.0.0.1/soulmate</mysql.jdbcUrl>
+        <mysql.user>root</mysql.user>
+        <mysql.password>CjTm803048</mysql.password>
+        <myself.binding_ip>127.0.0.1</myself.binding_ip>
+      </properties>
+    </profile>
+    <profile>
+      <id>home</id>
+      <properties>
+        <log.dir>C:/Projects/soulmate/logs</log.dir>
+        <log.file>websocket.log</log.file>
+        <mysql.jdbcUrl>jdbc:mysql://127.0.0.1/soulmate</mysql.jdbcUrl>
+        <mysql.user>root</mysql.user>
+        <mysql.password>CjTm803048</mysql.password>
+        <myself.binding_ip>127.0.0.1</myself.binding_ip>
+      </properties>
+    </profile>
+    <profile>
+      <id>production</id>
+      <properties>
+        <log.dir>/home/ubuntu/software_install/apache-tomcat-8.0.26/logs/soulmate</log.dir>
+        <log.file>websocket.log</log.file>
+        <mysql.jdbcUrl>jdbc:mysql://106.185.33.7:5454/soulmate</mysql.jdbcUrl>
+        <mysql.user>root</mysql.user>
+        <mysql.password>CjTm803048</mysql.password>
+        <myself.binding_ip>106.185.33.7</myself.binding_ip>
+      </properties>
+    </profile>
+  </profiles>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -81,6 +121,21 @@
   </dependencies>
   <build>
     <finalName>login</finalName>
+
+    <!--in order to replace ${xxxxx} to real value. The real value is at pom.xml, ${xxxxx} is at resources folder}-->
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <!--这里指定那些文件拷贝到最后的包里面-->
+          <include>*.properties</include>
+          <include>*.json</include>
+          <include>*.xml</include>
+        </includes>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <!---->
 
     <plugins>
       <plugin>

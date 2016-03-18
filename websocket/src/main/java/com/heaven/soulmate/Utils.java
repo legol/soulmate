@@ -1,5 +1,8 @@
 package com.heaven.soulmate;
 
+import org.springframework.web.HttpRequestHandler;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -14,6 +17,25 @@ import java.util.Random;
 public class Utils {
 
     static Random rand = new Random();
+    static String binding_ip = "";
+
+    static public String getBindingIP(){
+        if (binding_ip.isEmpty()) {
+            Properties props = new Properties();
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            InputStream stream = loader.getResourceAsStream("myself.properties");
+            try {
+                props.load(stream);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "";
+            }
+
+            binding_ip = props.getProperty("binding_ip");
+        }
+
+        return binding_ip;
+    }
 
     // read a property file from resource folder
     static public Properties readProperties(String filename){

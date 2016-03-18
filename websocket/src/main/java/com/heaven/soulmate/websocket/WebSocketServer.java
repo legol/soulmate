@@ -1,5 +1,7 @@
 package com.heaven.soulmate.websocket;
 
+import com.heaven.soulmate.Utils;
+import com.heaven.soulmate.websocket.model.LoginModelDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,7 @@ public class WebSocketServer {
     @RequestMapping("/websocket")
     @ResponseBody
     public Object test(HttpServletRequest request, HttpServletResponse response) {
-        return "hello websocket & spring mvc!";
+        LoginModelDAO.sharedInstance().websocketLogin(1, "ae1d1540b2650168767ff45ad053965d");
+        return "hello websocket & spring mvc! ";
     }
 }

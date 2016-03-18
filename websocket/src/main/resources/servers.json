@@ -1,0 +1,40 @@
+{
+  "info": [
+
+    {
+      "role":"websocket",
+      "ip": "106.186.33.7",
+      "portServer": 8081,
+      "portClient": 8081,
+      "uid_low":0,
+      "uid_high":10000
+    },
+    {
+      "role":"websocket",
+      "ip": "106.186.33.7",
+      "portServer": 8081,
+      "portClient": 8081,
+      "uid_low":10000,
+      "uid_high":20000
+    },
+
+
+    {
+      "role":"longconn",
+      "ip":"192.168.132.69",
+      "portServer": 7789,
+      "portClient": 7788,
+      "uid_low":0,
+      "uid_high":10000
+    },
+    {
+      "role":"longconn",
+      "ip": "106.186.33.7",
+      "portServer": 7789,
+      "portClient": 7788,
+      "uid_low":10000,
+      "uid_high":20000
+    }
+
+  ]
+}
