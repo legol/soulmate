@@ -3,15 +3,19 @@
 
     {
       "role":"websocket",
-      "url": "ws://127.0.0.1:8080/websocket/chat_room",
+      "ip":"127.0.0.1",
+      "url": "ws://127.0.0.1:82/websocket/chat_room",
       "portServer": 8081,
+      "portClient": 82,
       "uid_low":0,
       "uid_high":10000
     },
     {
       "role":"websocket",
-      "url": "ws://127.0.0.1:8080/websocket/chat_room",
+      "ip":"127.0.0.1",
+      "url": "ws://127.0.0.1:82/websocket/chat_room",
       "portServer": 8081,
+      "portClient": 82,
       "uid_low":10000,
       "uid_high":20000
     },

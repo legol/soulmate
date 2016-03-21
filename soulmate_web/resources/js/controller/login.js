@@ -15,7 +15,7 @@ if (!LoginController) {
         };
 
         $.ajax({
-            url: "/login", // 不能跨域，只能访问自己本站内容
+            url: "/login/login/", // 不能跨域，只能访问自己本站内容
             async: true,
             timeout: 10000, // ms
             type: 'POST',

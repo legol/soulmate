@@ -16,6 +16,9 @@ public class ServerInfo {
     @JsonProperty("ip")
     public String ip;
 
+    @JsonProperty("url")
+    public String url;
+
     @JsonProperty("portServer")
     public int portServer;
 
