@@ -16,7 +16,8 @@ if (!UserListController) {
             var template_data = new Object();
             template_data.users = userlist;
 
-            alert(JSON.stringify(template_data));
+            var log = log4javascript.getDefaultLogger();
+            log.info(JSON.stringify(template_data));
             r.render($("#member_container"), "resources/templates/userlist/userlist.html", template_data);
         }
     }

@@ -1,4 +1,4 @@
-package com.heaven.soulmate.websocket;
+package com.heaven.soulmate.websocket.controller;
 
 import java.util.Collections;
 import java.util.HashSet;

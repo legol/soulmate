@@ -3,17 +3,15 @@
 
     {
       "role":"websocket",
-      "ip": "106.186.33.7",
+      "url": "ws://127.0.0.1:8080/websocket/chat_room",
       "portServer": 8081,
-      "portClient": 8081,
       "uid_low":0,
       "uid_high":10000
     },
     {
       "role":"websocket",
-      "ip": "106.186.33.7",
+      "url": "ws://127.0.0.1:8080/websocket/chat_room",
       "portServer": 8081,
-      "portClient": 8081,
       "uid_low":10000,
       "uid_high":20000
     },
@@ -21,7 +19,7 @@
 
     {
       "role":"longconn",
-      "ip":"192.168.132.69",
+      "ip":"127.0.0.1",
       "portServer": 7789,
       "portClient": 7788,
       "uid_low":0,
@@ -29,7 +27,7 @@
     },
     {
       "role":"longconn",
-      "ip": "106.186.33.7",
+      "ip": "127.0.0.1",
       "portServer": 7789,
       "portClient": 7788,
       "uid_low":10000,

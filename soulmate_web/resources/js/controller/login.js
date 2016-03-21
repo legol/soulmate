@@ -6,7 +6,8 @@ if (!LoginController) {
     };
 
     LoginController.prototype.login = function (user_name, pwd, callback) {
-        alert("LoginController: login button clicked");
+        var log = log4javascript.getDefaultLogger();
+        log.info("LoginController: login button clicked");
 
         var login_data = {
             "phone":user_name,
@@ -23,8 +24,9 @@ if (!LoginController) {
             data: JSON.stringify(login_data),
             success: function (data) {
                 // process data
-                alert("success");
-                alert(JSON.stringify(data));
+                var log = log4javascript.getDefaultLogger();
+                log.info("success");
+                log.info(JSON.stringify(data));
 
                 if (callback)
                 {
@@ -32,9 +34,11 @@ if (!LoginController) {
                 }
             },
             error: function(url, options){
-                alert("error occured");
-                alert(url.toString());
-                alert(options.toString());
+                var log = log4javascript.getDefaultLogger();
+                log.info("error occured");
+                log.info(url.toString());
+                log.info(options.toString());
+
                 if (callback)
                 {
                     callback(false, null);
