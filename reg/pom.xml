@@ -12,7 +12,7 @@
     <profile>
       <id>debug</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
         <log.dir>C:/my_own_work/soulmate/logs</log.dir>
@@ -25,6 +25,9 @@
     </profile>
     <profile>
       <id>home</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <properties>
         <log.dir>C:/Projects/soulmate/logs</log.dir>
         <log.file>reg.log</log.file>

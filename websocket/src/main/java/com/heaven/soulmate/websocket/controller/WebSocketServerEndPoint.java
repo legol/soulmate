@@ -1,16 +1,15 @@
 package com.heaven.soulmate.websocket.controller;
 
+import org.springframework.web.socket.server.standard.SpringConfigurator;
+
+import javax.websocket.OnClose;
+import javax.websocket.OnMessage;
+import javax.websocket.OnOpen;
+import javax.websocket.Session;
+import javax.websocket.server.ServerEndpoint;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.Session;
-import javax.websocket.OnOpen;
-import javax.websocket.server.ServerEndpoint;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.socket.server.standard.SpringConfigurator;
 
 /**
  * Created by ChenJie3 on 2016/2/17.
