@@ -56,7 +56,16 @@ if (!UIController) {
 
                                 r.render($("#main_container"), "resources/templates/chat/lobby.html", JSON.stringify(login_result));
 
-                                window.wscontroller.init("aaaa", this.onwsmsg);
+                                var servers = login_result.data.servers.info;
+                                var arrayLength = servers.length;
+                                for (var i = 0; i < arrayLength; i++) {
+                                    if (servers[i].role.toUpperCase() == "WEBSOCKET"){
+                                        log.info("websocket info: " + JSON.stringify(servers[i]));
+                                        window.wscontroller.init(servers[i].url, this.onwsmsg);
+                                        window.wscontroller.connect();
+                                        break;
+                                    }
+                                }
 
                             }
                             else{

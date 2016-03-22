@@ -16,7 +16,7 @@
       </activation>
       <properties>
         <log.dir>C:/my_own_work/soulmate/logs</log.dir>
-        <log.file>websocket.log</log.file>
+        <log.file>login.log</log.file>
         <mysql.jdbcUrl>jdbc:mysql://127.0.0.1/soulmate</mysql.jdbcUrl>
         <mysql.user>root</mysql.user>
         <mysql.password>CjTm803048</mysql.password>
@@ -30,7 +30,7 @@
       </activation>
       <properties>
         <log.dir>C:/Projects/soulmate/logs</log.dir>
-        <log.file>websocket.log</log.file>
+        <log.file>login.log</log.file>
         <mysql.jdbcUrl>jdbc:mysql://127.0.0.1/soulmate</mysql.jdbcUrl>
         <mysql.user>root</mysql.user>
         <mysql.password>CjTm803048</mysql.password>
@@ -41,7 +41,7 @@
       <id>production</id>
       <properties>
         <log.dir>/home/ubuntu/software_install/apache-tomcat-8.0.26/logs/soulmate</log.dir>
-        <log.file>websocket.log</log.file>
+        <log.file>login.log</log.file>
         <mysql.jdbcUrl>jdbc:mysql://106.185.33.7:5454/soulmate</mysql.jdbcUrl>
         <mysql.user>root</mysql.user>
         <mysql.password>CjTm803048</mysql.password>

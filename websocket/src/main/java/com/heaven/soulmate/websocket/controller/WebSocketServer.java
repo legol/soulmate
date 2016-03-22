@@ -2,6 +2,7 @@ package com.heaven.soulmate.websocket.controller;
 
 import com.heaven.soulmate.Utils;
 import com.heaven.soulmate.websocket.model.LoginModelDAO;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,10 +22,12 @@ import javax.websocket.server.ServerEndpoint;
  */
 @Controller
 public class WebSocketServer {
+    private static final Logger LOGGER = Logger.getLogger(WebSocketServer.class);
+
     @RequestMapping("/websocket")
     @ResponseBody
     public Object test(HttpServletRequest request, HttpServletResponse response) {
-        LoginModelDAO.sharedInstance().websocketLogin(1, "ae1d1540b2650168767ff45ad053965d");
+        //LoginModelDAO.sharedInstance().websocketLogin(1, "ae1d1540b2650168767ff45ad053965d");
         return "hello websocket & spring mvc! ";
     }
 }

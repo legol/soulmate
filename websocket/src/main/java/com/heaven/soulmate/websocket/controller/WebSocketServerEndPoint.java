@@ -1,5 +1,6 @@
 package com.heaven.soulmate.websocket.controller;
 
+import org.apache.log4j.Logger;
 import org.springframework.web.socket.server.standard.SpringConfigurator;
 
 import javax.websocket.OnClose;
@@ -17,10 +18,11 @@ import java.util.Set;
 @ServerEndpoint(value="/chat_room", configurator = SpringConfigurator.class)
 public class WebSocketServerEndPoint{
 
+    private static final Logger LOGGER = Logger.getLogger(WebSocketServerEndPoint.class);
+
+
     public WebSocketServerEndPoint() {
     }
-
-    Set<Session> userSessions = Collections.synchronizedSet(new HashSet<Session>());
 
     /**
      * Callback hook for Connection open events.
@@ -32,8 +34,8 @@ public class WebSocketServerEndPoint{
      */
     @OnOpen
     public void onOpen(Session userSession) {
+        LOGGER.info(String.format("onopen id:<%s>", userSession.getId()));
         System.out.println("New request received. Id: " + userSession.getId());
-        userSessions.add(userSession);
     }
 
     /**
@@ -46,8 +48,8 @@ public class WebSocketServerEndPoint{
      */
     @OnClose
     public void onClose(Session userSession) {
+        LOGGER.info(String.format("onclose id:<%s>", userSession.getId()));
         System.out.println("Connection closed. Id: " + userSession.getId());
-        userSessions.remove(userSession);
     }
 
     /**
@@ -60,7 +62,8 @@ public class WebSocketServerEndPoint{
      */
     @OnMessage
     public void onMessage(String message, Session userSession) {
-        System.out.println("Message Received: " + message);
+        LOGGER.info(String.format("message received:<%s>", message));
+
         for (Session session : userSession.getOpenSessions()) {
             if (session.isOpen())
                 session.getAsyncRemote().sendText(message);
