@@ -52,6 +52,8 @@ if (!UIController) {
                                 myself.data.uid = storage.uid;
                                 myself.data.token = storage.token;
 
+                                window.myself = myself;
+
                                 window.userList.push(myself);
 
                                 r.render($("#main_container"), "resources/templates/chat/lobby.html", JSON.stringify(login_result));

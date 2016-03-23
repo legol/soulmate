@@ -35,7 +35,6 @@ public class WebSocketServerEndPoint{
     @OnOpen
     public void onOpen(Session userSession) {
         LOGGER.info(String.format("onopen id:<%s>", userSession.getId()));
-        System.out.println("New request received. Id: " + userSession.getId());
     }
 
     /**
@@ -49,7 +48,6 @@ public class WebSocketServerEndPoint{
     @OnClose
     public void onClose(Session userSession) {
         LOGGER.info(String.format("onclose id:<%s>", userSession.getId()));
-        System.out.println("Connection closed. Id: " + userSession.getId());
     }
 
     /**

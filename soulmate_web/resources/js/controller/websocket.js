@@ -17,12 +17,14 @@ if (!WebSocketController) {
             this.data.onmessage = fnOnMsg;
 
             var log = log4javascript.getDefaultLogger();
-            log.info("ws: init endpointURL=" + endpointURL);
+            log.info("ws: init endpointURL: " + endpointURL);
         },
 
         onmessage: function(event){
-            log.info("ws: onmessge" + this.data.endPointURL);
+            var log = log4javascript.getDefaultLogger();
+            log.info("ws: onmessge: " + JSON.stringify(event.data));
 
+            alert("onmessage: " + JSON.stringify(event.data));
             var msgObj = JSON.parse(event.data);
             if (this.data.onmessage) {
                 this.data.onmessage(msgObj);
@@ -30,41 +32,69 @@ if (!WebSocketController) {
         },
 
         onclose: function(event){
-            log.info("ws: onclose" + this.data.endPointURL);
+            var log = log4javascript.getDefaultLogger();
+            log.info("ws: onclose: " + JSON.stringify(event));
 
             this.data.wsclient = null;
         },
 
         onopen: function(event){
-            log.info("ws: onopen" + this.data.endPointURL);
+            var log = log4javascript.getDefaultLogger();
+            log.info("ws: onopen: " + JSON.stringify(event));
 
+            var ws_authentication = new Object();
+
+            ws_authentication.type = "auth";
+            ws_authentication.uid = window.myself.data.uid;
+            ws_authentication.token = window.myself.data.token;
+
+            window.wscontroller.send(ws_authentication);
+        },
+
+        onerror: function(event){
+            var log = log4javascript.getDefaultLogger();
+            log.info("ws: onopen: " + JSON.stringify(event));
+        },
+
+        send: function(msgObj) {
+            var log = log4javascript.getDefaultLogger();
+            log.info("ws: send msg <" + JSON.stringify(msgObj) + "> to" + this.data.endPointURL);
+
+            if (this.data.wsclient){
+                this.data.wsclient.send(JSON.stringify(msgObj));
+            }
         },
 
         connect: function () {
-            log.info("ws: connecting to" + this.data.endPointURL);
+            var log = log4javascript.getDefaultLogger();
+            log.info("ws: connecting to:" + this.data.endPointURL);
+
+            var THIS = this;
 
             this.data.wsclient = new WebSocket(this.data.endPointURL);
-            this.data.wsclient.onmessage = this.onmessage;
-            this.data.wsclient.onclose = this.onclose;
-            this.data.wsclient.onopen = this.onopen;
-            this.data.wsclient.onerror = this.onerror;
+            this.data.wsclient.onmessage = function(event){
+                THIS.onmessage(event);
+            };
+            this.data.wsclient.onclose = function(event){
+                THIS.onclose(event);
+            };
+            this.data.wsclient.onopen = function(event){
+                THIS.onopen(event);
+            };
+            this.data.wsclient.onerror = function(event){
+                THIS.onerror(event);
+            }
         },
 
         close: function(){
-            log.info("ws: close connection to" + this.data.endPointURL);
+            var log = log4javascript.getDefaultLogger();
+            log.info("ws: close connection to:" + this.data.endPointURL);
 
             if (this.data.wsclient){
                 this.data.wsclient.close();
             }
         },
 
-        send: function(msgObj) {
-            log.info("ws: send msg to" + this.data.endPointURL);
-
-            if (this.data.wsclient){
-                this.data.wsclient.send(JSON.stringify(msgObj));
-            }
-        }
     }
 
     window.wscontroller = new WebSocketController();
