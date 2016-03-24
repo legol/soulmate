@@ -24,10 +24,17 @@ import javax.websocket.server.ServerEndpoint;
 public class WebSocketServer {
     private static final Logger LOGGER = Logger.getLogger(WebSocketServer.class);
 
+    public WebSocketServer(){
+        // this is to make sure we load datasource.properties from the mainthread.
+        // We won't be able to load datasource.properties from OnMessage
+        // We won't be able to load myself.properties from OnMessage
+        LoginModelDAO.sharedInstance();
+        Utils.Init();
+    }
+
     @RequestMapping("/websocket")
     @ResponseBody
     public Object test(HttpServletRequest request, HttpServletResponse response) {
-        //LoginModelDAO.sharedInstance().websocketLogin(1, "ae1d1540b2650168767ff45ad053965d");
         return "hello websocket & spring mvc! ";
     }
 }

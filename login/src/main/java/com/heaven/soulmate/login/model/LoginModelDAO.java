@@ -95,10 +95,6 @@ public class LoginModelDAO {
             }
 
             // save token to login_status table
-            statement = conn.prepareStatement("delete from login_status where uid = ?");
-            statement.setLong(1, uid);
-            statement.executeUpdate();
-
             Timestamp token_gen_time = new Timestamp(System.currentTimeMillis());
 
             Calendar cal = Calendar.getInstance();
@@ -107,14 +103,16 @@ public class LoginModelDAO {
 
             Timestamp token_expire_time = new Timestamp(cal.getTime().getTime());
 
-            statement = conn.prepareStatement("insert into login_status(uid, token, token_gen_time, token_expire_time, location) values (?, ?, ?, ?, ST_GEOMFROMTEXT(?))");
+            statement = conn.prepareStatement("replace login_status(uid, token, token_gen_time, token_expire_time, location) values (?, ?, ?, ?, ST_GEOMFROMTEXT(?))");
             statement.setLong(1, uid);
             statement.setString(2, lr.getToken());
             statement.setTimestamp(3, token_gen_time);
             statement.setTimestamp(4, token_expire_time);
             statement.setString(5, "POINT(0 0)");
             int rowsAffacted = statement.executeUpdate();
-            if (rowsAffacted != 1) {
+            if (rowsAffacted == 0) {
+                statement.close();
+                conn.close();
                 return null;
             }
 

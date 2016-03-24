@@ -84,10 +84,10 @@ public class WebSocketServerEndPoint{
             }
 
             // broadcast
-            for (Session session : userSession.getOpenSessions()) {
-                if (session.isOpen())
-                    session.getAsyncRemote().sendText(message);
-            }
+//            for (Session session : userSession.getOpenSessions()) {
+//                if (session.isOpen())
+//                    session.getAsyncRemote().sendText(message);
+//            }
         } catch (IOException e) {
             LOGGER.error(String.format("unknown error caused by message <%s>", message));
             e.printStackTrace();
@@ -135,7 +135,7 @@ public class WebSocketServerEndPoint{
 
         MessageAck ack = new MessageAck();
         String messageInString = null;
-        ack.msgid = Long.parseLong((String)messageParsed.get("msgid"));
+        ack.msgid = ((Integer)messageParsed.get("msgid")).longValue();
         try {
             messageInString = mapper.writeValueAsString(ack);
         } catch (JsonProcessingException e) {
