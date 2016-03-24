@@ -4,6 +4,8 @@ if (!WebSocketController) {
         this.data.endPointURL = "";
         this.data.wsclient = null;
 
+        this.data.latestMessageId = 0;
+
         this.data.onmessage = null;
         this.data.onopen = null;
         this.data.onclose = null;
@@ -31,6 +33,10 @@ if (!WebSocketController) {
             }
         },
 
+        getNewMessageId:function (){
+            return ++this.data.latestMessageId;
+        },
+
         onclose: function(event){
             var log = log4javascript.getDefaultLogger();
             log.info("ws: onclose: " + JSON.stringify(event));
@@ -44,9 +50,9 @@ if (!WebSocketController) {
 
             var ws_authentication = new Object();
 
-            ws_authentication.type = "auth";
             ws_authentication.uid = window.myself.data.uid;
             ws_authentication.token = window.myself.data.token;
+            ws_authentication.msgid = window.wscontroller.getNewMessageId();
 
             window.wscontroller.send(ws_authentication);
         },

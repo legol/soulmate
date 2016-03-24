@@ -1,5 +1,11 @@
 package com.heaven.soulmate.websocket.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heaven.soulmate.websocket.model.LoginModelDAO;
+import com.heaven.soulmate.websocket.model.LoginResult;
+import com.heaven.soulmate.websocket.model.MessageAck;
 import org.apache.log4j.Logger;
 import org.springframework.web.socket.server.standard.SpringConfigurator;
 
@@ -8,7 +14,9 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -62,9 +70,84 @@ public class WebSocketServerEndPoint{
     public void onMessage(String message, Session userSession) {
         LOGGER.info(String.format("message received:<%s>", message));
 
-        for (Session session : userSession.getOpenSessions()) {
-            if (session.isOpen())
-                session.getAsyncRemote().sendText(message);
+        try {
+            if (!authentication(message)){
+                LOGGER.error(String.format("can't auth incoming message. <%s>", message));
+                userSession.close();
+                return;
+            }
+
+            if(!processMessage(message, userSession)){
+                LOGGER.error(String.format("can't process message. <%s>", message));
+                userSession.close();
+                return;
+            }
+
+            // broadcast
+            for (Session session : userSession.getOpenSessions()) {
+                if (session.isOpen())
+                    session.getAsyncRemote().sendText(message);
+            }
+        } catch (IOException e) {
+            LOGGER.error(String.format("unknown error caused by message <%s>", message));
+            e.printStackTrace();
         }
+    }
+
+    private boolean authentication(String message){
+        ObjectMapper mapper = new ObjectMapper();
+        TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object>>() {};
+
+        HashMap<String,Object> messageParsed = null;
+        try {
+            messageParsed = mapper.readValue(message, typeRef);
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            LOGGER.error(String.format("can't parse incoming message. <%s>", message));
+            return false;
+        }
+
+        long uid = Long.parseLong((String)messageParsed.get("uid"));
+        String token = (String)messageParsed.get("token");
+        LoginResult lr = LoginModelDAO.sharedInstance().websocketLogin(uid, token);
+        if (lr.errno != 0){
+            LOGGER.error(String.format("unauthorized uid <%d> with token <%s>", uid, token));
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean processMessage(String message, Session userSession){
+        ObjectMapper mapper = new ObjectMapper();
+        TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object>>() {};
+
+        HashMap<String,Object> messageParsed = null;
+        try {
+            messageParsed = mapper.readValue(message, typeRef);
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            LOGGER.error(String.format("can't parse incoming message. <%s>", message));
+            return false;
+        }
+
+        MessageAck ack = new MessageAck();
+        String messageInString = null;
+        ack.msgid = Long.parseLong((String)messageParsed.get("msgid"));
+        try {
+            messageInString = mapper.writeValueAsString(ack);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            LOGGER.error(String.format("can't assemble outgoing message."));
+            return false;
+        }
+
+        if(userSession.isOpen()){
+            userSession.getAsyncRemote().sendText(messageInString);
+        }
+
+        return true;
     }
 }

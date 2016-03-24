@@ -4,7 +4,7 @@
     {
       "role":"websocket",
       "ip":"127.0.0.1",
-      "url": "ws://127.0.0.1:8080/websocket/chat_room",
+      "url": "ws://127.0.0.1:8081/soulmate/chat_room",
       "portServer": 8081,
       "portClient": 8080,
       "uid_low":0,
@@ -13,9 +13,9 @@
     {
       "role":"websocket",
       "ip":"127.0.0.1",
-      "url": "ws://127.0.0.1:8080/websocket/chat_room",
+      "url": "ws://127.0.0.1:8081/soulmate/chat_room",
       "portServer": 8081,
-      "portClient": 8080,
+      "portClient": 8081,
       "uid_low":10000,
       "uid_high":20000
     },
