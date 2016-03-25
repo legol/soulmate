@@ -39,7 +39,7 @@ public class LoginController {
 
         // assign a websocket server to client
         ServerInfoList selectedWebSocketServer = ServerSelector.sharedInstance().selectServerBy("websocket", lr.getUid());
-        if (selectedWebSocketServer == null){
+        if (selectedWebSocketServer == null) {
             httpResult.setErrNo(-1L);
             httpResult.setErrMsg("can't find a longconn server for you.");
             return httpResult;
@@ -48,6 +48,24 @@ public class LoginController {
 
         httpResult.setErrNo(0L);
         httpResult.setData(lr);
+
+        // todo: notify all other clients that someone logged in
+
+
         return httpResult;
+    }
+
+    @RequestMapping("/query_online_clients")
+    @ResponseBody
+    public Object queryClients(HttpServletRequest request, @RequestBody QueryOnlineClientsRequest requestParsed) {
+
+        // todo: implementation
+
+        if (!LoginModelDAO.sharedInstance().authByToken(requestParsed.uid, requestParsed.token)){
+
+        }
+
+
+        return null;
     }
 }

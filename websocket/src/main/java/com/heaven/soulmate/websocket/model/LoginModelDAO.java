@@ -41,8 +41,8 @@ public class LoginModelDAO {
         return instance;
     }
 
-    // 1. verify password
-    // 2. generate token and store it into login_status
+    // 1. verify token
+    // 2. save my address into login_status
     public LoginResult websocketLogin(long uid, String token){
         assert(cpds != null);
 

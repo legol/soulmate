@@ -124,4 +124,49 @@ public class LoginModelDAO {
 
         return lr;
     }
+
+    public boolean authByToken(long uid, String token){
+        assert(cpds != null);
+
+        if(token.isEmpty()){
+            return false;
+        }
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        String token_from_mysql ="";
+
+        try {
+            conn = cpds.getConnection();
+
+            statement = conn.prepareStatement("select token, token_expire_time from login_status where uid=?");
+            statement.setLong(1, uid);
+            rs = statement.executeQuery();
+
+            while (rs.next()){
+                token_from_mysql = rs.getString("token");
+
+                if (token_from_mysql.isEmpty()) {
+                    return false;
+                }
+
+                if (token_from_mysql.compareToIgnoreCase(token) != 0) {
+                    return false;
+                }
+
+                break;
+            }
+
+            if (token_from_mysql.isEmpty()){
+                return false;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
 }

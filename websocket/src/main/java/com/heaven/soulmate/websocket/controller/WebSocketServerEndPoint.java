@@ -26,56 +26,54 @@ import java.util.Set;
 @ServerEndpoint(value="/chat_room", configurator = SpringConfigurator.class)
 public class WebSocketServerEndPoint{
 
+    public static HashMap<Long, HashSet<Session>> uidToSessions = new HashMap<Long, HashSet<Session>>();
+    public static HashMap<Long, Long> sessionIdToUid = new HashMap<Long, Long>();
+
     private static final Logger LOGGER = Logger.getLogger(WebSocketServerEndPoint.class);
 
+    public boolean sendMsg(long uid, String message){
+        if (!uidToSessions.containsKey(uid)) {
+            LOGGER.error(String.format("uid=%d is not connected to me.", uid));
+            return false;
+        }
 
-    public WebSocketServerEndPoint() {
+
+
+        return true;
     }
 
-    /**
-     * Callback hook for Connection open events.
-     *
-     * This method will be invoked when a client requests for a
-     * WebSocket connection.
-     *
-     * @param userSession the userSession which is opened.
-     */
     @OnOpen
     public void onOpen(Session userSession) {
         LOGGER.info(String.format("onopen id:<%s>", userSession.getId()));
     }
 
-    /**
-     * Callback hook for Connection close events.
-     *
-     * This method will be invoked when a client closes a WebSocket
-     * connection.
-     *
-     * @param userSession the userSession which is opened.
-     */
     @OnClose
     public void onClose(Session userSession) {
         LOGGER.info(String.format("onclose id:<%s>", userSession.getId()));
+
+        removeFromMap(userSession);
     }
 
-    /**
-     * Callback hook for Message Events.
-     *
-     * This method will be invoked when a client send a message.
-     *
-     * @param message The text message
-     * @param userSession The session of the client
-     */
+    @OnError
+    public void onError(Session userSession) {
+        LOGGER.info(String.format("onerror id:<%s>", userSession.getId()));
+
+        removeFromMap(userSession);
+    }
+
     @OnMessage
     public void onMessage(String message, Session userSession) {
         LOGGER.info(String.format("message received:<%s>", message));
 
         try {
-            if (!authentication(message)){
+            long uid = -1;
+            if ((uid = authentication(message)) > 0){
                 LOGGER.error(String.format("can't auth incoming message. <%s>", message));
                 userSession.close();
                 return;
             }
+
+            addToMap(uid, userSession);
 
             if(!processMessage(message, userSession)){
                 LOGGER.error(String.format("can't process message. <%s>", message));
@@ -94,7 +92,7 @@ public class WebSocketServerEndPoint{
         }
     }
 
-    private boolean authentication(String message){
+    private long authentication(String message){
         ObjectMapper mapper = new ObjectMapper();
         TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object>>() {};
 
@@ -105,7 +103,7 @@ public class WebSocketServerEndPoint{
             e.printStackTrace();
 
             LOGGER.error(String.format("can't parse incoming message. <%s>", message));
-            return false;
+            return -1;
         }
 
         long uid = Long.parseLong((String)messageParsed.get("uid"));
@@ -113,10 +111,10 @@ public class WebSocketServerEndPoint{
         LoginResult lr = LoginModelDAO.sharedInstance().websocketLogin(uid, token);
         if (lr.errno != 0){
             LOGGER.error(String.format("unauthorized uid <%d> with token <%s>", uid, token));
-            return false;
+            return -1;
         }
 
-        return true;
+        return uid;
     }
 
     private boolean processMessage(String message, Session userSession){
@@ -150,4 +148,23 @@ public class WebSocketServerEndPoint{
 
         return true;
     }
+
+    // map maintainence
+    private void addToMap(long uid, Session session){
+        if (!uidToSessions.containsKey(uid)){
+            uidToSessions.put(uid, new HashSet<Session>());
+        }
+        uidToSessions.get(uid).add(session);
+        sessionIdToUid.put(new Long(session.getId()), uid);
+    }
+
+    private void removeFromMap(Session session){
+        if (sessionIdToUid.containsKey(new Long(session.getId()))){
+            long uid = sessionIdToUid.get(new Long(session.getId())).longValue();
+            HashSet<Session> sessionSet = uidToSessions.get(uid);
+            sessionSet.remove(session);
+        }
+    }
+
+
 }
