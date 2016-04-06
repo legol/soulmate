@@ -92,10 +92,11 @@ public class LoginModelDAO {
                 return lr;
             }
 
-            // save websocket info to login_status
-            statement = conn.prepareStatement("update login_status set websocket_addr=? where uid=?");
-            statement.setString(1, Utils.getBindingIP());
-            statement.setLong(2, uid);
+            // save websocket info to websocket table
+            statement = conn.prepareStatement("insert into websocket(uid, websocket, last_active_time) values(?, ?, CURRENT_TIMESTAMP)" +
+                    " ON DUPLICATE KEY UPDATE last_active_time=CURRENT_TIMESTAMP");
+            statement.setLong(1, uid);
+            statement.setString(2, Utils.getBindingIP());
             int rowsAffacted = statement.executeUpdate();
             if (rowsAffacted != 1) {
                 lr.errno = -1;

@@ -9,10 +9,7 @@ import com.heaven.soulmate.websocket.model.MessageAck;
 import org.apache.log4j.Logger;
 import org.springframework.web.socket.server.standard.SpringConfigurator;
 
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Collections;
@@ -55,7 +52,7 @@ public class WebSocketServerEndPoint{
     }
 
     @OnError
-    public void onError(Session userSession) {
+    public void onError(Session userSession, Throwable t){ // javdoc says that method need to have mandatory Throwable parameter so on deploy module throws server exception
         LOGGER.info(String.format("onerror id:<%s>", userSession.getId()));
 
         removeFromMap(userSession);

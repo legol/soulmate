@@ -63,3 +63,24 @@ PRIMARY KEY(`uid`),
 SPATIAL INDEX(location)
 )ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `login_status`;
+CREATE TABLE `login_status` (
+`uid` BIGINT(20) NOT NULL COMMENT '',
+`token` VARCHAR(255) NULL COMMENT '',
+`token_gen_time` TIMESTAMP,
+`token_expire_time` TIMESTAMP,
+`last_login_time` TIMESTAMP DEFAULT 0,
+`websocket_addr` VARCHAR(255) NULL COMMENT '',
+location Point NOT NULL COMMENT 'current location',
+PRIMARY KEY(`uid`),
+SPATIAL INDEX(location)
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `websocket`;
+CREATE TABLE `websocket` (
+`uid` BIGINT(20) NOT NULL COMMENT '',
+`websocket` VARCHAR(255) NOT NULL COMMENT '',
+PRIMARY KEY(`uid`, `websocket`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
