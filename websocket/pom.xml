@@ -180,7 +180,7 @@
           </httpConnector>
           <webAppConfig>
             <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
-            <contextPath>/soulmate</contextPath>
+            <contextPath>/websocket</contextPath>
             <defaultsDescriptor>webdefault.xml</defaultsDescriptor>
           </webAppConfig>
           <stopPort>8888</stopPort>

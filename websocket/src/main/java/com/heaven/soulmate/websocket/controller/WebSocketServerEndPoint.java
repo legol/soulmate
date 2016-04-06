@@ -24,7 +24,7 @@ import java.util.Set;
 public class WebSocketServerEndPoint{
 
     public static HashMap<Long, HashSet<Session>> uidToSessions = new HashMap<Long, HashSet<Session>>();
-    public static HashMap<Long, Long> sessionIdToUid = new HashMap<Long, Long>();
+    public static HashMap<String, Long> sessionIdToUid = new HashMap<String, Long>();
 
     private static final Logger LOGGER = Logger.getLogger(WebSocketServerEndPoint.class);
 
@@ -44,19 +44,27 @@ public class WebSocketServerEndPoint{
         LOGGER.info(String.format("onopen id:<%s>", userSession.getId()));
     }
 
+    private void cleanup(Session userSession){
+        if(sessionIdToUid.containsKey(userSession.getId())){
+            long uid = sessionIdToUid.get(userSession.getId()).longValue();
+            LoginModelDAO.sharedInstance().websocketLogout(uid);
+        }
+
+        removeFromMap(userSession);
+    }
+
     @OnClose
     public void onClose(Session userSession) {
         LOGGER.info(String.format("onclose id:<%s>", userSession.getId()));
 
-        LoginResult lr = LoginModelDAO.sharedInstance().websocketLogout(uid);
-        removeFromMap(userSession);
+        cleanup(userSession);
     }
 
     @OnError
     public void onError(Session userSession, Throwable t){ // javdoc says that method need to have mandatory Throwable parameter so on deploy module throws server exception
         LOGGER.info(String.format("onerror id:<%s>", userSession.getId()));
 
-        removeFromMap(userSession);
+        cleanup(userSession);
     }
 
     @OnMessage
@@ -153,12 +161,12 @@ public class WebSocketServerEndPoint{
             uidToSessions.put(uid, new HashSet<Session>());
         }
         uidToSessions.get(uid).add(session);
-        sessionIdToUid.put(new Long(session.getId()), uid);
+        sessionIdToUid.put(session.getId(), uid);
     }
 
     private void removeFromMap(Session session){
-        if (sessionIdToUid.containsKey(new Long(session.getId()))){
-            long uid = sessionIdToUid.get(new Long(session.getId())).longValue();
+        if (sessionIdToUid.containsKey(session.getId())){
+            long uid = sessionIdToUid.get(session.getId()).longValue();
             HashSet<Session> sessionSet = uidToSessions.get(uid);
             sessionSet.remove(session);
         }

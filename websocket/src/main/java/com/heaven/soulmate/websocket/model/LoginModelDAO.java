@@ -19,7 +19,7 @@ public class LoginModelDAO {
 
     protected LoginModelDAO() {
         props = Utils.readProperties("datasource.properties");
-        if (props == null){
+        if (props == null) {
             return;
         }
 
@@ -35,7 +35,7 @@ public class LoginModelDAO {
     }
 
     public static LoginModelDAO sharedInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new LoginModelDAO();
         }
         return instance;
@@ -43,13 +43,13 @@ public class LoginModelDAO {
 
     // 1. verify token
     // 2. save my address into login_status
-    public LoginResult websocketLogin(long uid, String token){
-        assert(cpds != null);
+    public LoginResult websocketLogin(long uid, String token) {
+        assert (cpds != null);
 
         LoginResult lr = new LoginResult();
         lr.errno = 0;
 
-        if(token.isEmpty()){
+        if (token.isEmpty()) {
             lr.errno = -1;
             lr.errmsg = "wrong parameters.";
             return null;
@@ -57,7 +57,7 @@ public class LoginModelDAO {
         Connection conn = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        String token_from_mysql ="";
+        String token_from_mysql = "";
 
         try {
             conn = cpds.getConnection();
@@ -66,7 +66,7 @@ public class LoginModelDAO {
             statement.setLong(1, uid);
             rs = statement.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 token_from_mysql = rs.getString("token");
 
                 if (token_from_mysql.isEmpty()) {
@@ -86,7 +86,7 @@ public class LoginModelDAO {
                 break;
             }
 
-            if (token_from_mysql.isEmpty()){
+            if (token_from_mysql.isEmpty()) {
                 lr.errno = -1;
                 lr.errmsg = "uid not found";
                 return lr;
@@ -112,5 +112,35 @@ public class LoginModelDAO {
         }
 
         return lr;
+    }
+
+    public void websocketLogout(long uid) {
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        String token_from_mysql = "";
+
+        try {
+            conn = cpds.getConnection();
+
+            conn.setAutoCommit(false);
+
+            statement = conn.prepareStatement("delete from websocket where uid=?");
+            statement.setLong(1, uid);
+            statement.executeUpdate();
+
+            statement = conn.prepareStatement("delete from login_status where uid=?");
+            statement.setLong(1, uid);
+            statement.executeUpdate();
+
+            conn.commit();
+            conn.setAutoCommit(true);
+
+            statement.close();
+            conn.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
