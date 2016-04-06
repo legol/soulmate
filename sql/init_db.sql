@@ -81,6 +81,7 @@ DROP TABLE IF EXISTS `websocket`;
 CREATE TABLE `websocket` (
 `uid` BIGINT(20) NOT NULL COMMENT '',
 `websocket` VARCHAR(255) NOT NULL COMMENT '',
+`last_active_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 PRIMARY KEY(`uid`, `websocket`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -98,7 +98,7 @@ public class LoginModelDAO {
             statement.setLong(1, uid);
             statement.setString(2, Utils.getBindingIP());
             int rowsAffacted = statement.executeUpdate();
-            if (rowsAffacted != 1) {
+            if (rowsAffacted == 0) {
                 lr.errno = -1;
                 lr.errmsg = "can't save websocket info to db.";
                 return lr;

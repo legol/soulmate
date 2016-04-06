@@ -104,5 +104,9 @@ if (!WebSocketController) {
     }
 
     window.wscontroller = new WebSocketController();
+
+    $(window).unload(function() {
+        window.wscontroller.close();
+    });
 }
 

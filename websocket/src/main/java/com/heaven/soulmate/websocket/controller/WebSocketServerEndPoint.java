@@ -48,6 +48,7 @@ public class WebSocketServerEndPoint{
     public void onClose(Session userSession) {
         LOGGER.info(String.format("onclose id:<%s>", userSession.getId()));
 
+        LoginResult lr = LoginModelDAO.sharedInstance().websocketLogout(uid);
         removeFromMap(userSession);
     }
 
@@ -64,7 +65,7 @@ public class WebSocketServerEndPoint{
 
         try {
             long uid = -1;
-            if ((uid = authentication(message)) > 0){
+            if ((uid = authentication(message)) <= 0){
                 LOGGER.error(String.format("can't auth incoming message. <%s>", message));
                 userSession.close();
                 return;
