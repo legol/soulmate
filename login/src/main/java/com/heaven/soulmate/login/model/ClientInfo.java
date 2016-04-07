@@ -16,6 +16,6 @@ public class ClientInfo {
     @JsonProperty("name")
     public String name;
 
-    @JsonProperty("websocket_addr")
-    public int websocket_addr;
+    @JsonProperty("phone")
+    public String phone;
 }

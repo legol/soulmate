@@ -11,35 +11,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
 public class HttpResult {
     @JsonProperty("err_msg")
-    private String errMsg;
+    public String errMsg;
 
     @JsonProperty("err_no")
-    private Long errNo;
+    public int errNo;
 
     @JsonProperty("data")
-    private Object data;
-
-    public String getErrMsg() {
-        return errMsg;
-    }
-
-    public Long getErrNo() {
-        return errNo;
-    }
-
-    public void setErrMsg(String errMsg) {
-        this.errMsg = errMsg;
-    }
-
-    public void setErrNo(Long errNo) {
-        this.errNo = errNo;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
-    }
+    public Object data;
 }

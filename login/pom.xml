@@ -165,7 +165,7 @@
           </httpConnector>
           <webAppConfig>
             <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
-            <contextPath>/soulmate</contextPath>
+            <contextPath>/login</contextPath>
             <defaultsDescriptor>webdefault.xml</defaultsDescriptor>
           </webAppConfig>
           <stopPort>8888</stopPort>

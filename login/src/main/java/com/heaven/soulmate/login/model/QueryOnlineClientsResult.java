@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.util.List;
+
 /**
  * Created by legol on 2015/10/24.
  */
@@ -12,13 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
 public class QueryOnlineClientsResult {
 
-    @JsonProperty("err_msg")
-    public String errmsg;
-
-    @JsonProperty("errno")
-    public Long errno;
-
     @JsonProperty("clients")
-    public ClientInfoList clients;
+    public List<ClientInfo> clients;
 
 }

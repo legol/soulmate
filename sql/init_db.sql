@@ -10,7 +10,8 @@ CREATE TABLE `user` (
    `gender` int(11) DEFAULT NULL,
    `phone` varchar(255) DEFAULT NULL,
    `email` varchar(255) DEFAULT NULL,
-   PRIMARY KEY (`uid`)
+   PRIMARY KEY (`uid`),
+   UNIQUE KEY (`phone`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
  
@@ -81,7 +82,8 @@ DROP TABLE IF EXISTS `websocket`;
 CREATE TABLE `websocket` (
 `uid` BIGINT(20) NOT NULL COMMENT '',
 `websocket` VARCHAR(255) NOT NULL COMMENT '',
+`websocket_session_id` VARCHAR(255) NOT NULL COMMENT '',
 `last_active_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-PRIMARY KEY(`uid`, `websocket`)
+PRIMARY KEY(`uid`, `websocket`, `websocket_session_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

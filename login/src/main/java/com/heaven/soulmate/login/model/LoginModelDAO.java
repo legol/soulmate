@@ -6,6 +6,8 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import java.beans.PropertyVetoException;
 import java.sql.*;
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -131,6 +133,7 @@ public class LoginModelDAO {
         if(token.isEmpty()){
             return false;
         }
+
         Connection conn = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -169,4 +172,33 @@ public class LoginModelDAO {
         return true;
     }
 
+    public List<ClientInfo> queryOnlineClients(){
+        LinkedList<ClientInfo> clients = new LinkedList<ClientInfo>();
+
+        assert(cpds != null);
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+            conn = cpds.getConnection();
+
+            statement = conn.prepareStatement("select user.uid, user.name, user.phone from user where user.uid in (select distinct uid from websocket)");
+            rs = statement.executeQuery();
+
+            while (rs.next()){
+                ClientInfo client = new ClientInfo();
+                client.uid = rs.getLong("uid");
+                client.name = rs.getString("name");
+                client.phone = rs.getString("phone");
+
+                clients.add(client);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return clients;
+    }
 }

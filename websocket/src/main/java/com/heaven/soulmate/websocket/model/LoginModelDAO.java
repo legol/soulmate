@@ -41,9 +41,47 @@ public class LoginModelDAO {
         return instance;
     }
 
+    public boolean auth(long uid, String token){
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        String token_from_mysql = "";
+
+        try {
+            conn = cpds.getConnection();
+
+            statement = conn.prepareStatement("select token, token_expire_time from login_status where uid=?");
+            statement.setLong(1, uid);
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                token_from_mysql = rs.getString("token");
+
+                if (token_from_mysql.isEmpty()) {
+                    return false;
+                }
+
+                if (token_from_mysql.compareToIgnoreCase(token) != 0) {
+                    return false;
+                }
+
+                break;
+            }
+
+            if (token_from_mysql.isEmpty()) {
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
     // 1. verify token
     // 2. save my address into login_status
-    public LoginResult websocketLogin(long uid, String token) {
+    public LoginResult websocketLogin(long uid, String token, String websocket_session_id) {
         assert (cpds != null);
 
         LoginResult lr = new LoginResult();
@@ -62,41 +100,18 @@ public class LoginModelDAO {
         try {
             conn = cpds.getConnection();
 
-            statement = conn.prepareStatement("select token, token_expire_time from login_status where uid=?");
-            statement.setLong(1, uid);
-            rs = statement.executeQuery();
-
-            while (rs.next()) {
-                token_from_mysql = rs.getString("token");
-
-                if (token_from_mysql.isEmpty()) {
-                    lr.errno = -1;
-                    lr.errmsg = "uid not found";
-                    break;
-                }
-
-                if (token_from_mysql.compareToIgnoreCase(token) != 0) {
-                    lr.errno = -1;
-                    lr.errmsg = "token mismatch";
-                    break;
-                }
-
-                lr.errno = 0;
-
-                break;
-            }
-
-            if (token_from_mysql.isEmpty()) {
-                lr.errno = -1;
-                lr.errmsg = "uid not found";
+            if (!auth(uid, token)){
+                lr.errmsg = String.format("can't auth uid=%d token=%s", uid, token);
+                lr.errno = -2;
                 return lr;
             }
 
             // save websocket info to websocket table
-            statement = conn.prepareStatement("insert into websocket(uid, websocket, last_active_time) values(?, ?, CURRENT_TIMESTAMP)" +
+            statement = conn.prepareStatement("insert into websocket(uid, websocket, websocket_session_id, last_active_time) values(?, ?, ?, CURRENT_TIMESTAMP)" +
                     " ON DUPLICATE KEY UPDATE last_active_time=CURRENT_TIMESTAMP");
             statement.setLong(1, uid);
             statement.setString(2, Utils.getBindingIP());
+            statement.setString(3, websocket_session_id);
             int rowsAffacted = statement.executeUpdate();
             if (rowsAffacted == 0) {
                 lr.errno = -1;
@@ -114,7 +129,7 @@ public class LoginModelDAO {
         return lr;
     }
 
-    public void websocketLogout(long uid) {
+    public void websocketLogout(long uid, String websocket_session_id) {
         Connection conn = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -125,13 +140,15 @@ public class LoginModelDAO {
 
             conn.setAutoCommit(false);
 
-            statement = conn.prepareStatement("delete from websocket where uid=?");
+            statement = conn.prepareStatement("delete from websocket where uid=? and websocket=? and websocket_session_id=?");
             statement.setLong(1, uid);
+            statement.setString(2, Utils.getBindingIP());
+            statement.setString(3, websocket_session_id);
             statement.executeUpdate();
 
-            statement = conn.prepareStatement("delete from login_status where uid=?");
-            statement.setLong(1, uid);
-            statement.executeUpdate();
+//            statement = conn.prepareStatement("delete from login_status where uid=?");
+//            statement.setLong(1, uid);
+//            statement.executeUpdate();
 
             conn.commit();
             conn.setAutoCommit(true);

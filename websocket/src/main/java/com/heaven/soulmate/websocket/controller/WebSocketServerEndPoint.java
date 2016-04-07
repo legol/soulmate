@@ -47,7 +47,7 @@ public class WebSocketServerEndPoint{
     private void cleanup(Session userSession){
         if(sessionIdToUid.containsKey(userSession.getId())){
             long uid = sessionIdToUid.get(userSession.getId()).longValue();
-            LoginModelDAO.sharedInstance().websocketLogout(uid);
+            LoginModelDAO.sharedInstance().websocketLogout(uid, userSession.getId());
         }
 
         removeFromMap(userSession);
@@ -73,7 +73,7 @@ public class WebSocketServerEndPoint{
 
         try {
             long uid = -1;
-            if ((uid = authentication(message)) <= 0){
+            if ((uid = authentication(message, userSession.getId())) <= 0){
                 LOGGER.error(String.format("can't auth incoming message. <%s>", message));
                 userSession.close();
                 return;
@@ -98,7 +98,7 @@ public class WebSocketServerEndPoint{
         }
     }
 
-    private long authentication(String message){
+    private long authentication(String message, String websocket_session_id){
         ObjectMapper mapper = new ObjectMapper();
         TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object>>() {};
 
@@ -114,7 +114,7 @@ public class WebSocketServerEndPoint{
 
         long uid = Long.parseLong((String)messageParsed.get("uid"));
         String token = (String)messageParsed.get("token");
-        LoginResult lr = LoginModelDAO.sharedInstance().websocketLogin(uid, token);
+        LoginResult lr = LoginModelDAO.sharedInstance().websocketLogin(uid, token, websocket_session_id);
         if (lr.errno != 0){
             LOGGER.error(String.format("unauthorized uid <%d> with token <%s>", uid, token));
             return -1;

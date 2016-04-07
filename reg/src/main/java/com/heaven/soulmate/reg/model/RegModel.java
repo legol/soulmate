@@ -59,9 +59,10 @@ public class RegModel {
         try {
             conn = cpds.getConnection();
 
-            statement = conn.prepareStatement("insert into `user`(`phone`, `password`) values (?,?)");
+            statement = conn.prepareStatement("insert into `user`(`phone`, `password`, `name`) values (?,?,?)");
             statement.setString(1, phone);
             statement.setString(2, Utils.md5(password));
+            statement.setString(3, phone.substring(0, 3) + "********");
             rowsAffected = statement.executeUpdate();
 
             if(rowsAffected == 1){
@@ -71,6 +72,8 @@ public class RegModel {
                     newUID = rs.getLong("newUID");
                     break;
                 }
+            }else{
+                return 0L;
             }
             statement.close();
             conn.close();
