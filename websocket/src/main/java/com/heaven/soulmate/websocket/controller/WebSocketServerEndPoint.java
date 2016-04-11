@@ -12,10 +12,7 @@ import org.springframework.web.socket.server.standard.SpringConfigurator;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by ChenJie3 on 2016/2/17.
@@ -23,8 +20,8 @@ import java.util.Set;
 @ServerEndpoint(value="/chat_room", configurator = SpringConfigurator.class)
 public class WebSocketServerEndPoint{
 
-    public static HashMap<Long, HashSet<Session>> uidToSessions = new HashMap<Long, HashSet<Session>>();
-    public static HashMap<String, Long> sessionIdToUid = new HashMap<String, Long>();
+    public static Map<Long, Set<Session>> uidToSessions = Collections.synchronizedMap(new HashMap<Long, Set<Session>>());
+    public static Map<String, Long> sessionIdToUid = Collections.synchronizedMap(new HashMap<String, Long>());
 
     private static final Logger LOGGER = Logger.getLogger(WebSocketServerEndPoint.class);
 
@@ -34,9 +31,28 @@ public class WebSocketServerEndPoint{
             return false;
         }
 
+        Set<Session> sessionSet = uidToSessions.get(uid);
+        for (Session session : sessionSet) {
+            if (session.isOpen()){
+                session.getAsyncRemote().sendText(message);
+            }
+        }
 
+        LOGGER.info(String.format("send msg:%s to uid=%d", message, uid));
 
         return true;
+    }
+
+    public void broadcast(String message){
+        for (Set<Session> sessionSet : uidToSessions.values()) {
+            for (Session session : sessionSet) {
+                if (session.isOpen()){
+                    session.getAsyncRemote().sendText(message);
+                }
+            }
+        }
+
+        LOGGER.info(String.format("broadcast msg:%s", message));
     }
 
     @OnOpen
@@ -158,7 +174,7 @@ public class WebSocketServerEndPoint{
     // map maintainence
     private void addToMap(long uid, Session session){
         if (!uidToSessions.containsKey(uid)){
-            uidToSessions.put(uid, new HashSet<Session>());
+            uidToSessions.put(uid, Collections.synchronizedSet(new HashSet<Session>()));
         }
         uidToSessions.get(uid).add(session);
         sessionIdToUid.put(session.getId(), uid);
@@ -167,8 +183,12 @@ public class WebSocketServerEndPoint{
     private void removeFromMap(Session session){
         if (sessionIdToUid.containsKey(session.getId())){
             long uid = sessionIdToUid.get(session.getId()).longValue();
-            HashSet<Session> sessionSet = uidToSessions.get(uid);
+            Set<Session> sessionSet = uidToSessions.get(uid);
             sessionSet.remove(session);
+
+            if (sessionSet.isEmpty()){
+                sessionIdToUid.remove(uid);
+            }
         }
     }
 

@@ -9,10 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
-public class WebsocketRequest {
-    @JsonProperty("uid")
-    public long uid;
-
-    @JsonProperty("token")
-    public String token;
+public class BroadcastRequest {
+    @JsonProperty("message")
+    public String message;
 }

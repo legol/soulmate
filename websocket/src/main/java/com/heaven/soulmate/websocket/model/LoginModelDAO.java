@@ -2,6 +2,7 @@ package com.heaven.soulmate.websocket.model;
 
 import com.heaven.soulmate.Utils;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.apache.log4j.Logger;
 
 import java.beans.PropertyVetoException;
 import java.sql.*;
@@ -16,6 +17,8 @@ public class LoginModelDAO {
 
     private ComboPooledDataSource cpds = null;
     private Properties props = null;
+
+    private static final Logger LOGGER = Logger.getLogger(LoginModelDAO.class);
 
     protected LoginModelDAO() {
         props = Utils.readProperties("datasource.properties");
@@ -126,6 +129,8 @@ public class LoginModelDAO {
             e.printStackTrace();
         }
 
+        LOGGER.info(String.format("websocket login: uid=%d websocket_session_id=%s", uid, websocket_session_id));
+
         return lr;
     }
 
@@ -138,24 +143,36 @@ public class LoginModelDAO {
         try {
             conn = cpds.getConnection();
 
-            conn.setAutoCommit(false);
-
             statement = conn.prepareStatement("delete from websocket where uid=? and websocket=? and websocket_session_id=?");
             statement.setLong(1, uid);
             statement.setString(2, Utils.getBindingIP());
             statement.setString(3, websocket_session_id);
             statement.executeUpdate();
 
-//            statement = conn.prepareStatement("delete from login_status where uid=?");
-//            statement.setLong(1, uid);
-//            statement.executeUpdate();
+            LOGGER.info(String.format("websocket logout: uid=%d websocket_session_id=%s", uid, websocket_session_id));
 
-            conn.commit();
-            conn.setAutoCommit(true);
+            statement = conn.prepareStatement("select count(1) as count from websocket where uid=?");
+            statement.setLong(1, uid);
+            statement.executeQuery();
+            rs = statement.executeQuery();
+
+            int count = 0;
+            while (rs.next()) {
+                count = rs.getInt("count");
+                break;
+            }
+
+            if (count == 0){
+                // remove record from login_status table
+                statement = conn.prepareStatement("delete from login_status where uid=?");
+                statement.setLong(1, uid);
+                statement.executeUpdate();
+
+                LOGGER.info(String.format("remove from login_status: uid=%d", uid));
+            }
 
             statement.close();
             conn.close();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
