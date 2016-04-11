@@ -1,17 +1,26 @@
 package com.heaven.soulmate;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.web.HttpRequestHandler;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by ChenJie3 on 2015/10/23.
@@ -86,5 +95,57 @@ public class Utils {
 
         String token_raw = String.format("%d %d %s %s %d", uid, rand, secret, password, timestamp.getTime());
         return md5(token_raw);
+    }
+
+    // HTTP GET request
+    private String httpGet(String url) throws Exception {
+
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpGet request = new HttpGet(url);
+
+        // add request header
+        request.addHeader("User-Agent", "soulmate");
+
+        HttpResponse response = client.execute(request);
+
+        BufferedReader rd = new BufferedReader(
+                new InputStreamReader(response.getEntity().getContent()));
+
+        StringBuffer result = new StringBuffer();
+        String line = "";
+        while ((line = rd.readLine()) != null) {
+            result.append(line);
+        }
+
+        return result.toString();
+    }
+
+    public String httpPost(String url, Map<String, String> parameters) throws Exception {
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpPost post = new HttpPost(url);
+
+        // add header
+        post.setHeader("User-Agent", "soulmate");
+
+        List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+        for (String key : parameters.keySet()) {
+            String value = (String)parameters.get(key);
+            urlParameters.add(new BasicNameValuePair(key, value));
+        }
+
+        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+
+        HttpResponse response = client.execute(post);
+
+        BufferedReader rd = new BufferedReader(
+                new InputStreamReader(response.getEntity().getContent()));
+
+        StringBuffer result = new StringBuffer();
+        String line = "";
+        while ((line = rd.readLine()) != null) {
+            result.append(line);
+        }
+
+        return result.toString();
     }
 }

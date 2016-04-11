@@ -49,6 +49,17 @@ public class LoginController {
         return httpResult;
     }
 
+    @RequestMapping("/logout")
+    @ResponseBody
+    public Object login(HttpServletRequest request, @RequestBody LogoutRequest logoutRequeste) {
+        HttpResult hr = new HttpResult();
+
+        hr.errNo = 0;
+        LoginModelDAO.sharedInstance().logout(logoutRequeste.uid);
+
+        return hr;
+    }
+
     @RequestMapping("/query_online_clients")
     @ResponseBody
     public Object queryClients(HttpServletRequest request, @RequestBody QueryOnlineClientsRequest requestParsed) {

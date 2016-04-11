@@ -43,6 +43,31 @@ public class LoginModelDAO {
         return instance;
     }
 
+    // remove record from login_status
+    public void logout(long uid){
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+            conn = cpds.getConnection();
+
+            // remove record from login_status table
+            statement = conn.prepareStatement("delete from login_status where uid=?");
+            statement.setLong(1, uid);
+            statement.executeUpdate();
+
+            statement = conn.prepareStatement("delete from websocket where uid=?");
+            statement.setLong(1, uid);
+            statement.executeUpdate();
+
+            statement.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     // 1. verify password
     // 2. generate token and store it into login_status
     public LoginResult login(String phone, String password){
