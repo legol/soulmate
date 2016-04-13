@@ -1,5 +1,6 @@
 package com.heaven.soulmate.websocket.controller;
 
+import com.heaven.soulmate.ServerSelector;
 import com.heaven.soulmate.Utils;
 import com.heaven.soulmate.websocket.model.BroadcastRequest;
 import com.heaven.soulmate.websocket.model.HttpResult;
@@ -35,6 +36,7 @@ public class WebSocketServer {
         // We won't be able to load myself.properties from OnMessage
         LoginModelDAO.sharedInstance();
         Utils.Init();
+        ServerSelector.sharedInstance();
     }
 
     @RequestMapping("/test")

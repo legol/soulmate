@@ -1,22 +1,15 @@
 package com.heaven.soulmate.websocket.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heaven.soulmate.ServerSelector;
 import com.heaven.soulmate.Utils;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.apache.log4j.Logger;
 
 import java.beans.PropertyVetoException;
 import java.sql.*;
-import java.util.Calendar;
 import java.util.Properties;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 
 /**
  * Created by ChenJie3 on 2015/10/23.
@@ -173,11 +166,24 @@ public class LoginModelDAO {
 
             if (count == 0){
                 // remove record from login_status table
-                statement = conn.prepareStatement("delete from login_status where uid=?");
-                statement.setLong(1, uid);
-                statement.executeUpdate();
-
                 LOGGER.info(String.format("remove from login_status: uid=%d", uid));
+
+                ServerInfo loginServerInfo = ServerSelector.sharedInstance().selectServerBy("login", uid);
+                LogoutRequest logoutRequest = new LogoutRequest();
+                logoutRequest.uid = uid;
+
+                ObjectMapper mapper = new ObjectMapper();
+                String requestInJson = null;
+                try {
+                    requestInJson = mapper.writeValueAsString(logoutRequest);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                    LOGGER.error(String.format("unknown error happened while trying to logout: uid=%d", uid));
+                    return;
+                }
+
+                String response = Utils.httpPost(String.format("http://%s:%d/login/logout", loginServerInfo.ip, loginServerInfo.portServer), requestInJson);
+                LOGGER.info(String.format("logout: uid=%d response=%s", uid, response));
             }
 
             statement.close();

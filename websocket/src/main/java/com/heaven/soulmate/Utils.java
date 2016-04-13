@@ -7,6 +7,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.core.io.ClassPathResource;
@@ -30,7 +32,7 @@ public class Utils {
     static Random rand = new Random();
     static String binding_ip = "";
 
-    static public void Init(){
+    static public void Init() {
         Properties props = new Properties();
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream stream = loader.getResourceAsStream("myself.properties");
@@ -43,12 +45,12 @@ public class Utils {
         binding_ip = props.getProperty("binding_ip");
     }
 
-    static public String getBindingIP(){
+    static public String getBindingIP() {
         return binding_ip;
     }
 
     // read a property file from resource folder
-    static public Properties readProperties(String filename){
+    static public Properties readProperties(String filename) {
         Properties props = new Properties();
 
         ClassPathResource resource = new ClassPathResource(filename);
@@ -98,54 +100,68 @@ public class Utils {
     }
 
     // HTTP GET request
-    private String httpGet(String url) throws Exception {
+    public static String httpGet(String url){
 
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(url);
+        String result = null;
 
         // add request header
         request.addHeader("User-Agent", "soulmate");
 
-        HttpResponse response = client.execute(request);
+        HttpResponse response = null;
+        try {
+            response = client.execute(request);
 
-        BufferedReader rd = new BufferedReader(
-                new InputStreamReader(response.getEntity().getContent()));
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
 
-        StringBuffer result = new StringBuffer();
-        String line = "";
-        while ((line = rd.readLine()) != null) {
-            result.append(line);
+            StringBuffer sb = new StringBuffer();
+            String line = "";
+            while ((line = rd.readLine()) != null) {
+                sb.append(line);
+            }
+
+            result = sb.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        return result.toString();
+        return result;
     }
 
-    public String httpPost(String url, Map<String, String> parameters) throws Exception {
+    // post json to url
+    public static String httpPost(String url, String json){
         HttpClient client = HttpClientBuilder.create().build();
         HttpPost post = new HttpPost(url);
+        String result = null;
 
         // add header
         post.setHeader("User-Agent", "soulmate");
 
-        List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        for (String key : parameters.keySet()) {
-            String value = (String)parameters.get(key);
-            urlParameters.add(new BasicNameValuePair(key, value));
+        StringEntity requestEntity = new StringEntity(
+                json,
+                ContentType.APPLICATION_JSON);
+        post.setEntity(requestEntity);
+
+        HttpResponse response = null;
+        try {
+            response = client.execute(post);
+
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+            StringBuffer sb = new StringBuffer();
+            String line = "";
+            while ((line = rd.readLine()) != null) {
+                sb.append(line);
+            }
+
+            result = sb.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        post.setEntity(new UrlEncodedFormEntity(urlParameters));
-
-        HttpResponse response = client.execute(post);
-
-        BufferedReader rd = new BufferedReader(
-                new InputStreamReader(response.getEntity().getContent()));
-
-        StringBuffer result = new StringBuffer();
-        String line = "";
-        while ((line = rd.readLine()) != null) {
-            result.append(line);
-        }
-
-        return result.toString();
+        return result;
     }
+
 }

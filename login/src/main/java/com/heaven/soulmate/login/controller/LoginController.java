@@ -21,6 +21,7 @@ public class LoginController {
     @RequestMapping("/login")
     @ResponseBody
     public Object login(HttpServletRequest request, @RequestBody LoginRequest loginRequest) {
+        LOGGER.info(String.format("login. phone:<%s> pwd:<%s>", loginRequest.getPhone(), loginRequest.getPassword()));
 
         HttpResult httpResult = new HttpResult();
         LoginResult lr = LoginModelDAO.sharedInstance().login(loginRequest.getPhone(), loginRequest.getPassword());
@@ -51,7 +52,9 @@ public class LoginController {
 
     @RequestMapping("/logout")
     @ResponseBody
-    public Object login(HttpServletRequest request, @RequestBody LogoutRequest logoutRequeste) {
+    public Object logout(HttpServletRequest request, @RequestBody LogoutRequest logoutRequeste) {
+        LOGGER.info(String.format("logout. uid:<%d> ", logoutRequeste.uid));
+
         HttpResult hr = new HttpResult();
 
         hr.errNo = 0;

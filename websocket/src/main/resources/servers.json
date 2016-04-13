@@ -34,7 +34,25 @@
       "portClient": 7788,
       "uid_low":10000,
       "uid_high":20000
+    },
+
+    {
+      "role":"login",
+      "ip":"127.0.0.1",
+      "portServer": 8000,
+      "portClient": 8000,
+      "uid_low":0,
+      "uid_high":10000
+    },
+    {
+      "role":"login",
+      "ip": "127.0.0.1",
+      "portServer": 8000,
+      "portClient": 8000,
+      "uid_low":10000,
+      "uid_high":20000
     }
+
 
   ]
 }
