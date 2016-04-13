@@ -4,9 +4,9 @@
     {#foreach $T.users as user}
         <li>
             {#if $T.user.data.uid==sessionStorage.uid}
-                我：{$T.user.data.name}
+                我：{$T.user.data.name}:{$T.user.data.uid}
             {#else}
-                {$T.user.data.name}
+                {$T.user.data.name}:{$T.user.data.uid}
             {#/if}
         </li>
     {#/for}
