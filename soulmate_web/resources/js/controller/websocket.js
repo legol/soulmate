@@ -69,7 +69,7 @@ if (!WebSocketController) {
 
         send: function(msgObj) {
             var log = log4javascript.getDefaultLogger();
-            log.info("ws: send msg <" + JSON.stringify(msgObj) + "> to" + this.data.endPointURL);
+            log.info("ws: send msg <" + JSON.stringify(msgObj) + "> to " + this.data.endPointURL);
 
             if (this.data.wsclient){
                 this.data.wsclient.send(JSON.stringify(msgObj));
@@ -81,10 +81,10 @@ if (!WebSocketController) {
             log.info("ws: connecting to:" + this.data.endPointURL);
 
             this.data.wsclient = new WebSocket(this.data.endPointURL);
-            this.data.wsclient.onmessage = this.onmessage.bind(this);
-            this.data.wsclient.onclose = this.onclose.bind(this);
-            this.data.wsclient.onopen = this.onopen.bind(this);
-            this.data.wsclient.onerror = this.onerror.bind(this);
+            this.data.wsclient.onmessage = $.proxy(this.onmessage, this);
+            this.data.wsclient.onclose = $.proxy(this.onclose,this);
+            this.data.wsclient.onopen = $.proxy(this.onopen,this);
+            this.data.wsclient.onerror = $.proxy(this.onerror,this);
         },
 
         close: function(){

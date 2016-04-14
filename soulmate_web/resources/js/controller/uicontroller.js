@@ -57,11 +57,14 @@ if (!UIController) {
                             if (servers[i].role.toUpperCase() == "WEBSOCKET"){
                                 log.info("websocket info: " + JSON.stringify(servers[i]));
                                 window.wscontroller.init(servers[i].url,
-                                    window.uicontroller.websocket.onmessage.bind(this),
-                                    window.uicontroller.websocket.onopen.bind(this),
-                                    window.uicontroller.websocket.onclose.bind(this),
-                                    window.uicontroller.websocket.onerror.bind(this));
-                                window.wscontroller.connect();
+                                    $.proxy(window.uicontroller.websocket.onmessage, window.uicontroller.websocket),
+                                    $.proxy(window.uicontroller.websocket.onopen, window.uicontroller.websocket),
+                                    $.proxy(window.uicontroller.websocket.onclose, window.uicontroller.websocket),
+                                    $.proxy(window.uicontroller.websocket.onerror, window.uicontroller.websocket));
+
+
+                                $.proxy(window.wscontroller.connect, window.wscontroller)();
+
                                 break;
                             }
                         }
@@ -98,7 +101,7 @@ if (!UIController) {
                 ws_authentication.token = window.myself.data.token;
                 ws_authentication.msgid = window.wscontroller.getNewMessageId();
 
-                window.wscontroller.send(ws_authentication);
+                $.proxy(window.wscontroller.send, window.wscontroller)(ws_authentication);
             },
 
             onclose:function(event){
@@ -109,7 +112,7 @@ if (!UIController) {
                 $('#timer').timer({
                     duration: '3s',
                     callback: function() {
-                        window.wscontroller.connect();
+                        $.proxy(window.wscontroller.connect, window.wscontroller)();
                         $('#timer').timer('remove');
                     },
                     repeat: false //repeatedly call the callback
