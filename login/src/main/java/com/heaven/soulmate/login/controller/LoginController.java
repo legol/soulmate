@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 
 import com.heaven.soulmate.login.model.*;
-import com.heaven.soulmate.login.ServerSelector;
+import com.heaven.soulmate.ServerSelector;
 
 /**
  * Created by ChenJie3 on 2015/9/8.
@@ -47,6 +47,9 @@ public class LoginController {
         httpResult.errNo = 0;
         httpResult.data = lr;
 
+        // todo:notify all websocket server that someone logged out
+
+
         return httpResult;
     }
 
@@ -59,6 +62,8 @@ public class LoginController {
 
         hr.errNo = 0;
         LoginModelDAO.sharedInstance().logout(logoutRequeste.uid);
+
+        // todo:notify all websocket server that someone logged out
 
         return hr;
     }

@@ -1,7 +1,17 @@
 package com.heaven.soulmate;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
@@ -62,4 +72,70 @@ public class Utils {
         String token_raw = String.format("%d %d %s %s %d", uid, rand, secret, password, timestamp.getTime());
         return md5(token_raw);
     }
+
+    // HTTP GET request
+    public static String httpGet(String url){
+
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpGet request = new HttpGet(url);
+        String result = null;
+
+        // add request header
+        request.addHeader("User-Agent", "soulmate");
+
+        HttpResponse response = null;
+        try {
+            response = client.execute(request);
+
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+            StringBuffer sb = new StringBuffer();
+            String line = "";
+            while ((line = rd.readLine()) != null) {
+                sb.append(line);
+            }
+
+            result = sb.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    // post json to url
+    public static String httpPost(String url, String json){
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpPost post = new HttpPost(url);
+        String result = null;
+
+        // add header
+        post.setHeader("User-Agent", "soulmate");
+
+        StringEntity requestEntity = new StringEntity(
+                json,
+                ContentType.APPLICATION_JSON);
+        post.setEntity(requestEntity);
+
+        HttpResponse response = null;
+        try {
+            response = client.execute(post);
+
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+
+            StringBuffer sb = new StringBuffer();
+            String line = "";
+            while ((line = rd.readLine()) != null) {
+                sb.append(line);
+            }
+
+            result = sb.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
 }

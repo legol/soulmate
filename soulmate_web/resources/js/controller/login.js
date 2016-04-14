@@ -28,8 +28,7 @@ if (!LoginController) {
                 log.info("success");
                 log.info(JSON.stringify(data));
 
-                if (callback)
-                {
+                if (callback) {
                     callback(true, data);
                 }
             },

@@ -21,67 +21,107 @@ if (!UIController) {
             init: function(data){
                 var submitButton = $("#loginButton");
                 //submitButton.on("click",this.submit); // this works too
-                submitButton.bind("click", this.submit);
+                submitButton.bind("click", $.proxy(this.submit, this));
             },
 
-            onwsmsg: function(msgObj){
+            onLoginResult: function(status, login_result){
+
                 var log = log4javascript.getDefaultLogger();
-                log.info(JSON.stringify(msgObj));
+                log.info("login callback");
+                log.info(JSON.stringify(login_result));
+
+                var r = new Render();
+
+                // save login result.
+                if (status == true){
+                    storage = sessionStorage;
+
+                    if (login_result.err_no == 0){
+                        storage.uid = login_result.data.uid;
+                        storage.token = login_result.data.token;
+
+                        var myself = new User();
+                        myself.data.name = "myself";
+                        myself.data.uid = storage.uid;
+                        myself.data.token = storage.token;
+
+                        window.myself = myself;
+
+                        window.userList.push(myself);
+
+                        r.render($("#main_container"), "resources/templates/chat/lobby.html", JSON.stringify(login_result));
+
+                        var servers = login_result.data.servers.info;
+                        var arrayLength = servers.length;
+                        for (var i = 0; i < arrayLength; i++) {
+                            if (servers[i].role.toUpperCase() == "WEBSOCKET"){
+                                log.info("websocket info: " + JSON.stringify(servers[i]));
+                                window.wscontroller.init(servers[i].url,
+                                    window.uicontroller.websocket.onmessage.bind(this),
+                                    window.uicontroller.websocket.onopen.bind(this),
+                                    window.uicontroller.websocket.onclose.bind(this),
+                                    window.uicontroller.websocket.onerror.bind(this));
+                                window.wscontroller.connect();
+                                break;
+                            }
+                        }
+
+                    }
+                    else{
+                        r.render($("#main_container"), "resources/templates/login/login_failure.html", JSON.stringify(login_result));
+                    }
+                }
+                else {
+                    r.render($("#main_container"), "resources/templates/login/login_failure.html", JSON.stringify(login_result));
+                }
             },
 
             submit: function(){
-                window.logincontroller.login($("#user_name_input").val(), $("#pwd_input").val(),
-                    function(status, login_result){
-
-                        var log = log4javascript.getDefaultLogger();
-                        log.info("login callback");
-                        log.info(JSON.stringify(login_result));
-
-                        var r = new Render();
-
-                        // save login result.
-                        if (status == true){
-                            storage = sessionStorage;
-
-                            if (login_result.err_no == 0){
-                                storage.uid = login_result.data.uid;
-                                storage.token = login_result.data.token;
-
-                                var myself = new User();
-                                myself.data.name = "myself";
-                                myself.data.uid = storage.uid;
-                                myself.data.token = storage.token;
-
-                                window.myself = myself;
-
-                                window.userList.push(myself);
-
-                                r.render($("#main_container"), "resources/templates/chat/lobby.html", JSON.stringify(login_result));
-
-                                var servers = login_result.data.servers.info;
-                                var arrayLength = servers.length;
-                                for (var i = 0; i < arrayLength; i++) {
-                                    if (servers[i].role.toUpperCase() == "WEBSOCKET"){
-                                        log.info("websocket info: " + JSON.stringify(servers[i]));
-                                        window.wscontroller.init(servers[i].url, this.onwsmsg);
-                                        window.wscontroller.connect();
-                                        break;
-                                    }
-                                }
-
-                            }
-                            else{
-                                r.render($("#main_container"), "resources/templates/login/login_failure.html", JSON.stringify(login_result));
-                            }
-                        }
-                        else {
-                            r.render($("#main_container"), "resources/templates/login/login_failure.html", JSON.stringify(login_result));
-                        }
-                });
+                window.logincontroller.login($("#user_name_input").val(), $("#pwd_input").val(), $.proxy(this.onLoginResult, this));
             }
         },
 
+        websocket:{
+            onmessage:function(msg){
+                var log = log4javascript.getDefaultLogger();
+                log.info(JSON.stringify(msg));
+                alert("uicontroller.websocket.onmessage: " + JSON.stringify(msg));
+            },
 
+            onopen:function(event){
+                var log = log4javascript.getDefaultLogger();
+                log.info("uicontroller.websocket.onopen");
+
+                var ws_authentication = new Object();
+
+                ws_authentication.uid = window.myself.data.uid;
+                ws_authentication.token = window.myself.data.token;
+                ws_authentication.msgid = window.wscontroller.getNewMessageId();
+
+                window.wscontroller.send(ws_authentication);
+            },
+
+            onclose:function(event){
+                var log = log4javascript.getDefaultLogger();
+                log.info("retry connect to websocket in 3 seconds...");
+
+                // auto reconnect after 3 seconds
+                $('#timer').timer({
+                    duration: '3s',
+                    callback: function() {
+                        window.wscontroller.connect();
+                        $('#timer').timer('remove');
+                    },
+                    repeat: false //repeatedly call the callback
+                });
+
+
+            },
+
+            onerror:function(event){
+
+            },
+        },
     };
 
     window.uicontroller = new UIController();

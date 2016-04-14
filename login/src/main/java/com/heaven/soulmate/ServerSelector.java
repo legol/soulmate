@@ -1,4 +1,4 @@
-package com.heaven.soulmate.login;
+package com.heaven.soulmate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heaven.soulmate.login.model.ServerInfo;
@@ -7,9 +7,7 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by chenjie3 on 2015/11/6.
@@ -42,7 +40,7 @@ public class ServerSelector {
         }
     }
 
-    public ServerInfoList selectServerBy(String role, long uid){
+    public ServerInfo selectServerBy(String role, long uid){
         ServerInfoList selectedServers = new ServerInfoList();
         selectedServers.info = new LinkedList<ServerInfo>();
 
@@ -54,6 +52,26 @@ public class ServerSelector {
 
         if (selectedServers.info.size() == 0){
             LOGGER.error(String.format("no server is found for:%d", uid));
+            return null;
+        }
+
+        ServerInfo singleServer = selectedServers.info.get(Utils.randInt(0, selectedServers.info.size() - 1));
+
+        return singleServer;
+    }
+
+    public ServerInfoList selectServersBy(String role){
+        ServerInfoList selectedServers = new ServerInfoList();
+        selectedServers.info = new LinkedList<ServerInfo>();
+
+        for (ServerInfo server:serverInfoList.info) {
+            if (role.compareToIgnoreCase(server.role) == 0){
+                selectedServers.info.add(server);
+            }
+        }
+
+        if (selectedServers.info.size() == 0){
+            LOGGER.error(String.format("no server is found for role:%s", role));
             return null;
         }
 

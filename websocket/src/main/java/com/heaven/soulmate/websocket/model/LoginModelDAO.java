@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heaven.soulmate.ServerSelector;
 import com.heaven.soulmate.Utils;
+import com.heaven.soulmate.websocket.controller.InterServiceInvoker;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.apache.log4j.Logger;
 
@@ -165,25 +166,7 @@ public class LoginModelDAO {
             }
 
             if (count == 0){
-                // remove record from login_status table
-                LOGGER.info(String.format("remove from login_status: uid=%d", uid));
-
-                ServerInfo loginServerInfo = ServerSelector.sharedInstance().selectServerBy("login", uid);
-                LogoutRequest logoutRequest = new LogoutRequest();
-                logoutRequest.uid = uid;
-
-                ObjectMapper mapper = new ObjectMapper();
-                String requestInJson = null;
-                try {
-                    requestInJson = mapper.writeValueAsString(logoutRequest);
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                    LOGGER.error(String.format("unknown error happened while trying to logout: uid=%d", uid));
-                    return;
-                }
-
-                String response = Utils.httpPost(String.format("http://%s:%d/login/logout", loginServerInfo.ip, loginServerInfo.portServer), requestInJson);
-                LOGGER.info(String.format("logout: uid=%d response=%s", uid, response));
+                InterServiceInvoker.logout(uid);
             }
 
             statement.close();
@@ -192,4 +175,6 @@ public class LoginModelDAO {
             e.printStackTrace();
         }
     }
+
+
 }
