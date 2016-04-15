@@ -85,7 +85,7 @@ public class WebSocketServerEndPoint{
 
     @OnMessage
     public void onMessage(String message, Session userSession) {
-        LOGGER.info(String.format("message received:<%s>", message));
+         LOGGER.info(String.format("message received:<%s>", message));
 
         try {
             long uid = -1;

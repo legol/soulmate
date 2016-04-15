@@ -29,14 +29,6 @@ public class LoginResult{
     @JsonProperty("servers")
     public ServerInfoList servers;
 
-    public ServerInfoList getServers() {
-        return servers;
-    }
-
-    public void setServers(ServerInfoList servers) {
-        this.servers = servers;
-    }
-
     public String getToken() {
         return token;
     }

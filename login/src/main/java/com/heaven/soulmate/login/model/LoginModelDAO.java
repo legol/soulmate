@@ -2,6 +2,9 @@ package com.heaven.soulmate.login.model;
 
 import com.heaven.soulmate.Utils;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.beans.PropertyVetoException;
 import java.sql.*;
@@ -66,6 +69,7 @@ public class LoginModelDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
     // 1. verify password

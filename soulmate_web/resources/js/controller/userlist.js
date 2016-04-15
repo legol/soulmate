@@ -11,22 +11,22 @@ if (!UserListController) {
 
 
         init: function (userlist) {
-            this.reloadList(userlist);
+            this.queryOnlineClients();
 
             //start a timer & execute a function every 10 seconds and then reset the timer at the end of 10 seconds.
             var THIS = this;
 
-            //$('#timer').timer({
-            //    duration: '30s',
-            //    callback: function() {
-            //        var log = log4javascript.getDefaultLogger();
-            //        log.info("timer callback");
-            //        $('#timer').timer('reset');
-            //
-            //        THIS.queryOnlineClients();
-            //    },
-            //    repeat: true //repeatedly call the callback
-            //});
+            $('#timer').timer({
+                duration: '30s',
+                callback: function() {
+                    var log = log4javascript.getDefaultLogger();
+                    log.info("timer callback");
+                    $('#timer').timer('reset');
+
+                    THIS.queryOnlineClients();
+                },
+                repeat: true //repeatedly call the callback
+            });
         },
 
         queryOnlineClients: function(){
@@ -69,7 +69,7 @@ if (!UserListController) {
                 },
                 error: function(url, options){
                     var log = log4javascript.getDefaultLogger();
-                    log.info("query_online_clients failed. ignore silently");
+                    log.info("query_online_clients failed. retry...");
                     log.info(url.toString());
                     log.info(options.toString());
                 }

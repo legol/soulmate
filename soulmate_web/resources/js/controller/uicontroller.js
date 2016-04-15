@@ -47,8 +47,6 @@ if (!UIController) {
 
                         window.myself = myself;
 
-                        window.userList.push(myself);
-
                         r.render($("#main_container"), "resources/templates/chat/lobby.html", JSON.stringify(login_result));
 
                         var servers = login_result.data.servers.info;
@@ -89,6 +87,10 @@ if (!UIController) {
                 var log = log4javascript.getDefaultLogger();
                 log.info(JSON.stringify(msg));
                 alert("uicontroller.websocket.onmessage: " + JSON.stringify(msg));
+
+                if (msg.type == "online_clients_changed"){
+                    window.userlistcontroller.queryOnlineClients();
+                }
             },
 
             onopen:function(event){
@@ -110,7 +112,7 @@ if (!UIController) {
 
                 // auto reconnect after 3 seconds
                 $('#timer').timer({
-                    duration: '3s',
+                    duration: '10s',
                     callback: function() {
                         $.proxy(window.wscontroller.connect, window.wscontroller)();
                         $('#timer').timer('remove');

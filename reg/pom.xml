@@ -31,7 +31,7 @@
       <properties>
         <log.dir>C:/Projects/soulmate/logs</log.dir>
         <log.file>reg.log</log.file>
-        <mysql.jdbcUrl>jdbc:mysql://127.0.0.1/soulmate</mysql.jdbcUrl>
+        <mysql.jdbcUrl>jdbc:mysql://106.185.33.7:5454/soulmate</mysql.jdbcUrl>
         <mysql.user>root</mysql.user>
         <mysql.password>CjTm803048</mysql.password>
         <myself.binding_ip>127.0.0.1</myself.binding_ip>

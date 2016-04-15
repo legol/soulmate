@@ -1,5 +1,7 @@
 package com.heaven.soulmate.login.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.heaven.soulmate.login.model.*;
 import com.heaven.soulmate.ServerSelector;
+
+import java.util.LinkedList;
 
 /**
  * Created by ChenJie3 on 2015/9/8.
@@ -36,19 +40,21 @@ public class LoginController {
         LOGGER.info(lr.toString());
 
         // assign a websocket server to client
-        ServerInfoList selectedWebSocketServer = ServerSelector.sharedInstance().selectServerBy("websocket", lr.getUid());
+        ServerInfo selectedWebSocketServer = ServerSelector.sharedInstance().selectServerBy("websocket", lr.getUid());
         if (selectedWebSocketServer == null) {
             httpResult.errNo = -1;
             httpResult.errMsg = "can't find a websocket server for you.";
             return httpResult;
         }
-        lr.setServers(selectedWebSocketServer);
+        lr.servers = new ServerInfoList();
+        lr.servers.info = new LinkedList<ServerInfo>();
+        lr.servers.info.add(selectedWebSocketServer);
 
         httpResult.errNo = 0;
         httpResult.data = lr;
 
-        // todo:notify all websocket server that someone logged out
-
+        // notify all websocket server that someone logged out
+        InterServiceInvoker.notifyClientsChanged();
 
         return httpResult;
     }
@@ -63,7 +69,8 @@ public class LoginController {
         hr.errNo = 0;
         LoginModelDAO.sharedInstance().logout(logoutRequeste.uid);
 
-        // todo:notify all websocket server that someone logged out
+        // notify all websocket server that someone logged out
+        InterServiceInvoker.notifyClientsChanged();
 
         return hr;
     }
