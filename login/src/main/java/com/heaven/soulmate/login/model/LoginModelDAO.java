@@ -8,10 +8,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.beans.PropertyVetoException;
 import java.sql.*;
-import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Created by ChenJie3 on 2015/10/23.
@@ -59,15 +56,23 @@ public class LoginModelDAO {
             statement = conn.prepareStatement("delete from login_status where uid=?");
             statement.setLong(1, uid);
             statement.executeUpdate();
+            statement.close();
 
             statement = conn.prepareStatement("delete from websocket where uid=?");
             statement.setLong(1, uid);
             statement.executeUpdate();
-
             statement.close();
+
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
+
+            try {
+                statement.close();
+                conn.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         }
 
     }
@@ -122,6 +127,8 @@ public class LoginModelDAO {
             }
 
             if (uid == -1){
+                statement.close();
+                conn.close();
                 return null;
             }
 
@@ -151,6 +158,14 @@ public class LoginModelDAO {
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
+
+            try {
+                statement.close();
+                conn.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+
         }
 
         return lr;
@@ -179,10 +194,14 @@ public class LoginModelDAO {
                 token_from_mysql = rs.getString("token");
 
                 if (token_from_mysql.isEmpty()) {
+                    statement.close();
+                    conn.close();
                     return false;
                 }
 
                 if (token_from_mysql.compareToIgnoreCase(token) != 0) {
+                    statement.close();
+                    conn.close();
                     return false;
                 }
 
@@ -190,11 +209,24 @@ public class LoginModelDAO {
             }
 
             if (token_from_mysql.isEmpty()){
+                statement.close();
+                conn.close();
                 return false;
             }
 
+            statement.close();
+            conn.close();
+
         } catch (SQLException e) {
             e.printStackTrace();
+
+            try {
+                statement.close();
+                conn.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+
             return false;
         }
 
@@ -223,8 +255,19 @@ public class LoginModelDAO {
 
                 clients.add(client);
             }
+
+            statement.close();
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
+
+            try {
+                statement.close();
+                conn.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+
             return null;
         }
 

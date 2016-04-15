@@ -64,10 +64,14 @@ public class LoginModelDAO {
                 token_from_mysql = rs.getString("token");
 
                 if (token_from_mysql.isEmpty()) {
+                    statement.close();
+                    conn.close();
                     return false;
                 }
 
                 if (token_from_mysql.compareToIgnoreCase(token) != 0) {
+                    statement.close();
+                    conn.close();
                     return false;
                 }
 
@@ -75,10 +79,23 @@ public class LoginModelDAO {
             }
 
             if (token_from_mysql.isEmpty()) {
+                statement.close();
+                conn.close();
                 return false;
             }
+
+            statement.close();
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
+
+            try {
+                statement.close();
+                conn.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+
             return false;
         }
 
@@ -109,6 +126,10 @@ public class LoginModelDAO {
             if (!auth(uid, token)){
                 lr.errmsg = String.format("can't auth uid=%d token=%s", uid, token);
                 lr.errno = -2;
+
+                statement.close();
+                conn.close();
+
                 return lr;
             }
 
@@ -122,6 +143,10 @@ public class LoginModelDAO {
             if (rowsAffacted == 0) {
                 lr.errno = -1;
                 lr.errmsg = "can't save websocket info to db.";
+
+                statement.close();
+                conn.close();
+
                 return lr;
             }
 
@@ -130,6 +155,14 @@ public class LoginModelDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+
+            try {
+                statement.close();
+                conn.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+
         }
 
         LOGGER.info(String.format("websocket login: uid=%d websocket_session_id=%s", uid, websocket_session_id));
@@ -173,6 +206,14 @@ public class LoginModelDAO {
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
+
+            try {
+                statement.close();
+                conn.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+
         }
     }
 

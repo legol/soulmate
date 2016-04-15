@@ -73,12 +73,22 @@ public class RegModel {
                     break;
                 }
             }else{
+                statement.close();
+                conn.close();
                 return 0L;
             }
             statement.close();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
+
+            try {
+                statement.close();
+                conn.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+
         }
 
         return newUID;
