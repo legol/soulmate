@@ -85,8 +85,12 @@ if (!UIController) {
         websocket:{
             onmessage:function(msg){
                 var log = log4javascript.getDefaultLogger();
-                log.info(JSON.stringify(msg));
-                alert("uicontroller.websocket.onmessage: " + JSON.stringify(msg));
+                log.info("uicontroller.websocket.onmessage: " + JSON.stringify(msg));
+
+                var textArea = $("#messages");
+                var message = JSON.stringify(msg) + "\r\n";
+                textArea.val(textArea.val() + message);
+                textArea.scrollTop(textArea.scrollHeight);
 
                 if (msg.type == "online_clients_changed"){
                     window.userlistcontroller.queryOnlineClients();
