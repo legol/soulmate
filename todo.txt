@@ -1,1 +1,3 @@
 use websocket to refresh user list
+debug connection timeout/leak
+display all message in message area

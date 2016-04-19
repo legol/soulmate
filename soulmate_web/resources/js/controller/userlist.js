@@ -10,7 +10,7 @@ if (!UserListController) {
 
 
 
-        init: function (userlist) {
+        init: function () {
             this.queryOnlineClients();
 
             //start a timer & execute a function every 10 seconds and then reset the timer at the end of 10 seconds.
@@ -69,7 +69,7 @@ if (!UserListController) {
                 },
                 error: function(url, options){
                     var log = log4javascript.getDefaultLogger();
-                    log.info("query_online_clients failed. retry...");
+                    log.info("query_online_clients failed. ignore silently...");
                     log.info(url.toString());
                     log.info(options.toString());
                 }

@@ -14,5 +14,11 @@
 </div>
 
 <script>
-	window.userlistcontroller.init(window.userList);
+	var log = log4javascript.getDefaultLogger();
+	log.info("lobby scripts running...");
+
+	window.userlistcontroller.init();
+	log.info("lobby scripts running...111");
+	window.messagelistcontroller.init();
+	log.info("lobby scripts running...222");
 </script>

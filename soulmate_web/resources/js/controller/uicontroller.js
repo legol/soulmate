@@ -90,6 +90,8 @@ if (!UIController) {
 
                 if (msg.type == "online_clients_changed"){
                     window.userlistcontroller.queryOnlineClients();
+                }else if(msg.type == "chat"){
+
                 }
             },
 
