@@ -21,9 +21,7 @@ html, body {
     height: 80%;
     resize: none;
 	float:left;
-    box-sizing: border-box;
 	background-color:#0F3;
-	margin-top:30px;
 }
 
 .chat-lobby-member-area {
@@ -31,16 +29,13 @@ html, body {
     height: 80%;
 	float:left;
     resize: none;
-    box-sizing: border-box;
 	background-color:#00C;
-	margin-top:30px;
-} 
+}
 
 .chat-lobby-input-area {
 	width:100%;
     float:left;
     resize: none;
-    box-sizing: border-box;
 	background-color:#909999;
 } 
 

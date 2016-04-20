@@ -7,12 +7,6 @@
     box-sizing: border-box;
 }
  
-html, body {
-    width:90%;
-    height:90%;
-    background: #eeeeda;
-}
- 
 .panel {
     border: 2px solid #0078ae;
     border-radius: 5px;
