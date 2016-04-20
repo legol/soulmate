@@ -38,10 +38,10 @@ html, body {
 
 .chat-lobby-input-area {
 	width:100%;
-    height: 20%;
+    float:left;
     resize: none;
     box-sizing: border-box;
-	background-color:#909;
+	background-color:#909999;
 } 
 
 .chat-lobby-menu-area {

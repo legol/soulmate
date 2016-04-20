@@ -18,6 +18,12 @@ if (!MessageListController) {
             r.render($("#message_container"), "resources/templates/message/messagelist.html", template_data);
         },
 
+        addMsg: function(msg){
+            var textArea = $("#messages");
+            var message = JSON.stringify(msg) + "\r\n";
+            textArea.val(textArea.val() + message);
+            textArea.scrollTop(textArea.scrollHeight);
+        },
     }
 
     window.messagelistcontroller = new MessageListController();
