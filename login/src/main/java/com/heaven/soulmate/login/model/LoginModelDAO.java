@@ -132,7 +132,7 @@ public class LoginModelDAO {
                 return null;
             }
 
-            // save token to login_status table
+            // save the new token or update the token expire time
             Timestamp token_gen_time = new Timestamp(System.currentTimeMillis());
 
             Calendar cal = Calendar.getInstance();
@@ -141,14 +141,34 @@ public class LoginModelDAO {
 
             Timestamp token_expire_time = new Timestamp(cal.getTime().getTime());
 
-            statement = conn.prepareStatement("replace login_status(uid, token, token_gen_time, token_expire_time, location) values (?, ?, ?, ?, ST_GEOMFROMTEXT(?))");
+            statement = conn.prepareStatement("insert into login_status(uid, token, token_gen_time, token_expire_time, location) values (?, ?, ?, ?, ST_GEOMFROMTEXT(?))" +
+                    " ON DUPLICATE KEY UPDATE token_expire_time=?, location=ST_GEOMFROMTEXT(?)");
             statement.setLong(1, uid);
             statement.setString(2, lr.getToken());
             statement.setTimestamp(3, token_gen_time);
             statement.setTimestamp(4, token_expire_time);
             statement.setString(5, "POINT(0 0)");
+            statement.setTimestamp(6, token_expire_time);
+            statement.setString(7, "POINT(0 0)");
             int rowsAffacted = statement.executeUpdate();
             if (rowsAffacted == 0) {
+                statement.close();
+                conn.close();
+                return null;
+            }
+
+            // get the latest token
+            statement = conn.prepareStatement("select token from login_status where uid=?");
+            statement.setLong(1, uid);
+            rs = statement.executeQuery();
+            boolean gotToken = false;
+            while (rs.next()) {
+                lr.setToken(rs.getString("token"));
+                gotToken = true;
+                break;
+            }
+
+            if (!gotToken){
                 statement.close();
                 conn.close();
                 return null;
