@@ -1,4 +1,4 @@
-package com.heaven.soulmate.chat;
+package com.heaven.soulmate.chat.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,7 +12,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.concurrent.ThreadLocalRandom;
 

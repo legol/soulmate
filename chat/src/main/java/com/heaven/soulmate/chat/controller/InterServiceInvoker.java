@@ -1,14 +1,13 @@
-package com.heaven.soulmate.login.controller;
+package com.heaven.soulmate.chat.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heaven.soulmate.ServerSelector;
 import com.heaven.soulmate.Utils;
-import com.heaven.soulmate.login.model.WebsocketBroadcast;
-import com.heaven.soulmate.login.model.ServerInfo;
-import com.heaven.soulmate.login.model.ServerInfoList;
-import com.heaven.soulmate.login.model.WebsocketBroadcast;
-import com.heaven.soulmate.login.model.WebsocketNotification;
+import com.heaven.soulmate.chat.model.WebsocketBroadcast;
+import com.heaven.soulmate.chat.model.ServerInfo;
+import com.heaven.soulmate.chat.model.ServerInfoList;
+import com.heaven.soulmate.chat.model.WebsocketNotification;
 import org.apache.log4j.Logger;
 
 /**
@@ -18,7 +17,7 @@ public class InterServiceInvoker {
     private static final Logger LOGGER = Logger.getLogger(InterServiceInvoker.class);
 
 
-    private static boolean broadcast(String message){
+    public static boolean broadcast(String message){
         ServerInfoList websocketServers = ServerSelector.sharedInstance().selectServersBy("websocket");
         WebsocketBroadcast broadcastRequest = new WebsocketBroadcast();
         broadcastRequest.message = message;

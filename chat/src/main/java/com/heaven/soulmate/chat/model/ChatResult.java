@@ -11,10 +11,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
 public class ChatResult {
     @JsonProperty("err_no")
-    private Long errNo;
+    public int errNo;
 
     @JsonProperty("err_msg")
-    private String errMsg;
+    public String errMsg;
 
     public Long getErrNo() {
         return errNo;

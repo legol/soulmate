@@ -10,8 +10,14 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
 public class ServerInfo {
+    @JsonProperty("role")
+    public String role;
+
     @JsonProperty("ip")
     public String ip;
+
+    @JsonProperty("url")
+    public String url;
 
     @JsonProperty("portServer")
     public int portServer;

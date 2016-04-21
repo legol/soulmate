@@ -60,11 +60,24 @@ public class LoginStatusDao {
             }
 
             if (tokenFromDb == null || token.compareToIgnoreCase(tokenFromDb) != 0){
+                statement.close();
+                conn.close();
                 return false;
             }
 
+            statement.close();
+            conn.close();
+
         } catch (SQLException e) {
             e.printStackTrace();
+
+            try {
+                statement.close();
+                conn.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+
             return false;
         }
 

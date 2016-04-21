@@ -78,9 +78,29 @@ public class OfflineMsgDAO {
                     break;
                 }
             }
+
+            statement.close();
+            conn.close();
+
         } catch (SQLException e) {
+
+            try {
+                statement.close();
+                conn.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+
             e.printStackTrace();
         } catch (JsonProcessingException e) {
+
+            try {
+                statement.close();
+                conn.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+
             e.printStackTrace();
         }
 
@@ -114,7 +134,19 @@ public class OfflineMsgDAO {
 
             int rowsAffectted = statement.executeUpdate();
             LOGGER.info(String.format("update delivered, %d rowsAffected: %s", rowsAffectted, sql));
+
+            statement.close();
+            conn.close();
+
         } catch (SQLException e) {
+
+            try {
+                statement.close();
+                conn.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+
             e.printStackTrace();
         }
 

@@ -1,6 +1,5 @@
-package com.heaven.soulmate.login.model;
+package com.heaven.soulmate.chat.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -10,7 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
-public class BroadcastRequest {
-    @JsonProperty("message")
-    public String message;
+public class WebsocketNotification {
+    @JsonProperty("type")
+    public String type;
 }
