@@ -41,7 +41,7 @@ public class ChatController {
             messageInJson = mapper.writeValueAsString(msg);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            ret.setErrNo(-1L);
+            ret.setErrNo(-1);
             ret.setErrMsg(String.format("can't convert message to json"));
             return ret;
         }
@@ -68,14 +68,14 @@ public class ChatController {
 
         // 0. verify token
         if(!LoginStatusDao.sharedInstance().verifyToken(msg.getUid(), msg.getToken())){
-            ret.setErrNo(-1L);
+            ret.setErrNo(-1);
             ret.setErrMsg(String.format("can't verify token"));
             return ret;
         }
 
         // 1. save to offlineMsgDB
-        long messageId = 0;
-        if ((messageId = OfflineMsgDAO.sharedInstance().saveMsg(msg)) < 0) {
+        int messageId = 0;
+        if ((messageId = (int)OfflineMsgDAO.sharedInstance().saveMsg(msg)) < 0) {
             ret.setErrNo(messageId);
             ret.setErrMsg("can't write msg to db.");
             return ret;
@@ -90,18 +90,18 @@ public class ChatController {
             messageInJson = mapper.writeValueAsString(msg);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            ret.setErrNo(-1L);
+            ret.setErrNo(-1);
             ret.setErrMsg(String.format("can't convert message to json"));
             return ret;
         }
 
         if (LongConnServerController.sharedInstance().sendMessage(msg.getTarget_uid(), 2, messageInJson) == false) {
-            ret.setErrNo(-1L);
+            ret.setErrNo(-1);
             ret.setErrMsg(String.format("can't send message."));
             return ret;
         }
 
-        ret.setErrNo(0L);
+        ret.setErrNo(0);
         return ret;
 
     }

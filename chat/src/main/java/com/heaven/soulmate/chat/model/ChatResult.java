@@ -16,10 +16,10 @@ public class ChatResult {
     @JsonProperty("err_msg")
     public String errMsg;
 
-    public Long getErrNo() {
+    public int getErrNo() {
         return errNo;
     }
-    public void setErrNo(Long errNo) {
+    public void setErrNo(int errNo) {
         this.errNo = errNo;
     }
 

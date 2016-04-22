@@ -1,0 +1,42 @@
+{
+  "info": [
+
+    {
+      "role":"websocket",
+      "ip":"127.0.0.1",
+      "url": "ws://127.0.0.1:8080/websocket/chat_room",
+      "portServer": 8000,
+      "portClient": 8080,
+      "uid_low":0,
+      "uid_high":10000
+    },
+    {
+      "role":"websocket_aaaaaaaaaa",
+      "ip":"127.0.0.1",
+      "url": "ws://127.0.0.1:8000/websocket/chat_room",
+      "portServer": 8000,
+      "portClient": 8081,
+      "uid_low":10000,
+      "uid_high":20000
+    },
+
+
+    {
+      "role":"longconn",
+      "ip":"127.0.0.1",
+      "portServer": 7789,
+      "portClient": 7788,
+      "uid_low":0,
+      "uid_high":10000
+    },
+    {
+      "role":"longconn",
+      "ip": "127.0.0.1",
+      "portServer": 7789,
+      "portClient": 7788,
+      "uid_low":10000,
+      "uid_high":20000
+    }
+
+  ]
+}
