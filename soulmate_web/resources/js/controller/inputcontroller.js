@@ -20,9 +20,20 @@ if (!InputController) {
 
         sendMessage: function() {
             var log = log4javascript.getDefaultLogger();
-            log.info("send message...");
 
-            var chat_data = new Object();
+            var msg = new Object();
+            msg.type = "broadcast";
+            msg.uid = window.myself.data.uid;
+            msg.token = window.myself.data.token;
+            msg.messages = new Array();
+
+            var msg_segment = new Object();
+            msg_segment.type = 1234;
+            msg_segment.message = $("#messageInput").val();
+            msg.messages.push(msg_segment);
+
+            log.info("sending message..." + JSON.stringify(msg));
+
 
             $.ajax({
                 url: "/chat/broadcast", // 不能跨域，只能访问自己本站内容
@@ -31,17 +42,19 @@ if (!InputController) {
                 type: 'POST',
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                data: JSON.stringify(chat_data),
+                data: JSON.stringify(msg),
                 success: function (response) {
                     // process data
                     var log = log4javascript.getDefaultLogger();
-                    log.info("chat success");
+                    log.info("broadcast success.");
                     log.info(JSON.stringify(response));
 
+                    $("#messageInput").val("");
+                    $("#messageInput").focusin();
                 },
                 error: function(url, options){
                     var log = log4javascript.getDefaultLogger();
-                    log.info("chat error occured");
+                    log.info("broadcast error.");
                     log.info(url.toString());
                     log.info(options.toString());
 
