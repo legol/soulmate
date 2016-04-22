@@ -46,7 +46,10 @@ public class ChatController {
             return ret;
         }
 
-        InterServiceInvoker.broadcast(messageInJson);
+        if(!InterServiceInvoker.broadcast(messageInJson)){
+            ret.errNo = -1;
+            ret.errMsg = "can't broadcast to websocket";
+        }
 
         return ret;
     }
