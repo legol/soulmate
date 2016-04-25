@@ -3,8 +3,8 @@
 
     {
       "role":"websocket",
-      "ip":"127.0.0.1",
-      "url": "ws://127.0.0.1:8080/websocket/chat_room",
+      "ip":"106.185.33.7",
+      "url": "ws://106.185.33.7:8000/websocket/chat_room",
       "portServer": 8000,
       "portClient": 8080,
       "uid_low":0,

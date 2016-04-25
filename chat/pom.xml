@@ -36,7 +36,7 @@
     <profile>
       <id>production</id>
       <properties>
-        <log.path>/var/log/soulmate/chat</log.path>
+        <log.path>/home/ubuntu/software_install/apache-tomcat-8.0.26/logs/soulmate</log.path>
         <mysql.jdbcUrl>jdbc:mysql://106.185.33.7:5454/soulmate</mysql.jdbcUrl>
         <mysql.user>root</mysql.user>
         <mysql.password>CjTm803048</mysql.password>

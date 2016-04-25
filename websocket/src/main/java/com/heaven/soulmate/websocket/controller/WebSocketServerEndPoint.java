@@ -44,15 +44,18 @@ public class WebSocketServerEndPoint{
     }
 
     public void broadcast(String message){
+        LOGGER.info(String.format("broadcasting msg:%s", message));
+
         for (Set<Session> sessionSet : uidToSessions.values()) {
             for (Session session : sessionSet) {
                 if (session.isOpen()){
+                    LOGGER.info(String.format("broadcasting to uid=%d", sessionIdToUid.get(session.getId()).longValue()));
                     session.getAsyncRemote().sendText(message);
                 }
             }
         }
+        LOGGER.info(String.format("broadcast complete"));
 
-        LOGGER.info(String.format("broadcast msg:%s", message));
     }
 
     @OnOpen
@@ -176,6 +179,9 @@ public class WebSocketServerEndPoint{
         if (!uidToSessions.containsKey(uid)){
             uidToSessions.put(uid, Collections.synchronizedSet(new HashSet<Session>()));
         }
+
+        LOGGER.info(String.format("map uid=%d to session_id=%s", uid, session.getId()));
+
         uidToSessions.get(uid).add(session);
         sessionIdToUid.put(session.getId(), uid);
     }
