@@ -60,7 +60,7 @@ if (!WebSocketController) {
 
         onerror: function(event){
             var log = log4javascript.getDefaultLogger();
-            log.info("ws: onopen: " + JSON.stringify(event));
+            log.info("ws: onerror: " + JSON.stringify(event));
 
             if (this.data.onerror) {
                 this.data.onerror(event);

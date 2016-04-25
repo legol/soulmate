@@ -16,12 +16,12 @@ if (!UserListController) {
             //start a timer & execute a function every 10 seconds and then reset the timer at the end of 10 seconds.
             var THIS = this;
 
-            $('#timer').timer({
+            $('#timer_userlist').timer({
                 duration: '30s',
                 callback: function() {
                     var log = log4javascript.getDefaultLogger();
                     log.info("timer callback");
-                    $('#timer').timer('reset');
+                    $('#timer_userlist').timer('reset');
 
                     THIS.queryOnlineClients();
                 },

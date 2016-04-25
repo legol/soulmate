@@ -114,11 +114,11 @@ if (!UIController) {
                 log.info("retry connect to websocket in 3 seconds...");
 
                 // auto reconnect after 3 seconds
-                $('#timer').timer({
+                $('#timer_websocket').timer({
                     duration: '10s',
                     callback: function() {
                         $.proxy(window.wscontroller.connect, window.wscontroller)();
-                        $('#timer').timer('remove');
+                        $('#timer_websocket').timer('remove');
                     },
                     repeat: false //repeatedly call the callback
                 });
