@@ -45,35 +45,36 @@ public class LoginModelDAO {
 
     // remove record from login_status
     public void logout(long uid){
-        Connection conn = null;
-        PreparedStatement statement = null;
-        ResultSet rs = null;
-
-        try {
-            conn = cpds.getConnection();
-
-            // remove record from login_status table
-            statement = conn.prepareStatement("delete from login_status where uid=?");
-            statement.setLong(1, uid);
-            statement.executeUpdate();
-            statement.close();
-
-            statement = conn.prepareStatement("delete from websocket where uid=?");
-            statement.setLong(1, uid);
-            statement.executeUpdate();
-            statement.close();
-
-            conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-
-            try {
-                statement.close();
-                conn.close();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-        }
+        // simply do nothing.
+//        Connection conn = null;
+//        PreparedStatement statement = null;
+//        ResultSet rs = null;
+//
+//        try {
+//            conn = cpds.getConnection();
+//
+//            // remove record from login_status table
+//            statement = conn.prepareStatement("delete from login_status where uid=?"); // todo do not delete.
+//            statement.setLong(1, uid);
+//            statement.executeUpdate();
+//            statement.close();
+//
+//            statement = conn.prepareStatement("delete from websocket where uid=?");
+//            statement.setLong(1, uid);
+//            statement.executeUpdate();
+//            statement.close();
+//
+//            conn.close();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//
+//            try {
+//                statement.close();
+//                conn.close();
+//            } catch (SQLException e1) {
+//                e1.printStackTrace();
+//            }
+//        }
 
     }
 
