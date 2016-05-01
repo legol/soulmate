@@ -3,4 +3,4 @@ debug connection timeout/leak
 display all message in message area
 input area, adjust layout based on the  knowledge from http://learnlayout.com/
 input area call chat interface.
-go back to login when connection lost.
+go back to login when connection lost. 
