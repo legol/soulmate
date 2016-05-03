@@ -32,13 +32,14 @@
       <param-name>contextConfigLocation</param-name>
       <param-value>classpath:applicationContext.xml</param-value>
     </init-param>
-    <multipart-config>
-      <location>${upload.dir}</location>
-      <max-file-size>5242880</max-file-size><!--5MB-->
-      <max-request-size>20971520</max-request-size><!--20MB-->
-      <file-size-threshold>0</file-size-threshold>
-    </multipart-config>
+    <!--<multipart-config>-->
+      <!--<location>${upload.dir}</location>-->
+      <!--<max-file-size>5242880</max-file-size>&lt;!&ndash;5MB&ndash;&gt;-->
+      <!--<max-request-size>20971520</max-request-size>&lt;!&ndash;20MB&ndash;&gt;-->
+      <!--<file-size-threshold>0</file-size-threshold>-->
+    <!--</multipart-config>-->
   </servlet>
+
   <servlet-mapping>
     <servlet-name>springMvc</servlet-name>
     <url-pattern>/</url-pattern>
