@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
-public class QueryOnlineClientsRequest {
+public class queryOnlineClientsRequest {
     @JsonProperty("uid")
     public long uid;
 

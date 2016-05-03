@@ -21,6 +21,7 @@
         <mysql.user>root</mysql.user>
         <mysql.password>CjTm803048</mysql.password>
         <myself.binding_ip>127.0.0.1</myself.binding_ip>
+        <upload.dir>C:/Projects/soulmate/tmp</upload.dir>
       </properties>
     </profile>
     <profile>
@@ -35,6 +36,7 @@
         <mysql.user>root</mysql.user>
         <mysql.password>CjTm803048</mysql.password>
         <myself.binding_ip>127.0.0.1</myself.binding_ip>
+        <upload.dir>C:/Projects/soulmate/tmp</upload.dir>
       </properties>
     </profile>
     <profile>
@@ -46,6 +48,7 @@
         <mysql.user>root</mysql.user>
         <mysql.password>CjTm803048</mysql.password>
         <myself.binding_ip>106.185.33.7</myself.binding_ip>
+        <upload.dir>/home/ubuntu/tmp</upload.dir>
       </properties>
     </profile>
   </profiles>
@@ -181,7 +184,7 @@
           </httpConnector>
           <webAppConfig>
             <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
-            <contextPath>/websocket</contextPath>
+            <contextPath>/fileuploader</contextPath>
             <defaultsDescriptor>webdefault.xml</defaultsDescriptor>
           </webAppConfig>
           <stopPort>8888</stopPort>

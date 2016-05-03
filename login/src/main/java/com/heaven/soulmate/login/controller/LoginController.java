@@ -1,7 +1,5 @@
 package com.heaven.soulmate.login.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -77,7 +75,7 @@ public class LoginController {
 
     @RequestMapping("/query_online_clients")
     @ResponseBody
-    public Object queryClients(HttpServletRequest request, @RequestBody QueryOnlineClientsRequest requestParsed) {
+    public Object queryClients(HttpServletRequest request, @RequestBody queryOnlineClientsRequest requestParsed) {
 
         HttpResult hr = new HttpResult();
 
