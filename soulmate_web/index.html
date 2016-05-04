@@ -39,5 +39,87 @@
         <script>
             window.uicontroller.main.init("data to be rendered");
         </script>
+
+        <h3>Upload Multiple File:</h3>
+
+        <div id="uploadFileForm">
+
+            File to upload (1): <input type="file" name="file"><br />
+            File to upload (2): <input type="file" name="file"><br />
+            File to upload (3): <input type="file" name="file"><br />
+            File to upload (4): <input type="file" name="file"><br />
+            File to upload (5): <input type="file" name="file"><br />
+
+            <input id="fileUploadButton" type="submit">
+
+        </div>
+
+    <script>
+
+        function progressHandlingFunction(e){
+            if(e.lengthComputable){
+                //$('progress').attr({value:e.loaded,max:e.total});
+            }
+        }
+
+        var submitButton = $("#fileUploadButton");
+        submitButton.bind("click", function(e, data){
+
+            var uploadFileFormData = new FormData();
+
+            $("#uploadFileForm input[type=file]").each(function() {
+
+                var files = $(this)[0].files;
+
+                // Loop through each of the selected files.
+                for (var i = 0; i < files.length; i++) {
+                    var file = files[i];
+
+                    // Add the file to the request.
+                    uploadFileFormData.append('files[]', file, file.name);
+                }
+
+//                uploadFileFormData.append($(this).val(), $(this)[0].files);
+            });
+
+            $.ajax({
+                url: 'fileuploader_ajax/uploadFile',  //Server script to process data
+                type: 'POST',
+
+                // progress
+                xhr: function() {  // Custom XMLHttpRequest
+                    var myXhr = $.ajaxSettings.xhr();
+                    if(myXhr.upload){ // Check if upload property exists
+                        myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // For handling the progress of the upload
+                    }
+                    return myXhr;
+                },
+
+                //Ajax events
+                beforeSend: function(){
+
+                },
+
+                success: function(data){
+
+                },
+
+                error: function(url, options){
+
+                },
+
+                // Form data
+                data: uploadFileFormData,
+
+                //Options to tell jQuery not to process data or worry about content-type.
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+
+        });
+
+    </script>
+
     </body>
 </html>

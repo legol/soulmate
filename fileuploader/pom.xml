@@ -48,7 +48,7 @@
         <mysql.user>root</mysql.user>
         <mysql.password>CjTm803048</mysql.password>
         <myself.binding_ip>106.185.33.7</myself.binding_ip>
-        <fileuploadpload.root_dir>/home/ubuntu/tmp</fileuploadpload.root_dir>
+        <fileupload.root_dir>/home/ubuntu/tmp</fileupload.root_dir>
       </properties>
     </profile>
   </profiles>
