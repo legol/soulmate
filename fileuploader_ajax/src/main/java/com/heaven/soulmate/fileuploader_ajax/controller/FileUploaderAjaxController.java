@@ -49,6 +49,7 @@ public class FileUploaderAjaxController {
         if (!uploadRootDir.exists()) {
             uploadRootDir.mkdirs();
         }
+
         //
         List<File> uploadedFiles = new ArrayList<File>();
         for (int i = 0; i < files.length; i++) {
@@ -56,7 +57,7 @@ public class FileUploaderAjaxController {
 
             // Client File Name
             String name = file.getOriginalFilename();
-            System.out.println("Client File Name = " + name);
+            LOGGER.info("Client File Name = " + name);
 
             if (name != null && name.length() > 0) {
                 try {
@@ -73,9 +74,9 @@ public class FileUploaderAjaxController {
                     stream.close();
                     //
                     uploadedFiles.add(serverFile);
-                    System.out.println("Write file: " + serverFile);
+                    LOGGER.info("Write file: " + serverFile);
                 } catch (Exception e) {
-                    System.out.println("Error Write file: " + name);
+                    LOGGER.error("Error Write file: " + name);
                 }
             }
         }
