@@ -22,6 +22,7 @@
         <mysql.password>CjTm803048</mysql.password>
         <myself.binding_ip>127.0.0.1</myself.binding_ip>
         <fileupload.root_dirir>C:/Projects/soulmate/tmp</fileupload.root_dirir>
+        <fileupload.base_url>http://192.168.95.128:7654/filevault/</fileupload.base_url>
       </properties>
     </profile>
     <profile>
@@ -37,6 +38,7 @@
         <mysql.password>CjTm803048</mysql.password>
         <myself.binding_ip>127.0.0.1</myself.binding_ip>
         <fileupload.root_dir>C:/Projects/soulmate/tmp</fileupload.root_dir>
+        <fileupload.base_url>http://192.168.95.128:7654/filevault/</fileupload.base_url>
       </properties>
     </profile>
     <profile>
@@ -49,6 +51,7 @@
         <mysql.password>CjTm803048</mysql.password>
         <myself.binding_ip>106.185.33.7</myself.binding_ip>
         <fileupload.root_dir>/home/ubuntu/tmp</fileupload.root_dir>
+        <fileupload.base_url>http://192.168.95.128:7654/filevault/</fileupload.base_url>
       </properties>
     </profile>
   </profiles>

@@ -3,6 +3,8 @@ package com.heaven.soulmate.fileuploader_ajax.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heaven.soulmate.fileuploader_ajax.Utils;
+import com.heaven.soulmate.fileuploader_ajax.model.UploadResult;
+import com.heaven.soulmate.fileuploader_ajax.model.UploadResultItem;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,22 +38,23 @@ public class FileUploaderAjaxController {
 
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     @ResponseBody
-    public String upload(HttpServletRequest request, @RequestParam("file") MultipartFile[] files) {
+    public UploadResult upload(HttpServletRequest request, @RequestParam("file") MultipartFile[] files) {
 
         // Root Directory.
         Properties fileuploadProperties = Utils.readProperties("fileupload.properties");
         String uploadRootPath = fileuploadProperties.getProperty("root_dir");
-        LOGGER.info("uploadRootPath=" + uploadRootPath);
+        String baseUrl = fileuploadProperties.getProperty("base_url");
+        LOGGER.info("uploadRootPath=" + uploadRootPath + " base_url=" + baseUrl);
 
         File uploadRootDir = new File(uploadRootPath);
-        //
-        // Create directory if it not exists.
         if (!uploadRootDir.exists()) {
             uploadRootDir.mkdirs();
         }
 
-        //
-        List<File> uploadedFiles = new ArrayList<File>();
+        UploadResult result = new UploadResult();
+        result.errNo = 0;
+        result.data = new LinkedList<UploadResultItem>();
+
         for (int i = 0; i < files.length; i++) {
             MultipartFile file = files[i];
 
@@ -72,15 +75,22 @@ public class FileUploaderAjaxController {
                             new FileOutputStream(serverFile));
                     stream.write(bytes);
                     stream.close();
-                    //
-                    uploadedFiles.add(serverFile);
                     LOGGER.info("Write file: " + serverFile);
+
+                    String md5 = Utils.md5FromFile(serverFile.getAbsolutePath());
+
+                    UploadResultItem resultItem = new UploadResultItem();
+                    resultItem.original_name = serverFile.getAbsolutePath();
+                    resultItem.url = baseUrl + md5;
+
+                    result.data.add(resultItem);
+
                 } catch (Exception e) {
                     LOGGER.error("Error Write file: " + name);
                 }
             }
         }
 
-        return "hello";
+        return result;
     }
 }

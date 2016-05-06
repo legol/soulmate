@@ -12,6 +12,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
@@ -56,6 +60,30 @@ public class Utils {
         }
 
         return sb.toString();
+    }
+
+    public static String md5FromFile(String fileName) {
+
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            InputStream is = Files.newInputStream(Paths.get(fileName));
+            DigestInputStream dis = new DigestInputStream(is, md);
+            byte[] digest = md.digest();
+
+            StringBuffer sb = new StringBuffer();
+            for (byte b : digest) {
+                sb.append(String.format("%02x", b & 0xff));
+            }
+
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static int randInt(int min, int max) {
